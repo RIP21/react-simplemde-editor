@@ -1,4 +1,4 @@
-React SimpleMDE Markdown Editor
+React SimpleMDE Markdown Editor - Work in Progress
 ===============================
 
 React component wrapper for
