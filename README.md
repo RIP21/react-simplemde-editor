@@ -24,9 +24,9 @@ View the [demo code](https://github.com/benrlodge/react-simplemde-editor/tree/ma
 
 ```javascript
 var React = require('react');
-var SimpleMDEReact = require('react-simplemde-editor');
+var SimpleMDE = require('react-simplemde-editor');
 
-<SimpleMDEReact
+<SimpleMDE
   onChange={this.handleChange}
   initialValue={this.state.textValue}
 />
