@@ -19690,7 +19690,6 @@
 	        )
 	      ),
 	      React.createElement(SimpleMDEReact, {
-	        ref: 'demo',
 	        onChange: this.handleChange,
 	        initialValue: this.state.textValue
 	      }),

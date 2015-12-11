@@ -29,8 +29,7 @@ module.exports = React.createClass({
           </p>
         </div>
         
-        <SimpleMDEReact 
-          ref='demo'
+        <SimpleMDEReact
           onChange={this.handleChange}
           initialValue={this.state.textValue}
         />
