@@ -7,7 +7,8 @@ module.exports = React.createClass({
 
   getDefaultProps: function() {
     return {
-      initialValue: ''
+      initialValue: '',
+      onChange: function(){}
     }
   },
 
@@ -32,6 +33,6 @@ module.exports = React.createClass({
   },
 
   render: function() {
-    return React.createElement('textarea');
+    return React.createElement('textarea', {id:'simplepostmd-editor'});
   }
 });
