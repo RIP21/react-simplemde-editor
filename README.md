@@ -10,7 +10,7 @@ npm install --save react-simplemde-editor
 ```
 
 ## Usage
-Visit `/demo` for a full example
+View the [demo code](https://github.com/benrlodge/react-simplemde-editor/tree/master/demo/scripts) for a full example
 
 ```javascript
 <SimpleMDEReact
