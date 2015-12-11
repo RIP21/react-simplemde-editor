@@ -1,5 +1,4 @@
-React SimpleMDE Markdown Editor - Work in Progress
-===============================
+# React SimpleMDE Markdown Editor
 
 React component wrapper for
 [SimpleMDE](https://github.com/NextStepWebs/simplemde-markdown-editor).
@@ -8,7 +7,7 @@ React component wrapper for
 
 ```
 npm install --save react-simplemde-editor
-
+```
 
 ## Usage
 Visit `/demo` for a full example
