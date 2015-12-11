@@ -4,9 +4,14 @@ var $ = require('gulp-load-plugins')();
 
 var webpackConfig = require('./webpack.config.js');
 
-var port = 5000;
+var port = 3000;
 var dist = 'dist/';
 
+gulp.task('styles', function(){
+  return gulp.src(['../node_modules/simplemde/dist/simplemde.min.css'])
+    .pipe($.concat('vendor.css'))
+    .pipe(gulp.dest(dist + 'stylesheets/'))
+});
 
 gulp.task('scripts', function() {
   return gulp.src(webpackConfig.entry)
@@ -31,4 +36,4 @@ gulp.task('watch', function() {
 });
 
 // by default build project and then watch files in order to trigger livereload
-gulp.task('default', ['scripts', 'serve', 'watch']);
+gulp.task('default', ['scripts', 'styles', 'serve', 'watch']);
