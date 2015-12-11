@@ -4,7 +4,7 @@ var $ = require('gulp-load-plugins')();
 
 var webpackConfig = require('./webpack.config.js');
 
-var port = 3000;
+var port = 5555;
 var dist = 'dist/';
 
 gulp.task('styles', function(){
@@ -30,7 +30,7 @@ gulp.task('serve', function() {
   });
 });
 
-gulp.task('watch', function() {  
+gulp.task('watch', function() {
   gulp.watch('./scripts/**/*.js', ['scripts']);
   gulp.watch('../src/**/*.js', ['scripts']);
 });

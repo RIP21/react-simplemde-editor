@@ -5,13 +5,13 @@ var $ = require('jquery');
 
 module.exports = React.createClass({
 
-  getDefaultProps() {
+  getDefaultProps: function() {
     return {
       initialValue: ''
     }
   },
 
-  componentDidMount() {
+  componentDidMount: function() {
     var simplemde = new SimpleMDE({ simplemdeement: document.getElementById("simplepostmd-editor") });
     var _this = this;
 
@@ -26,15 +26,12 @@ module.exports = React.createClass({
     });
   },
 
-  componentWillUnmount() {
+  componentWillUnmount: function() {
     $('.CodeMirror').off('keyup', '*');
     $('.editor-toolbar').off('click', '*');
   },
 
-  render() {
-    return (
-      <textarea id="simplepostmd-editor" />
-    );
+  render: function() {
+    return React.createElement('textarea');
   }
-
 });

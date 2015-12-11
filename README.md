@@ -3,7 +3,7 @@
 React component wrapper for
 [SimpleMDE](https://github.com/NextStepWebs/simplemde-markdown-editor).
 
-## Install
+## Install (coming soon...)
 
 ```
 npm install --save react-simplemde-editor

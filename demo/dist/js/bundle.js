@@ -19719,13 +19719,13 @@
 	module.exports = React.createClass({
 	  displayName: 'exports',
 
-	  getDefaultProps() {
+	  getDefaultProps: function () {
 	    return {
 	      initialValue: ''
 	    };
 	  },
 
-	  componentDidMount() {
+	  componentDidMount: function () {
 	    var simplemde = new SimpleMDE({ simplemdeement: document.getElementById("simplepostmd-editor") });
 	    var _this = this;
 
@@ -19740,15 +19740,14 @@
 	    });
 	  },
 
-	  componentWillUnmount() {
+	  componentWillUnmount: function () {
 	    $('.CodeMirror').off('keyup', '*');
 	    $('.editor-toolbar').off('click', '*');
 	  },
 
-	  render() {
-	    return React.createElement('textarea', { id: 'simplepostmd-editor' });
+	  render: function () {
+	    return React.createElement('textarea');
 	  }
-
 	});
 
 /***/ },
