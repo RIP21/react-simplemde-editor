@@ -1,24 +1,78 @@
 0 info it worked if it ends with ok
-1 verbose cli [ 'node', '/usr/local/bin/npm', 'run', 'build' ]
-2 info using npm@2.11.3
-3 info using node@v0.12.7
-4 verbose stack Error: missing script: build
-4 verbose stack     at run (/usr/local/lib/node_modules/npm/lib/run-script.js:142:19)
-4 verbose stack     at /usr/local/lib/node_modules/npm/lib/run-script.js:58:5
-4 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:345:5
-4 verbose stack     at checkBinReferences_ (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:309:45)
-4 verbose stack     at final (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:343:3)
-4 verbose stack     at then (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:113:5)
-4 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:300:12
-4 verbose stack     at evalmachine.<anonymous>:334:14
-4 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/graceful-fs/graceful-fs.js:102:5
-4 verbose stack     at FSReqWrap.oncomplete (evalmachine.<anonymous>:95:15)
-5 verbose cwd /Users/ben/www/react-simplemde-editor
-6 error Darwin 14.5.0
-7 error argv "node" "/usr/local/bin/npm" "run" "build"
-8 error node v0.12.7
-9 error npm  v2.11.3
-10 error missing script: build
-11 error If you need help, you may report this error at:
-11 error     <https://github.com/npm/npm/issues>
-12 verbose exit [ 1, true ]
+1 verbose cli [ '/opt/boxen/nodenv/versions/v0.10.38/bin/node',
+1 verbose cli   '/opt/boxen/nodenv/versions/v0.10.38/bin/npm',
+1 verbose cli   'adduser',
+1 verbose cli   'mrlodge' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.38
+4 verbose adduser before first PUT { name: 'mrlodge',
+4 verbose adduser   password: 'XXXXX',
+4 verbose adduser   email: 'benrlodge@gmail.com',
+4 verbose adduser   _id: 'org.couchdb.user:mrlodge',
+4 verbose adduser   type: 'user',
+4 verbose adduser   roles: [],
+4 verbose adduser   date: '2015-12-11T22:43:24.065Z' }
+5 verbose request where is /-/user/org.couchdb.user:mrlodge
+6 verbose request registry https://npm.hubteam.com/
+7 verbose request id 96b77d0772bc12f7
+8 verbose url raw /-/user/org.couchdb.user:mrlodge
+9 verbose url resolving [ 'https://npm.hubteam.com/',
+9 verbose url resolving   './-/user/org.couchdb.user:mrlodge' ]
+10 verbose url resolved https://npm.hubteam.com/-/user/org.couchdb.user:mrlodge
+11 verbose request where is https://npm.hubteam.com/-/user/org.couchdb.user:mrlodge
+12 info trying registry request attempt 1 at 17:43:24
+13 http PUT https://npm.hubteam.com/-/user/org.couchdb.user:mrlodge
+14 http 405 https://npm.hubteam.com/-/user/org.couchdb.user:mrlodge
+15 verbose bad json <html>
+15 verbose bad json <head><title>405 Not Allowed</title></head>
+15 verbose bad json <body bgcolor="white">
+15 verbose bad json <center><h1>405 Not Allowed</h1></center>
+15 verbose bad json <hr><center>nginx/1.8.0</center>
+15 verbose bad json </body>
+15 verbose bad json </html>
+16 error registry error parsing json
+17 verbose headers { server: 'nginx/1.8.0',
+17 verbose headers   date: 'Fri, 11 Dec 2015 22:43:21 GMT',
+17 verbose headers   'content-type': 'text/html',
+17 verbose headers   'content-length': '172',
+17 verbose headers   connection: 'keep-alive' }
+18 verbose adduser back [ [SyntaxError: Unexpected token <
+18 verbose adduser   <html>
+18 verbose adduser   <head><title>405 Not Allowed</title></head>
+18 verbose adduser   <body bgcolor="white">
+18 verbose adduser   <center><h1>405 Not Allowed</h1></center>
+18 verbose adduser   <hr><center>nginx/1.8.0</center>
+18 verbose adduser   </body>
+18 verbose adduser   </html>
+18 verbose adduser   ],
+18 verbose adduser   null,
+18 verbose adduser   '<html>\r\n<head><title>405 Not Allowed</title></head>\r\n<body bgcolor="white">\r\n<center><h1>405 Not Allowed</h1></center>\r\n<hr><center>nginx/1.8.0</center>\r\n</body>\r\n</html>\r\n' ]
+19 error SyntaxError: Unexpected token <
+19 error <html>
+19 error <head><title>405 Not Allowed</title></head>
+19 error <body bgcolor="white">
+19 error <center><h1>405 Not Allowed</h1></center>
+19 error <hr><center>nginx/1.8.0</center>
+19 error </body>
+19 error </html>
+19 error
+19 error     at Object.parse (native)
+19 error     at RegClient.<anonymous> (/opt/boxen/nodenv/versions/v0.10.38/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:274:23)
+19 error     at Request._callback (/opt/boxen/nodenv/versions/v0.10.38/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:246:65)
+19 error     at Request.self.callback (/opt/boxen/nodenv/versions/v0.10.38/lib/node_modules/npm/node_modules/request/request.js:236:22)
+19 error     at Request.emit (events.js:98:17)
+19 error     at Request.<anonymous> (/opt/boxen/nodenv/versions/v0.10.38/lib/node_modules/npm/node_modules/request/request.js:1142:14)
+19 error     at Request.emit (events.js:117:20)
+19 error     at IncomingMessage.<anonymous> (/opt/boxen/nodenv/versions/v0.10.38/lib/node_modules/npm/node_modules/request/request.js:1096:12)
+19 error     at IncomingMessage.emit (events.js:117:20)
+19 error     at _stream_readable.js:944:16
+20 error If you need help, you may report this *entire* log,
+20 error including the npm and node versions, at:
+20 error     <http://github.com/npm/npm/issues>
+21 error System Darwin 13.4.0
+22 error command "/opt/boxen/nodenv/versions/v0.10.38/bin/node" "/opt/boxen/nodenv/versions/v0.10.38/bin/npm" "adduser" "mrlodge"
+23 error cwd /Users/blodge/personal-dev/react-simplemde-editor
+24 error node -v v0.10.38
+25 error npm -v 1.4.28
+26 error type unexpected_token
+27 verbose exit [ 1, true ]
