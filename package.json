@@ -1,5 +1,10 @@
 {
   "name": "react-simplemde-editor-demo",
+  "homepage": "http://www.benrlodge.com",
+  "repository": "https://github.com/benrlodge/react-simplemde-editor",
+  "version": "0.0.1",
+  "author": "Ben Lodge",
+  "license": "MIT",
   "dependencies": {
     "jquery": "^2.1.4",
     "react": "^0.14.2",
@@ -17,7 +22,6 @@
     "gulp-webpack": "^1.5.0",
     "install": "^0.4.1",
     "raw-loader": "^0.5.1",
-    "react": "^0.14.3",
     "react-dom": "^0.14.3",
     "webpack": "^1.12.9",
     "webpack-dev-server": "^1.12.1"
