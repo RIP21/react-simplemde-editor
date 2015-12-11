@@ -1,5 +1,6 @@
 var React = require('react');
 // not ideal, but doesn't properly load codemirror
+// currently looking for a better solution
 var SimpleMDE = require('simplemde/dist/simplemde.min');
 var $ = require('jquery');
 
