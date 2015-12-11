@@ -6,7 +6,9 @@ var $ = require('jquery');
 module.exports = React.createClass({
 
   getDefaultProps() {
-    initialValue: ''
+    return {
+      initialValue: ''
+    }
   },
 
   componentDidMount() {
@@ -14,16 +16,16 @@ module.exports = React.createClass({
     var _this = this;
 
     simplemde.value(this.props.initialValue);
-    
+
     $('.CodeMirror').on('keyup', '*', function(){
       _this.props.onChange(simplemde.value())
     });
-    
+
     $('.editor-toolbar').on('click', '*', function(){
       _this.props.onChange(simplemde.value())
     });
   },
-  
+
   componentWillUnmount() {
     $('.CodeMirror').off('keyup', '*');
     $('.editor-toolbar').off('click', '*');

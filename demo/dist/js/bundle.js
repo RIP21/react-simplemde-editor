@@ -19720,7 +19720,9 @@
 	  displayName: 'exports',
 
 	  getDefaultProps() {
-	    initialValue: '';
+	    return {
+	      initialValue: ''
+	    };
 	  },
 
 	  componentDidMount() {
