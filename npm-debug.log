@@ -1,0 +1,87 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'publish',
+1 verbose cli   'react-simplemde-editor' ]
+2 info using npm@2.11.3
+3 info using node@v0.12.7
+4 verbose publish [ 'react-simplemde-editor' ]
+5 silly cache add args [ 'react-simplemde-editor', null ]
+6 verbose cache add spec react-simplemde-editor
+7 silly cache add parsed spec { raw: 'react-simplemde-editor',
+7 silly cache add   scope: null,
+7 silly cache add   name: 'react-simplemde-editor',
+7 silly cache add   rawSpec: '',
+7 silly cache add   spec: '*',
+7 silly cache add   type: 'range' }
+8 silly addNamed react-simplemde-editor@*
+9 verbose addNamed "*" is a valid semver range for react-simplemde-editor
+10 silly addNameRange { name: 'react-simplemde-editor', range: '*', hasData: false }
+11 silly mapToRegistry name react-simplemde-editor
+12 silly mapToRegistry using default registry
+13 silly mapToRegistry registry https://registry.npmjs.org/
+14 silly mapToRegistry uri https://registry.npmjs.org/react-simplemde-editor
+15 verbose addNameRange registry:https://registry.npmjs.org/react-simplemde-editor not in flight; fetching
+16 verbose request uri https://registry.npmjs.org/react-simplemde-editor
+17 verbose request no auth needed
+18 info attempt registry request try #1 at 11:34:33 PM
+19 verbose request using bearer token for auth
+20 verbose request id a678253f3994fa59
+21 http request GET https://registry.npmjs.org/react-simplemde-editor
+22 http 404 https://registry.npmjs.org/react-simplemde-editor
+23 verbose headers { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+23 verbose headers   etag: '"4ITSGPNABOZAL6MUX5XR3K1E1"',
+23 verbose headers   'content-type': 'application/json',
+23 verbose headers   'cache-control': 'max-age=0',
+23 verbose headers   'content-length': '467',
+23 verbose headers   'accept-ranges': 'bytes',
+23 verbose headers   date: 'Fri, 11 Dec 2015 04:34:33 GMT',
+23 verbose headers   via: '1.1 varnish',
+23 verbose headers   connection: 'keep-alive',
+23 verbose headers   'x-served-by': 'cache-iad2135-IAD',
+23 verbose headers   'x-cache': 'MISS',
+23 verbose headers   'x-cache-hits': '0',
+23 verbose headers   'x-timer': 'S1449808473.560553,VS0,VE395',
+23 verbose headers   vary: 'Accept' }
+24 silly get cb [ 404,
+24 silly get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+24 silly get     etag: '"4ITSGPNABOZAL6MUX5XR3K1E1"',
+24 silly get     'content-type': 'application/json',
+24 silly get     'cache-control': 'max-age=0',
+24 silly get     'content-length': '467',
+24 silly get     'accept-ranges': 'bytes',
+24 silly get     date: 'Fri, 11 Dec 2015 04:34:33 GMT',
+24 silly get     via: '1.1 varnish',
+24 silly get     connection: 'keep-alive',
+24 silly get     'x-served-by': 'cache-iad2135-IAD',
+24 silly get     'x-cache': 'MISS',
+24 silly get     'x-cache-hits': '0',
+24 silly get     'x-timer': 'S1449808473.560553,VS0,VE395',
+24 silly get     vary: 'Accept' } ]
+25 verbose stack Error: Registry returned 404 for GET on https://registry.npmjs.org/react-simplemde-editor
+25 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:239:14)
+25 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:170:14)
+25 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:354:22)
+25 verbose stack     at Request.emit (events.js:110:17)
+25 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1207:14)
+25 verbose stack     at Request.emit (events.js:129:20)
+25 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1153:12)
+25 verbose stack     at IncomingMessage.emit (events.js:129:20)
+25 verbose stack     at _stream_readable.js:908:16
+25 verbose stack     at process._tickCallback (node.js:355:11)
+26 verbose statusCode 404
+27 verbose pkgid react-simplemde-editor
+28 verbose cwd /Users/ben/www/react-simplemde-editor
+29 error Darwin 14.5.0
+30 error argv "node" "/usr/local/bin/npm" "publish" "react-simplemde-editor"
+31 error node v0.12.7
+32 error npm  v2.11.3
+33 error code E404
+34 error 404 Registry returned 404 for GET on https://registry.npmjs.org/react-simplemde-editor
+34 error 404
+34 error 404 'react-simplemde-editor' is not in the npm registry.
+34 error 404 You should bug the author to publish it (or use the name yourself!)
+34 error 404
+34 error 404 Note that you can also install from a
+34 error 404 tarball, folder, http url, or git url.
+35 verbose exit [ 1, true ]
