@@ -11,4 +11,11 @@ npm install --save react-simplemde-editor
 
 
 ## Usage
-See `/demo` for an example
+Visit `/demo` for a full example
+
+```javascript
+<SimpleMDEReact
+  onChange={this.handleChange}
+  initialValue={this.state.textValue}
+/>
+```
