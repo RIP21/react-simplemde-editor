@@ -19650,15 +19650,23 @@
 
 	  getInitialState() {
 	    return {
-	      textValue: 'Check me out!'
+	      textValue: 'Check me out yo!'
 	    };
 	  },
 
 	  handleChange(value) {
-	    console.log('Change: ', value);
+	    console.log('handleChange: ', value);
 	    this.setState({
 	      textValue: value
 	    });
+	  },
+
+	  getMarkdownOptions() {
+	    return {
+	      autofocus: true,
+	      spellChecker: false,
+	      initialValue: this.state.textValue
+	    };
 	  },
 
 	  render() {
@@ -19691,7 +19699,7 @@
 	      ),
 	      React.createElement(SimpleMDEReact, {
 	        onChange: this.handleChange,
-	        initialValue: this.state.textValue
+	        options: this.getMarkdownOptions()
 	      }),
 	      React.createElement(
 	        'h5',
@@ -19713,6 +19721,7 @@
 
 	var React = __webpack_require__(1);
 	// not ideal, but doesn't properly load codemirror
+	// currently looking for a better solution
 	var SimpleMDE = __webpack_require__(161);
 	var $ = __webpack_require__(162);
 
@@ -19721,15 +19730,21 @@
 
 	  getDefaultProps: function () {
 	    return {
-	      initialValue: ''
+	      onChange: function () {},
+	      options: {}
 	    };
 	  },
 
 	  componentDidMount: function () {
-	    var simplemde = new SimpleMDE({ simplemdeement: document.getElementById("simplepostmd-editor") });
-	    var _this = this;
 
-	    simplemde.value(this.props.initialValue);
+	    var initialOptions = {
+	      simplemdeement: document.getElementById("simplepostmd-editor")
+	    };
+
+	    var allOptions = $.extend({}, initialOptions, this.props.options);
+	    var simplemde = new SimpleMDE(allOptions);
+
+	    var _this = this;
 
 	    $('.CodeMirror').on('keyup', '*', function () {
 	      _this.props.onChange(simplemde.value());
@@ -19746,7 +19761,7 @@
 	  },
 
 	  render: function () {
-	    return React.createElement('textarea');
+	    return React.createElement('textarea', { id: 'simplepostmd-editor' });
 	  }
 	});
 

@@ -6,15 +6,23 @@ module.exports = React.createClass({
 
   getInitialState(){
     return {
-      textValue: 'Check me out!'
+      textValue: 'Check me out yo!'
     }
   },
 
   handleChange(value) {
-    console.log('Change: ', value);
+    console.log('handleChange: ', value);
     this.setState({
       textValue: value
     });
+  },
+  
+  getMarkdownOptions() {
+    return {
+      autofocus: true,
+      spellChecker: false,
+      initialValue: this.state.textValue
+    }
   },
   
   render() {
@@ -28,10 +36,9 @@ module.exports = React.createClass({
             A React.js wrapper for <a href="https://github.com/NextStepWebs/simplemde-markdown-editor">simplemde-markdown-editor</a>. 
           </p>
         </div>
-        
         <SimpleMDEReact
           onChange={this.handleChange}
-          initialValue={this.state.textValue}
+          options={this.getMarkdownOptions()}
         />
         <h5>this.state.textValue:</h5>
         <pre>

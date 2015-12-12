@@ -8,16 +8,21 @@ module.exports = React.createClass({
 
   getDefaultProps: function() {
     return {
-      initialValue: '',
-      onChange: function(){}
+      onChange: function(){},
+      options: {}
     }
   },
 
   componentDidMount: function() {
-    var simplemde = new SimpleMDE({ simplemdeement: document.getElementById("simplepostmd-editor") });
+    
+    var initialOptions = {
+      simplemdeement: document.getElementById("simplepostmd-editor")
+    };
+    
+    var allOptions = $.extend({}, initialOptions, this.props.options);
+    var simplemde = new SimpleMDE(allOptions);
+    
     var _this = this;
-
-    simplemde.value(this.props.initialValue);
 
     $('.CodeMirror').on('keyup', '*', function(){
       _this.props.onChange(simplemde.value())
