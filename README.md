@@ -20,7 +20,8 @@ gulp
 View demo at localhost:3000
 
 ## Usage
-View the [demo code](https://github.com/benrlodge/react-simplemde-editor/tree/master/demo/scripts) for a full example
+Right now you can pass in an initial value, and an onChange handler. Future updates include adding all options in as props.
+View the [demo code](https://github.com/benrlodge/react-simplemde-editor/tree/master/demo/scripts) for a full example.
 
 ```javascript
 var React = require('react');
@@ -31,3 +32,6 @@ var SimpleMDE = require('react-simplemde-editor');
   initialValue={this.state.textValue}
 />
 ```
+
+## To Do
+ - Add all configuration options: https://github.com/NextStepWebs/simplemde-markdown-editor#configuration
