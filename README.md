@@ -3,8 +3,10 @@
 React component wrapper for
 [SimpleMDE](https://github.com/NextStepWebs/simplemde-markdown-editor).
 
-## Install
+## New version 2.0
+Version 1.0 did not have SimpleMDE options configured well, this readme reflects the changes made to better include options.
 
+## Install
 ```
 npm install --save react-simplemde-editor
 ```
@@ -28,7 +30,7 @@ Not required, but useless without it, the `onChange` callback is the only option
 var React = require('react');
 var SimpleMDE = require('react-simplemde-editor');
 
-<SimpleMDE 
+<SimpleMDE
   onChange={this.handleChange}
 />
 ```
