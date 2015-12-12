@@ -57,3 +57,6 @@ var SimpleMDE = require('react-simplemde-editor');
   }}
 />
 ```
+
+[npm-badge]: http://badge.fury.io/js/react-simplemde-editor.svg
+[npm]: http://badge.fury.io/js/react-simplemde-editor
