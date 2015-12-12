@@ -1,4 +1,5 @@
 # React SimpleMDE Markdown Editor
+[![NPM version][npm-badge]][npm]
 
 React component wrapper for
 [SimpleMDE](https://github.com/NextStepWebs/simplemde-markdown-editor).
