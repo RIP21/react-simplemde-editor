@@ -22,7 +22,7 @@ Open browser to localhost:3000
 ## Usage
 View the [demo code](https://github.com/benrlodge/react-simplemde-editor/tree/master/demo/scripts) for a full example.
 
-Not required, but useless without it, the `onChange` callback is the only options you need to set.
+Not required, but useless without it, the `onChange` callback is the only option you need to set.
 
 ```javascript
 var React = require('react');
