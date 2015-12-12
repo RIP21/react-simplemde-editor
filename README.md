@@ -13,14 +13,17 @@ npm install --save react-simplemde-editor
 ```
 
 ## Demo
+http://www.benrlodge.com/projects/react-simplemde
+
+or view it locally:
 ```
 git clone https://github.com/benrlodge/react-simplemde-editor.git
 cd react-simplemde-editor
 npm install
 cd demo
 gulp
+open browser to localhost:3000
 ```
-Open browser to localhost:3000
 
 ## Usage
 View the [demo code](https://github.com/benrlodge/react-simplemde-editor/tree/master/demo/scripts) for a full example.
