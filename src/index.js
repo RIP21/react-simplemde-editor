@@ -1,5 +1,7 @@
 var React = require('react');
-var SimpleMDE = require('simplemde');
+// not ideal, but doesn't properly load codemirror
+// currently looking for a better solution
+var SimpleMDE = require('simplemde/dist/simplemde.min');
 var $ = require('jquery');
 
 module.exports = React.createClass({

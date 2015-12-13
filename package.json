@@ -2,13 +2,13 @@
   "name": "react-simplemde-editor",
   "homepage": "http://www.benrlodge.com",
   "repository": "https://github.com/benrlodge/react-simplemde-editor",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "author": "Ben Lodge",
   "license": "MIT",
   "dependencies": {
     "jquery": "^2.1.4",
     "react": "^0.14.2",
-    "simplemde": "git://github.com/benrlodge/simplemde-markdown-editor#master"
+    "simplemde": "^1.8.1"
   },
   "main": "src/index.js",
   "devDependencies": {

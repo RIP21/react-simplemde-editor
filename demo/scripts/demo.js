@@ -19,8 +19,8 @@ module.exports = React.createClass({
   
   getMarkdownOptions() {
     return {
-      autofocus: true,
-      spellChecker: false,
+      autofocus: false,
+      spellChecker: true,
       initialValue: this.state.textValue
     }
   },
