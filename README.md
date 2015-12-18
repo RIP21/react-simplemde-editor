@@ -4,6 +4,9 @@
 React component wrapper for
 [SimpleMDE](https://github.com/NextStepWebs/simplemde-markdown-editor).
 
+## Contribute
+This is a WIP, if you find this component useful, contributions are appreciated, [see issues](https://github.com/benrlodge/react-simplemde-editor/issues). 
+
 ## New version 2.0
 Version 1.0 did not have SimpleMDE options configured well, this readme reflects the changes made to better include options.
 This is still a very new project. Testing, feedback and PRs are welcome and appreciated.
