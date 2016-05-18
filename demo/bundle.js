@@ -215,9 +215,6 @@
 	var queueIndex = -1;
 
 	function cleanUpNextTick() {
-	    if (!draining || !currentQueue) {
-	        return;
-	    }
 	    draining = false;
 	    if (currentQueue.length) {
 	        queue = currentQueue.concat(queue);
@@ -19675,7 +19672,7 @@
 
 	  getInitialState() {
 	    return {
-	      textValue: "I am the initial value. Erase me, or try the button above."
+	      textValue: "chickens"
 	    };
 	  },
 
@@ -19686,6 +19683,7 @@
 	  },
 
 	  handleTextChange() {
+
 	    this.setState({
 	      textValue: `Changing text ${ counter++ }`
 	    });

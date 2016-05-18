@@ -1,6 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var Demo = require('./demo');
+var Demo = require('./Demo');
 
 ReactDOM.render(
   <Demo />,

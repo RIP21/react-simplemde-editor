@@ -46,6 +46,8 @@ var SimpleMDE = require('react-simplemde-editor');
 ## Options
 Set additional [SimpleMDE options](https://github.com/NextStepWebs/simplemde-markdown-editor#configuration) with an options prop.
 
+Note - while SimpleMDE options has an `initialValue` option, this component only takes a `value` prop which is set as the `initialValue` on first render.
+
 ```javascript
 var React = require('react');
 var SimpleMDE = require('react-simplemde-editor');
@@ -55,7 +57,7 @@ var SimpleMDE = require('react-simplemde-editor');
   options={{
     autofocus: true,
     spellChecker: false,
-    initialValue: this.state.textValue
+    value: this.state.textValue
     // etc.
   }}
 />
