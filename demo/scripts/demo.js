@@ -1,30 +1,30 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var SimpleMDEReact = require('../../src/index');
+var Editor = require('./Editor');
+
+let counter = 1;
 
 module.exports = React.createClass({
 
-  getInitialState(){
+  getInitialState() {
     return {
-      textValue: 'Check me out yo!'
+      textValue: "I am the initial value. Erase me, or try the button above."
     }
   },
 
-  handleChange(value) {
-    console.log('handleChange: ', value);
+  handleEditorChange(value) {
     this.setState({
       textValue: value
     });
   },
-  
-  getMarkdownOptions() {
-    return {
-      autofocus: false,
-      spellChecker: true,
-      initialValue: this.state.textValue
-    }
+
+  handleTextChange() {
+    this.setState({
+      textValue: `Changing text ${counter++}`
+    });
   },
-  
+
   render() {
     return (
       <div className='container container-narrow'>
@@ -36,10 +36,12 @@ module.exports = React.createClass({
             A React.js wrapper for <a href="https://github.com/NextStepWebs/simplemde-markdown-editor">simplemde-markdown-editor</a>. 
           </p>
         </div>
-        <SimpleMDEReact
-          onChange={this.handleChange}
-          options={this.getMarkdownOptions()}
-        />
+        <button style={{display: "inline-block", margin: "10px 0"}} onClick={this.handleTextChange}>
+          Click me to update the textValue outside of the editor
+        </button>
+        <Editor 
+          value={this.state.textValue}
+          handleEditorChange={this.handleEditorChange} />
         <h5>this.state.textValue:</h5>
         <pre>
           {this.state.textValue}
