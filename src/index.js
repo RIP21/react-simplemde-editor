@@ -1,8 +1,8 @@
-var React = require('react');
+const React = require('react');
 // not ideal, but doesn't properly load codemirror
 // currently looking for a better solution
-var SimpleMDE = require('simplemde/dist/simplemde.min');
-var $ = require('jquery');
+const SimpleMDE = require('simplemde/dist/simplemde.min');
+const $ = require('jquery');
 
 let state = {
   previousValue: null
@@ -24,15 +24,15 @@ module.exports = React.createClass({
   },
 
   componentDidMount: function() {
-    var initialOptions = {
+    let initialOptions = {
       simplemdeement: document.getElementById("simplepostmd-editor")
     };
-    
-    var allOptions = $.extend({}, initialOptions, this.props.options);
+
+    const allOptions = $.extend({}, initialOptions, this.props.options);
     this.simplemde = new SimpleMDE(allOptions);
     state.previousValue = this.props.options.initialValue
-    
-    var _this = this;
+
+    const _this = this;
 
     $('.CodeMirror').on('keyup', '*', function() {
       _this.setState({

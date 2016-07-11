@@ -19745,11 +19745,11 @@
 /* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
+	const React = __webpack_require__(1);
 	// not ideal, but doesn't properly load codemirror
 	// currently looking for a better solution
-	var SimpleMDE = __webpack_require__(161);
-	var $ = __webpack_require__(162);
+	const SimpleMDE = __webpack_require__(161);
+	const $ = __webpack_require__(162);
 
 	let state = {
 	  previousValue: null
@@ -19773,15 +19773,15 @@
 	  },
 
 	  componentDidMount: function () {
-	    var initialOptions = {
+	    let initialOptions = {
 	      simplemdeement: document.getElementById("simplepostmd-editor")
 	    };
 
-	    var allOptions = $.extend({}, initialOptions, this.props.options);
+	    const allOptions = $.extend({}, initialOptions, this.props.options);
 	    this.simplemde = new SimpleMDE(allOptions);
 	    state.previousValue = this.props.options.initialValue;
 
-	    var _this = this;
+	    const _this = this;
 
 	    $('.CodeMirror').on('keyup', '*', function () {
 	      _this.setState({
