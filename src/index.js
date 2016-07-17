@@ -31,6 +31,13 @@ module.exports = React.createClass({
     var allOptions = $.extend({}, initialOptions, this.props.options);
     this.simplemde = new SimpleMDE(allOptions);
     state.previousValue = this.props.options.initialValue
+
+    if (this.props.options.extraKeys) {
+      this.simplemde.codemirror.setOption(
+        'extraKeys',
+        this.props.options.extraKeys
+      );
+    }
     
     var _this = this;
 
