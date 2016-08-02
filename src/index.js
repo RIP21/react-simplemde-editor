@@ -1,7 +1,5 @@
 const React = require('react');
-// not ideal, but doesn't properly load codemirror
-// currently looking for a better solution
-const SimpleMDE = require('simplemde/dist/simplemde.min');
+const SimpleMDE = require('simplemde');
 const $ = require('jquery');
 
 let state = {
