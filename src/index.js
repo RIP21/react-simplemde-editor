@@ -2,8 +2,10 @@ const React = require('react');
 const SimpleMDE = require('simplemde');
 const $ = require('jquery');
 
-let state = {
-  previousValue: null
+_id = 0;
+
+function _generateId() {
+  return `simplepostmd-editor-${++_id}`
 }
 
 module.exports = React.createClass({
@@ -21,27 +23,29 @@ module.exports = React.createClass({
     }
   },
 
+  componentWillMount: function() {
+    this.id = _generateId();
+  },
+
   componentDidMount: function() {
-    let initialOptions = {
-      simplemdeement: document.getElementById("simplepostmd-editor")
+    const initialOptions = {
+      element: document.getElementById(this.id)
     };
 
-    const allOptions = $.extend({}, initialOptions, this.props.options);
+    const allOptions = Object.assign({}, initialOptions, this.props.options);
     this.simplemde = new SimpleMDE(allOptions);
-    state.previousValue = this.props.options.initialValue
+    wrapperClass = `${this.id}-wrapper`;
 
-    const _this = this;
-
-    $('.CodeMirror').on('keyup', '*', function() {
-      _this.setState({
+    $(`#${wrapperClass} .CodeMirror`).on('keyup', '*', () => {
+      this.setState({
         keyChange: true
       });
-      _this.simplemde.value()
-      _this.props.onChange(_this.simplemde.value())
+      this.simplemde.value()
+      this.props.onChange(this.simplemde.value())
     });
 
-    $('.editor-toolbar').on('click', '*', function() {
-      _this.props.onChange(_this.simplemde.value())
+    $(`#${wrapperClass} .editor-toolbar`).on('click', '*', () => {
+      this.props.onChange(this.simplemde.value())
     });
   },
 
@@ -61,6 +65,7 @@ module.exports = React.createClass({
   },
 
   render: function() {
-    return React.createElement('textarea', {id:'simplepostmd-editor'});
+    const textarea = React.createElement('textarea', {id: this.id});
+    return React.createElement('div', {id: `${this.id}-wrapper`}, textarea)
   }
 });
