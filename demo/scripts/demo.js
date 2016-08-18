@@ -50,13 +50,13 @@ module.exports = React.createClass({
           value={this.state.textValue1}
           handleEditorChange={this.handleChange1}
         />
-        <pre>Value 1:{this.state.textValue1}</pre>
+        <pre>Demo 1: {this.state.textValue1}</pre>
         <hr />
         <Editor
           value={this.state.textValue2}
           handleEditorChange={this.handleChange2}
         />
-        <pre>Value 2:{this.state.textValue2}</pre>
+        <pre>Demo 2: {this.state.textValue2}</pre>
       </div>
     )
   }

@@ -19716,7 +19716,7 @@
 	      React.createElement(
 	        'pre',
 	        null,
-	        'Value 1:',
+	        'Demo 1: ',
 	        this.state.textValue1
 	      ),
 	      React.createElement('hr', null),
@@ -19727,7 +19727,7 @@
 	      React.createElement(
 	        'pre',
 	        null,
-	        'Value 2:',
+	        'Demo 2: ',
 	        this.state.textValue2
 	      )
 	    );
