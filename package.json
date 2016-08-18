@@ -8,7 +8,7 @@
   "dependencies": {
     "jquery": "^2.1.4",
     "react": "^0.14.2",
-    "simplemde": "^1.8.1"
+    "simplemde": "^1.11.2"
   },
   "main": "src/index.js",
   "devDependencies": {

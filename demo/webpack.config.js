@@ -4,12 +4,13 @@ module.exports = {
         path: __dirname,
         filename: "bundle.js"
     },
+    node: { fs: 'empty' },
     module: {
       loaders: [
-        { 
-          test: /\.js$/, 
-          exclude: /node_modules/, 
-          loader: "babel", 
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          loader: "babel",
           query:
             {
               presets:['react']
