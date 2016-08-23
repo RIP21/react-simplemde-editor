@@ -2,7 +2,7 @@ const React = require('react');
 const SimpleMDE = require('simplemde');
 const $ = require('jquery');
 
-_id = 0;
+let _id = 0;
 
 function _generateId() {
   return `simplepostmd-editor-${++_id}`
@@ -34,7 +34,7 @@ module.exports = React.createClass({
 
     const allOptions = Object.assign({}, initialOptions, this.props.options);
     this.simplemde = new SimpleMDE(allOptions);
-    wrapperClass = `${this.id}-wrapper`;
+    const wrapperClass = `${this.id}-wrapper`;
 
     $(`#${wrapperClass} .CodeMirror`).on('keyup', '*', () => {
       this.setState({
