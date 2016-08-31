@@ -26,5 +26,10 @@
     "react-dom": "^0.14.3",
     "webpack": "^1.12.9",
     "webpack-dev-server": "^1.12.1"
+  },
+  "scripts": {
+    "build":  "webpack --progress --colors",
+    "build-prod":  "NODE_ENV=production webpack --progress --colors",
+    "build-all" : "npm run build && npm run build-prod"
   }
 }
