@@ -4,8 +4,10 @@
 React component wrapper for
 [SimpleMDE](https://github.com/NextStepWebs/simplemde-markdown-editor).
 
+Only two dependencies, React and SimpleMDE.
+
 ## Contribute
-This is a WIP, if you find this component useful, contributions are appreciated, [see issues](https://github.com/benrlodge/react-simplemde-editor/issues). 
+This is a WIP, if you find this component useful, contributions are appreciated, [see issues](https://github.com/benrlodge/react-simplemde-editor/issues).
 
 ## New in version 3.0
 The `initialValue` prop has been removed and replaced with a `value` prop, allowing direct changes to the value to be made after the component mounts.

@@ -11,7 +11,7 @@ module.exports = React.createClass({
       initialValue: this.props.value
     }
   },
-  
+
   render() {
     return (
       <SimpleMDEReact

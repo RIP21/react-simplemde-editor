@@ -1,12 +1,7 @@
 const React = require('react');
 const SimpleMDE = require('simplemde');
-const $ = require('jquery');
-
-_id = 0;
-
-function _generateId() {
-  return `simplepostmd-editor-${++_id}`
-}
+const generateId = require('./services/idGenerator');
+const NOOP = require('./utils/noop');
 
 module.exports = React.createClass({
 
@@ -18,35 +13,55 @@ module.exports = React.createClass({
 
   getDefaultProps: function() {
     return {
-      onChange: function(){},
+      onChange: NOOP,
       options: {}
     }
   },
 
-  componentWillMount: function() {
-    this.id = _generateId();
-  },
-
-  componentDidMount: function() {
+  createEditor: function() {
     const initialOptions = {
       element: document.getElementById(this.id)
     };
 
     const allOptions = Object.assign({}, initialOptions, this.props.options);
     this.simplemde = new SimpleMDE(allOptions);
-    wrapperClass = `${this.id}-wrapper`;
+  },
 
-    $(`#${wrapperClass} .CodeMirror`).on('keyup', '*', () => {
-      this.setState({
-        keyChange: true
-      });
-      this.simplemde.value()
-      this.props.onChange(this.simplemde.value())
+  eventWrapper: function() {
+    this.setState({
+      keyChange: true
     });
+    this.simplemde.value();
+    this.props.onChange(this.simplemde.value());
+  },
 
-    $(`#${wrapperClass} .editor-toolbar`).on('click', '*', () => {
-      this.props.onChange(this.simplemde.value())
-    });
+  eventToolbar: function() {
+    this.props.onChange(this.simplemde.value());
+  },
+
+  removeEvents: function() {
+    this.editorEl.removeEventListener('keyup', this.eventWrapper);
+    this.editorToolbarEl.removeEventListener('click', this.eventToolbar);
+  },
+
+  addEvents: function() {
+    wrapperId = `${this.id}-wrapper`;
+    const wrapperEl = document.getElementById(`${wrapperId}`);
+
+    this.editorEl = wrapperEl.getElementsByClassName('CodeMirror')[0];
+    this.editorToolbarEl = wrapperEl.getElementsByClassName('editor-toolbar')[0];
+
+    this.editorEl.addEventListener('keyup', this.eventWrapper);
+    this.editorToolbarEl.addEventListener('click', this.eventToolbar);
+  },
+
+  componentWillMount: function() {
+    this.id = generateId();
+  },
+
+  componentDidMount: function() {
+    this.createEditor();
+    this.addEvents();
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -60,8 +75,7 @@ module.exports = React.createClass({
   },
 
   componentWillUnmount: function() {
-    $('.CodeMirror').off('keyup', '*');
-    $('.editor-toolbar').off('click', '*');
+    this.removeEvents();
   },
 
   render: function() {
