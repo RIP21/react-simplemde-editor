@@ -94,7 +94,7 @@
 	  },
 	
 	  addEvents: function addEvents() {
-	    wrapperId = this.id + '-wrapper';
+	    var wrapperId = this.id + '-wrapper';
 	    var wrapperEl = document.getElementById('' + wrapperId);
 	
 	    this.editorEl = wrapperEl.getElementsByClassName('CodeMirror')[0];
@@ -35932,7 +35932,7 @@
 
 	"use strict";
 	
-	_id = 0;
+	var _id = 0;
 	
 	module.exports = function generateId() {
 	  return "simplepostmd-editor-" + ++_id;

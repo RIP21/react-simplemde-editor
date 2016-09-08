@@ -45,7 +45,7 @@ module.exports = React.createClass({
   },
 
   addEvents: function() {
-    wrapperId = `${this.id}-wrapper`;
+    const wrapperId = `${this.id}-wrapper`;
     const wrapperEl = document.getElementById(`${wrapperId}`);
 
     this.editorEl = wrapperEl.getElementsByClassName('CodeMirror')[0];

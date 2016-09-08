@@ -19786,7 +19786,7 @@
 	  },
 
 	  addEvents: function () {
-	    wrapperId = `${ this.id }-wrapper`;
+	    const wrapperId = `${ this.id }-wrapper`;
 	    const wrapperEl = document.getElementById(`${ wrapperId }`);
 
 	    this.editorEl = wrapperEl.getElementsByClassName('CodeMirror')[0];
@@ -36044,7 +36044,7 @@
 /* 179 */
 /***/ function(module, exports) {
 
-	_id = 0;
+	let _id = 0;
 
 	module.exports = function generateId() {
 	  return `simplepostmd-editor-${ ++_id }`;
