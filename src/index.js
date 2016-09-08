@@ -18,6 +18,30 @@ module.exports = React.createClass({
     }
   },
 
+  componentWillMount: function() {
+    this.id = generateId();
+  },
+
+  componentDidMount: function() {
+    this.createEditor();
+    this.addEvents();
+    this.addExtraKeys();
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    if (!this.state.keyChange) {
+      this.simplemde.value(nextProps.value)
+    }
+
+    this.setState({
+      keyChange: false
+    });
+  },
+
+  componentWillUnmount: function() {
+    this.removeEvents();
+  },
+
   createEditor: function() {
     const initialOptions = {
       element: document.getElementById(this.id)
@@ -55,27 +79,14 @@ module.exports = React.createClass({
     this.editorToolbarEl.addEventListener('click', this.eventToolbar);
   },
 
-  componentWillMount: function() {
-    this.id = generateId();
-  },
-
-  componentDidMount: function() {
-    this.createEditor();
-    this.addEvents();
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    if (!this.state.keyChange) {
-      this.simplemde.value(nextProps.value)
+  addExtraKeys: function() {
+    // https://codemirror.net/doc/manual.html#option_extraKeys
+    if (this.props.extraKeys) {
+      this.simplemde.codemirror.setOption(
+        'extraKeys',
+        this.props.extraKeys
+      );
     }
-
-    this.setState({
-      keyChange: false
-    });
-  },
-
-  componentWillUnmount: function() {
-    this.removeEvents();
   },
 
   render: function() {
