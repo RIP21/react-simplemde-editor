@@ -18,6 +18,7 @@ module.exports = React.createClass({
         onChange={this.props.handleEditorChange}
         options={this.getMarkdownOptions()}
         value={this.props.value}
+        extraKeys={this.props.extraKeys}
       />
     );
   }

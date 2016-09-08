@@ -10,8 +10,19 @@ module.exports = React.createClass({
   getInitialState() {
     return {
       textValue1: "I am the initial value. Erase me, or try the button above.",
-      textValue2: "I am another initial value"
+      textValue2: "Focus this text area and then use the Up and Down arrow keys to see the `extraKeys` prop in action"
     }
+  },
+
+  extraKeys() {
+    return {
+      Up: function(cm) {
+        cm.replaceSelection(" surprise. ");
+      },
+      Down: function(cm) {
+        cm.replaceSelection(" surprise again! ");
+      }
+    };
   },
 
   handleChange1(value) {
@@ -50,13 +61,12 @@ module.exports = React.createClass({
           value={this.state.textValue1}
           handleEditorChange={this.handleChange1}
         />
-        <pre>Demo 1: {this.state.textValue1}</pre>
         <hr />
         <Editor
           value={this.state.textValue2}
           handleEditorChange={this.handleChange2}
+          extraKeys={this.extraKeys()}
         />
-        <pre>Demo 2: {this.state.textValue2}</pre>
       </div>
     )
   }

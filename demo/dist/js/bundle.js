@@ -19654,7 +19654,18 @@
 	  getInitialState() {
 	    return {
 	      textValue1: "I am the initial value. Erase me, or try the button above.",
-	      textValue2: "I am another initial value"
+	      textValue2: "Focus this text area and then use the Up and Down arrow keys to see the `extraKeys` prop in action"
+	    };
+	  },
+
+	  extraKeys() {
+	    return {
+	      Up: function (cm) {
+	        cm.replaceSelection(" surprise. ");
+	      },
+	      Down: function (cm) {
+	        cm.replaceSelection(" surprise again! ");
+	      }
 	    };
 	  },
 
@@ -19713,23 +19724,12 @@
 	        value: this.state.textValue1,
 	        handleEditorChange: this.handleChange1
 	      }),
-	      React.createElement(
-	        'pre',
-	        null,
-	        'Demo 1: ',
-	        this.state.textValue1
-	      ),
 	      React.createElement('hr', null),
 	      React.createElement(Editor, {
 	        value: this.state.textValue2,
-	        handleEditorChange: this.handleChange2
-	      }),
-	      React.createElement(
-	        'pre',
-	        null,
-	        'Demo 2: ',
-	        this.state.textValue2
-	      )
+	        handleEditorChange: this.handleChange2,
+	        extraKeys: this.extraKeys()
+	      })
 	    );
 	  }
 	});
@@ -19757,6 +19757,30 @@
 	      onChange: NOOP,
 	      options: {}
 	    };
+	  },
+
+	  componentWillMount: function () {
+	    this.id = generateId();
+	  },
+
+	  componentDidMount: function () {
+	    this.createEditor();
+	    this.addEvents();
+	    this.addExtraKeys();
+	  },
+
+	  componentWillReceiveProps: function (nextProps) {
+	    if (!this.state.keyChange) {
+	      this.simplemde.value(nextProps.value);
+	    }
+
+	    this.setState({
+	      keyChange: false
+	    });
+	  },
+
+	  componentWillUnmount: function () {
+	    this.removeEvents();
 	  },
 
 	  createEditor: function () {
@@ -19796,27 +19820,11 @@
 	    this.editorToolbarEl.addEventListener('click', this.eventToolbar);
 	  },
 
-	  componentWillMount: function () {
-	    this.id = generateId();
-	  },
-
-	  componentDidMount: function () {
-	    this.createEditor();
-	    this.addEvents();
-	  },
-
-	  componentWillReceiveProps: function (nextProps) {
-	    if (!this.state.keyChange) {
-	      this.simplemde.value(nextProps.value);
+	  addExtraKeys: function () {
+	    // https://codemirror.net/doc/manual.html#option_extraKeys
+	    if (this.props.extraKeys) {
+	      this.simplemde.codemirror.setOption('extraKeys', this.props.extraKeys);
 	    }
-
-	    this.setState({
-	      keyChange: false
-	    });
-	  },
-
-	  componentWillUnmount: function () {
-	    this.removeEvents();
 	  },
 
 	  render: function () {
@@ -36079,7 +36087,8 @@
 	    return React.createElement(SimpleMDEReact, {
 	      onChange: this.props.handleEditorChange,
 	      options: this.getMarkdownOptions(),
-	      value: this.props.value
+	      value: this.props.value,
+	      extraKeys: this.props.extraKeys
 	    });
 	  }
 	});
