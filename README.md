@@ -68,5 +68,24 @@ var SimpleMDE = require('react-simplemde-editor');
 />
 ```
 
+You can include key maps using the `extraKeys` prop.
+Read more at https://codemirror.net/doc/manual.html#option_extraKeys
+
+```javascript
+extraKeys = {
+  Up: function(cm) {
+    cm.replaceSelection(" surprise. ");
+  },
+  Down: function(cm) {
+    cm.replaceSelection(" surprise again! ");
+  }
+};
+
+<SimpleMDEReact
+  onChange={this.handleChange}
+  extraKeys={extraKeys}
+/>
+```
+
 [npm-badge]: http://badge.fury.io/js/react-simplemde-editor.svg
 [npm]: http://badge.fury.io/js/react-simplemde-editor
