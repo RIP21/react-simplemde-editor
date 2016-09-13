@@ -1,5 +1,5 @@
 const React = require('react');
-const SimpleMDE = require('simplemde');
+const SimpleMDE = require('simplemde/dist/simplemde.min');
 const generateId = require('./services/idGenerator');
 const NOOP = require('./utils/noop');
 
