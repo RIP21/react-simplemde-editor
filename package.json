@@ -28,7 +28,7 @@
   },
   "scripts": {
     "build":  "webpack --progress --colors",
-    "build-prod":  "NODE_ENV=production webpack --progress --colors",
+    "build-prod":  "NODE_ENV=production webpack --progress --colors && gulp",
     "build-all" : "npm run build && npm run build-prod"
   }
 }
