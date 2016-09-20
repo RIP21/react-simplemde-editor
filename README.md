@@ -31,7 +31,7 @@ cd react-simplemde-editor
 npm install
 cd demo
 gulp
-open browser to localhost:3000
+open browser to localhost:5555
 ```
 
 ## Usage
