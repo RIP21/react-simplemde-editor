@@ -57,7 +57,7 @@ Note - while SimpleMDE options has an `initialValue` option, this component only
 var React = require('react');
 var SimpleMDE = require('react-simplemde-editor');
 
-<SimpleMDEReact
+<SimpleMDE
   onChange={this.handleChange}
   options={{
     autofocus: true,
@@ -81,7 +81,7 @@ extraKeys = {
   }
 };
 
-<SimpleMDEReact
+<SimpleMDE
   onChange={this.handleChange}
   extraKeys={extraKeys}
 />
