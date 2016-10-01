@@ -7,7 +7,8 @@ module.exports = {
   devtool: 'source-map',
   output: {
     path: './dist',
-    filename: isProd ? 'react-simplemde-editor.min.js' : 'react-simplemde-editor.js'
+    filename: isProd ? 'react-simplemde-editor.min.js' : 'react-simplemde-editor.js',
+    libraryTarget: 'umd'
   },
   module: {
     loaders: [
