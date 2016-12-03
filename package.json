@@ -2,7 +2,7 @@
   "name": "react-simplemde-editor",
   "homepage": "http://www.benrlodge.com",
   "repository": "https://github.com/benrlodge/react-simplemde-editor",
-  "version": "3.6.5",
+  "version": "3.6.6",
   "author": "Ben Lodge",
   "license": "MIT",
   "dependencies": {
