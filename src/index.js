@@ -1,5 +1,4 @@
 const React = require('react');
-const SimpleMDE = require('simplemde/dist/simplemde.min');
 const generateId = require('./services/idGenerator');
 const NOOP = require('./utils/noop');
 
@@ -19,7 +18,12 @@ module.exports = React.createClass({
   },
 
   componentWillMount: function() {
-    this.id = generateId();
+    const id = this.props.id;
+    if (id) {
+      this.id = id;
+    } else {
+      this.id = generateId();
+    }
   },
 
   componentDidMount: function() {
@@ -43,8 +47,10 @@ module.exports = React.createClass({
   },
 
   createEditor: function() {
+    const SimpleMDE = require('simplemde/src/js/simplemde.js');
     const initialOptions = {
-      element: document.getElementById(this.id)
+      element: document.getElementById(this.id),
+      initialValue: this.props.value
     };
 
     const allOptions = Object.assign({}, initialOptions, this.props.options);

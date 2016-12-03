@@ -59,10 +59,10 @@ var SimpleMDE = require('react-simplemde-editor');
 
 <SimpleMDE
   onChange={this.handleChange}
+  value={this.state.textValue}
   options={{
     autofocus: true,
     spellChecker: false,
-    value: this.state.textValue
     // etc.
   }}
 />
