@@ -2,7 +2,7 @@
   "name": "react-simplemde-editor",
   "homepage": "http://www.benrlodge.com",
   "repository": "https://github.com/benrlodge/react-simplemde-editor",
-  "version": "3.6.7",
+  "version": "3.6.8",
   "author": "Ben Lodge",
   "license": "MIT",
   "dependencies": {
@@ -27,8 +27,8 @@
     "webpack-dev-server": "^1.12.1"
   },
   "scripts": {
-    "build":  "webpack --progress --colors",
-    "build-prod":  "NODE_ENV=production webpack --progress --colors && gulp",
-    "build-all" : "npm run build && npm run build-prod"
+    "build": "webpack --progress --colors",
+    "build-prod": "NODE_ENV=production webpack --progress --colors && gulp",
+    "build-all": "npm run build && npm run build-prod"
   }
 }
