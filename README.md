@@ -11,7 +11,7 @@ This is a WIP, if you find this component useful, contributions are appreciated,
 
 ## New in v3
  - The `initialValue` prop has been removed and replaced with a `value` prop, allowing direct changes to the value to be made after the component mounts.
- - Updated in v3.6.7, if rendering server-side, you can set static ids to avoid errors in rendering synchronization.
+ - Updated in v3.6.8, if rendering server-side, you can set static ids to avoid errors in rendering synchronization.
 
 ## New in v2
 Version 1.0 did not have SimpleMDE options configured well, this readme reflects the changes made to better include options.
