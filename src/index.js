@@ -97,6 +97,6 @@ module.exports = React.createClass({
 
   render: function() {
     const textarea = React.createElement('textarea', {id: this.id});
-    return React.createElement('div', {id: `${this.id}-wrapper`}, textarea)
+    return React.createElement('div', {id: `${this.id}-wrapper`, className: this.props.className}, textarea)
   }
 });
