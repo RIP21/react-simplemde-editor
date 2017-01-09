@@ -71,7 +71,7 @@ module.exports = React.createClass({
 
   removeEvents: function() {
     this.editorEl.removeEventListener('keyup', this.eventWrapper);
-    this.editorToolbarEl.removeEventListener('click', this.eventToolbar);
+    this.editorToolbarEl && this.editorToolbarEl.removeEventListener('click', this.eventToolbar);
   },
 
   addEvents: function() {
@@ -82,7 +82,7 @@ module.exports = React.createClass({
     this.editorToolbarEl = wrapperEl.getElementsByClassName('editor-toolbar')[0];
 
     this.editorEl.addEventListener('keyup', this.eventWrapper);
-    this.editorToolbarEl.addEventListener('click', this.eventToolbar);
+    this.editorToolbarEl && this.editorToolbarEl.addEventListener('click', this.eventToolbar);
   },
 
   addExtraKeys: function() {
