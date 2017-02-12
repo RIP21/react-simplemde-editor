@@ -61,17 +61,12 @@ module.exports = React.createClass({
     this.setState({
       keyChange: true
     });
-    this.simplemde.value();
-    this.props.onChange(this.simplemde.value());
-  },
-
-  eventToolbar: function() {
     this.props.onChange(this.simplemde.value());
   },
 
   removeEvents: function() {
     this.editorEl.removeEventListener('keyup', this.eventWrapper);
-    this.editorToolbarEl && this.editorToolbarEl.removeEventListener('click', this.eventToolbar);
+    this.editorToolbarEl && this.editorToolbarEl.removeEventListener('click', this.eventWrapper);
   },
 
   addEvents: function() {
@@ -82,7 +77,7 @@ module.exports = React.createClass({
     this.editorToolbarEl = wrapperEl.getElementsByClassName('editor-toolbar')[0];
 
     this.editorEl.addEventListener('keyup', this.eventWrapper);
-    this.editorToolbarEl && this.editorToolbarEl.addEventListener('click', this.eventToolbar);
+    this.editorToolbarEl && this.editorToolbarEl.addEventListener('click', this.eventWrapper);
   },
 
   addExtraKeys: function() {
@@ -97,6 +92,6 @@ module.exports = React.createClass({
 
   render: function() {
     const textarea = React.createElement('textarea', {id: this.id});
-    return React.createElement('div', {id: `${this.id}-wrapper`, className: this.props.className}, textarea)
+    return React.createElement('div', {id: `${this.id}-wrapper`, className: this.props.className}, textarea);
   }
 });
