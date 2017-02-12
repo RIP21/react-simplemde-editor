@@ -121,17 +121,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.setState({
 	      keyChange: true
 	    });
-	    this.simplemde.value();
-	    this.props.onChange(this.simplemde.value());
-	  },
-	
-	  eventToolbar: function eventToolbar() {
 	    this.props.onChange(this.simplemde.value());
 	  },
 	
 	  removeEvents: function removeEvents() {
 	    this.editorEl.removeEventListener('keyup', this.eventWrapper);
-	    this.editorToolbarEl && this.editorToolbarEl.removeEventListener('click', this.eventToolbar);
+	    this.editorToolbarEl && this.editorToolbarEl.removeEventListener('click', this.eventWrapper);
 	  },
 	
 	  addEvents: function addEvents() {
@@ -142,7 +137,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.editorToolbarEl = wrapperEl.getElementsByClassName('editor-toolbar')[0];
 	
 	    this.editorEl.addEventListener('keyup', this.eventWrapper);
-	    this.editorToolbarEl && this.editorToolbarEl.addEventListener('click', this.eventToolbar);
+	    this.editorToolbarEl && this.editorToolbarEl.addEventListener('click', this.eventWrapper);
 	  },
 	
 	  addExtraKeys: function addExtraKeys() {
