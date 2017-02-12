@@ -27,6 +27,7 @@
     "webpack-dev-server": "^1.12.1"
   },
   "scripts": {
+    "dev": "webpack --progress --colors --watch",
     "build": "webpack --progress --colors",
     "build-prod": "NODE_ENV=production webpack --progress --colors && gulp",
     "build-all": "npm run build && npm run build-prod"
