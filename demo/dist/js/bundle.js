@@ -19829,6 +19829,7 @@
 	        'Click me to update the textValue outside of the editor'
 	      ),
 	      React.createElement(Editor, {
+	        label: 'Markdown Editor',
 	        value: this.state.textValue1,
 	        handleEditorChange: this.handleChange1
 	      }),
@@ -19939,7 +19940,8 @@
 
 	  render: function () {
 	    const textarea = React.createElement('textarea', { id: this.id });
-	    return React.createElement('div', { id: `${this.id}-wrapper`, className: this.props.className }, textarea);
+	    const label = this.props.label ? React.createElement('label', { htmlFor: this.id }, [this.props.label]) : false;
+	    return React.createElement('div', { id: `${this.id}-wrapper`, className: this.props.className }, [label, textarea]);
 	  }
 	});
 
@@ -37526,6 +37528,7 @@
 	    return React.createElement(SimpleMDEReact, {
 	      onChange: this.props.handleEditorChange,
 	      options: this.getMarkdownOptions(),
+	      label: this.props.label,
 	      value: this.props.value,
 	      extraKeys: this.props.extraKeys
 	    });
