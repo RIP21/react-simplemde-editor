@@ -33,7 +33,7 @@ module.exports = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
-    if (!this.state.keyChange) {
+    if (!this.state.keyChange && (nextProps.value !== this.simplemde.value())) {
       this.simplemde.value(nextProps.value)
     }
 
