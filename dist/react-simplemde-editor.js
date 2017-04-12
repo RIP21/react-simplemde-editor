@@ -93,7 +93,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	    if (!this.state.keyChange) {
+	    if (!this.state.keyChange && nextProps.value !== this.simplemde.value()) {
 	      this.simplemde.value(nextProps.value);
 	    }
 	
@@ -149,7 +149,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  render: function render() {
 	    var textarea = React.createElement('textarea', { id: this.id });
-	    return React.createElement('div', { id: this.id + '-wrapper', className: this.props.className }, textarea);
+	    var label = this.props.label ? React.createElement('label', { htmlFor: this.id }, [this.props.label]) : false;
+	    return React.createElement('div', { id: this.id + '-wrapper', className: this.props.className }, [label, textarea]);
 	  }
 	});
 
