@@ -9,7 +9,7 @@
     "react": "^0.14.2",
     "simplemde": "^1.11.2"
   },
-  "main": "dist/react-simplemde-editor.js",
+  "main": "index.js",
   "devDependencies": {
     "babel-core": "^6.3.15",
     "babel-loader": "^6.2.0",
