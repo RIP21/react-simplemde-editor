@@ -6,8 +6,8 @@ React component wrapper for
 
 Only two dependencies, React and SimpleMDE.
 
-## Contribute
-This is a WIP, if you find this component useful, contributions are appreciated, [see issues](https://github.com/benrlodge/react-simplemde-editor/issues).
+## Request for new owner
+My time has been very limited lately, if anyone would like to take over this repo let me know, and I can transfer it over.
 
 ## New in v3
  - The `initialValue` prop has been removed and replaced with a `value` prop, allowing direct changes to the value to be made after the component mounts.
