@@ -6,7 +6,7 @@
   "author": "Ben Lodge",
   "license": "MIT",
   "dependencies": {
-    "react": "^0.14.2",
+    "react": "^15.5.x",
     "simplemde": "^1.11.2"
   },
   "main": "dist/simplemde-editor.js",
@@ -22,7 +22,7 @@
     "gulp-webpack": "^1.5.0",
     "install": "^0.4.1",
     "raw-loader": "^0.5.1",
-    "react-dom": "^0.14.3",
+    "react-dom": "^15.5.x",
     "webpack": "^1.12.9",
     "webpack-dev-server": "^1.12.1"
   },
