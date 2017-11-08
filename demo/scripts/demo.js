@@ -58,6 +58,7 @@ module.exports = React.createClass({
           Click me to update the textValue outside of the editor
         </button>
         <Editor
+          label="Markdown Editor"
           value={this.state.textValue1}
           handleEditorChange={this.handleChange1}
         />

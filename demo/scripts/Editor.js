@@ -17,6 +17,7 @@ module.exports = React.createClass({
       <SimpleMDEReact
         onChange={this.props.handleEditorChange}
         options={this.getMarkdownOptions()}
+        label={this.props.label}
         value={this.props.value}
         extraKeys={this.props.extraKeys}
       />
