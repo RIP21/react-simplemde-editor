@@ -6,9 +6,6 @@ React component wrapper for
 
 Only two dependencies, React and SimpleMDE.
 
-## Request for new owner
-My time has been very limited lately, if anyone would like to take over this repo let me know, and I can transfer it over.
-
 ## New in v3
  - The `initialValue` prop has been removed and replaced with a `value` prop, allowing direct changes to the value to be made after the component mounts.
  - Updated in v3.6.8, if rendering server-side, you can set static ids to avoid errors in rendering synchronization.
