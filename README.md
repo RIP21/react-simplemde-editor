@@ -51,11 +51,14 @@ Set additional [SimpleMDE options](https://github.com/NextStepWebs/simplemde-mar
 
 Note - while SimpleMDE options has an `initialValue` option, this component only takes a `value` prop which is set as the `initialValue` on first render.
 
+Note - if you don't specify a custom id it will automatically generate an id for you.
+
 ```javascript
 var React = require('react');
 var SimpleMDE = require('react-simplemde-editor');
 
 <SimpleMDE
+  id="your-custom-id"
   onChange={this.handleChange}
   value={this.state.textValue}
   options={{
