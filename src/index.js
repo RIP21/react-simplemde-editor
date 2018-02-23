@@ -30,6 +30,7 @@ module.exports = React.createClass({
     this.createEditor();
     this.addEvents();
     this.addExtraKeys();
+    this.getCursor();
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -78,6 +79,8 @@ module.exports = React.createClass({
 
     this.editorEl.addEventListener('keyup', this.eventWrapper);
     this.editorToolbarEl && this.editorToolbarEl.addEventListener('click', this.eventWrapper);
+
+    this.simplemde.codemirror.on("cursorActivity", this.getCursor);
   },
 
   addExtraKeys: function() {
@@ -88,6 +91,11 @@ module.exports = React.createClass({
         this.props.extraKeys
       );
     }
+  },
+
+  getCursor: function() {
+    // https://codemirror.net/doc/manual.html#api_selection
+    this.props.getLineAndCursor(this.simplemde.codemirror.getCursor());
   },
 
   render: function() {

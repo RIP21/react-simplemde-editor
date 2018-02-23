@@ -57,8 +57,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var generateId = __webpack_require__(36);
-	var NOOP = __webpack_require__(37);
+	var generateId = __webpack_require__(37);
+	var NOOP = __webpack_require__(38);
 	
 	module.exports = React.createClass({
 	  displayName: 'exports',
@@ -90,6 +90,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.createEditor();
 	    this.addEvents();
 	    this.addExtraKeys();
+	    this.getCursor();
 	  },
 	
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
@@ -107,7 +108,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	
 	  createEditor: function createEditor() {
-	    var SimpleMDE = __webpack_require__(38);
+	    var SimpleMDE = __webpack_require__(39);
 	    var initialOptions = {
 	      element: document.getElementById(this.id),
 	      initialValue: this.props.value
@@ -138,6 +139,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this.editorEl.addEventListener('keyup', this.eventWrapper);
 	    this.editorToolbarEl && this.editorToolbarEl.addEventListener('click', this.eventWrapper);
+	
+	    this.simplemde.codemirror.on("cursorActivity", this.getCursor);
 	  },
 	
 	  addExtraKeys: function addExtraKeys() {
@@ -145,6 +148,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (this.props.extraKeys) {
 	      this.simplemde.codemirror.setOption('extraKeys', this.props.extraKeys);
 	    }
+	  },
+	
+	  getCursor: function getCursor() {
+	    // https://codemirror.net/doc/manual.html#api_selection
+	    this.props.getLineAndCursor(this.simplemde.codemirror.getCursor());
 	  },
 	
 	  render: function render() {
@@ -168,12 +176,10 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 */
 	
@@ -181,25 +187,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _assign = __webpack_require__(4);
 	
-	var ReactChildren = __webpack_require__(5);
-	var ReactComponent = __webpack_require__(18);
-	var ReactPureComponent = __webpack_require__(21);
-	var ReactClass = __webpack_require__(22);
-	var ReactDOMFactories = __webpack_require__(24);
-	var ReactElement = __webpack_require__(9);
-	var ReactPropTypes = __webpack_require__(29);
-	var ReactVersion = __webpack_require__(34);
+	var ReactBaseClasses = __webpack_require__(5);
+	var ReactChildren = __webpack_require__(14);
+	var ReactDOMFactories = __webpack_require__(22);
+	var ReactElement = __webpack_require__(16);
+	var ReactPropTypes = __webpack_require__(28);
+	var ReactVersion = __webpack_require__(33);
 	
-	var onlyChild = __webpack_require__(35);
-	var warning = __webpack_require__(11);
+	var createReactClass = __webpack_require__(34);
+	var onlyChild = __webpack_require__(36);
 	
 	var createElement = ReactElement.createElement;
 	var createFactory = ReactElement.createFactory;
 	var cloneElement = ReactElement.cloneElement;
 	
 	if (process.env.NODE_ENV !== 'production') {
-	  var canDefineProperty = __webpack_require__(13);
-	  var ReactElementValidator = __webpack_require__(25);
+	  var lowPriorityWarning = __webpack_require__(13);
+	  var canDefineProperty = __webpack_require__(10);
+	  var ReactElementValidator = __webpack_require__(23);
 	  var didWarnPropTypesDeprecated = false;
 	  createElement = ReactElementValidator.createElement;
 	  createFactory = ReactElementValidator.createFactory;
@@ -207,18 +212,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	var __spread = _assign;
+	var createMixin = function (mixin) {
+	  return mixin;
+	};
 	
 	if (process.env.NODE_ENV !== 'production') {
-	  var warned = false;
+	  var warnedForSpread = false;
+	  var warnedForCreateMixin = false;
 	  __spread = function () {
-	    process.env.NODE_ENV !== 'production' ? warning(warned, 'React.__spread is deprecated and should not be used. Use ' + 'Object.assign directly or another helper function with similar ' + 'semantics. You may be seeing this warning due to your compiler. ' + 'See https://fb.me/react-spread-deprecation for more details.') : void 0;
-	    warned = true;
+	    lowPriorityWarning(warnedForSpread, 'React.__spread is deprecated and should not be used. Use ' + 'Object.assign directly or another helper function with similar ' + 'semantics. You may be seeing this warning due to your compiler. ' + 'See https://fb.me/react-spread-deprecation for more details.');
+	    warnedForSpread = true;
 	    return _assign.apply(null, arguments);
+	  };
+	
+	  createMixin = function (mixin) {
+	    lowPriorityWarning(warnedForCreateMixin, 'React.createMixin is deprecated and should not be used. ' + 'In React v16.0, it will be removed. ' + 'You can use this mixin directly instead. ' + 'See https://fb.me/createmixin-was-never-implemented for more info.');
+	    warnedForCreateMixin = true;
+	    return mixin;
 	  };
 	}
 	
 	var React = {
-	
 	  // Modern
 	
 	  Children: {
@@ -229,8 +243,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    only: onlyChild
 	  },
 	
-	  Component: ReactComponent,
-	  PureComponent: ReactPureComponent,
+	  Component: ReactBaseClasses.Component,
+	  PureComponent: ReactBaseClasses.PureComponent,
 	
 	  createElement: createElement,
 	  cloneElement: cloneElement,
@@ -239,12 +253,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // Classic
 	
 	  PropTypes: ReactPropTypes,
-	  createClass: ReactClass.createClass,
+	  createClass: createReactClass,
 	  createFactory: createFactory,
-	  createMixin: function (mixin) {
-	    // Currently a noop. Will be used to validate and trace mixins.
-	    return mixin;
-	  },
+	  createMixin: createMixin,
 	
 	  // This looks DOM specific but these are actually isomorphic helpers
 	  // since they are just generating DOM strings.
@@ -256,17 +267,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	  __spread: __spread
 	};
 	
-	// TODO: Fix tests so that this deprecation warning doesn't cause failures.
 	if (process.env.NODE_ENV !== 'production') {
+	  var warnedForCreateClass = false;
 	  if (canDefineProperty) {
 	    Object.defineProperty(React, 'PropTypes', {
 	      get: function () {
-	        process.env.NODE_ENV !== 'production' ? warning(didWarnPropTypesDeprecated, 'Accessing PropTypes via the main React package is deprecated. Use ' + 'the prop-types package from npm instead.') : void 0;
+	        lowPriorityWarning(didWarnPropTypesDeprecated, 'Accessing PropTypes via the main React package is deprecated,' + ' and will be removed in  React v16.0.' + ' Use the latest available v15.* prop-types package from npm instead.' + ' For info on usage, compatibility, migration and more, see ' + 'https://fb.me/prop-types-docs');
 	        didWarnPropTypesDeprecated = true;
 	        return ReactPropTypes;
 	      }
 	    });
+	
+	    Object.defineProperty(React, 'createClass', {
+	      get: function () {
+	        lowPriorityWarning(warnedForCreateClass, 'Accessing createClass via the main React package is deprecated,' + ' and will be removed in React v16.0.' + " Use a plain JavaScript class instead. If you're not yet " + 'ready to migrate, create-react-class v15.* is available ' + 'on npm as a temporary, drop-in replacement. ' + 'For more info see https://fb.me/react-create-class');
+	        warnedForCreateClass = true;
+	        return createReactClass;
+	      }
+	    });
 	  }
+	
+	  // React.DOM factories are deprecated. Wrap these methods so that
+	  // invocations of the React.DOM namespace and alert users to switch
+	  // to the `react-dom-factories` package.
+	  React.DOM = {};
+	  var warnedForFactories = false;
+	  Object.keys(ReactDOMFactories).forEach(function (factory) {
+	    React.DOM[factory] = function () {
+	      if (!warnedForFactories) {
+	        lowPriorityWarning(false, 'Accessing factories like React.DOM.%s has been deprecated ' + 'and will be removed in v16.0+. Use the ' + 'react-dom-factories package instead. ' + ' Version 1.0 provides a drop-in replacement.' + ' For more info, see https://fb.me/react-dom-factories', factory);
+	        warnedForFactories = true;
+	      }
+	      return ReactDOMFactories[factory].apply(ReactDOMFactories, arguments);
+	    };
+	  });
 	}
 	
 	module.exports = React;
@@ -562,23 +596,594 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 */
 	
 	'use strict';
 	
-	var PooledClass = __webpack_require__(6);
-	var ReactElement = __webpack_require__(9);
+	var _prodInvariant = __webpack_require__(6),
+	    _assign = __webpack_require__(4);
 	
-	var emptyFunction = __webpack_require__(12);
-	var traverseAllChildren = __webpack_require__(15);
+	var ReactNoopUpdateQueue = __webpack_require__(7);
+	
+	var canDefineProperty = __webpack_require__(10);
+	var emptyObject = __webpack_require__(11);
+	var invariant = __webpack_require__(12);
+	var lowPriorityWarning = __webpack_require__(13);
+	
+	/**
+	 * Base class helpers for the updating state of a component.
+	 */
+	function ReactComponent(props, context, updater) {
+	  this.props = props;
+	  this.context = context;
+	  this.refs = emptyObject;
+	  // We initialize the default updater but the real one gets injected by the
+	  // renderer.
+	  this.updater = updater || ReactNoopUpdateQueue;
+	}
+	
+	ReactComponent.prototype.isReactComponent = {};
+	
+	/**
+	 * Sets a subset of the state. Always use this to mutate
+	 * state. You should treat `this.state` as immutable.
+	 *
+	 * There is no guarantee that `this.state` will be immediately updated, so
+	 * accessing `this.state` after calling this method may return the old value.
+	 *
+	 * There is no guarantee that calls to `setState` will run synchronously,
+	 * as they may eventually be batched together.  You can provide an optional
+	 * callback that will be executed when the call to setState is actually
+	 * completed.
+	 *
+	 * When a function is provided to setState, it will be called at some point in
+	 * the future (not synchronously). It will be called with the up to date
+	 * component arguments (state, props, context). These values can be different
+	 * from this.* because your function may be called after receiveProps but before
+	 * shouldComponentUpdate, and this new state, props, and context will not yet be
+	 * assigned to this.
+	 *
+	 * @param {object|function} partialState Next partial state or function to
+	 *        produce next partial state to be merged with current state.
+	 * @param {?function} callback Called after state is updated.
+	 * @final
+	 * @protected
+	 */
+	ReactComponent.prototype.setState = function (partialState, callback) {
+	  !(typeof partialState === 'object' || typeof partialState === 'function' || partialState == null) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'setState(...): takes an object of state variables to update or a function which returns an object of state variables.') : _prodInvariant('85') : void 0;
+	  this.updater.enqueueSetState(this, partialState);
+	  if (callback) {
+	    this.updater.enqueueCallback(this, callback, 'setState');
+	  }
+	};
+	
+	/**
+	 * Forces an update. This should only be invoked when it is known with
+	 * certainty that we are **not** in a DOM transaction.
+	 *
+	 * You may want to call this when you know that some deeper aspect of the
+	 * component's state has changed but `setState` was not called.
+	 *
+	 * This will not invoke `shouldComponentUpdate`, but it will invoke
+	 * `componentWillUpdate` and `componentDidUpdate`.
+	 *
+	 * @param {?function} callback Called after update is complete.
+	 * @final
+	 * @protected
+	 */
+	ReactComponent.prototype.forceUpdate = function (callback) {
+	  this.updater.enqueueForceUpdate(this);
+	  if (callback) {
+	    this.updater.enqueueCallback(this, callback, 'forceUpdate');
+	  }
+	};
+	
+	/**
+	 * Deprecated APIs. These APIs used to exist on classic React classes but since
+	 * we would like to deprecate them, we're not going to move them over to this
+	 * modern base class. Instead, we define a getter that warns if it's accessed.
+	 */
+	if (process.env.NODE_ENV !== 'production') {
+	  var deprecatedAPIs = {
+	    isMounted: ['isMounted', 'Instead, make sure to clean up subscriptions and pending requests in ' + 'componentWillUnmount to prevent memory leaks.'],
+	    replaceState: ['replaceState', 'Refactor your code to use setState instead (see ' + 'https://github.com/facebook/react/issues/3236).']
+	  };
+	  var defineDeprecationWarning = function (methodName, info) {
+	    if (canDefineProperty) {
+	      Object.defineProperty(ReactComponent.prototype, methodName, {
+	        get: function () {
+	          lowPriorityWarning(false, '%s(...) is deprecated in plain JavaScript React classes. %s', info[0], info[1]);
+	          return undefined;
+	        }
+	      });
+	    }
+	  };
+	  for (var fnName in deprecatedAPIs) {
+	    if (deprecatedAPIs.hasOwnProperty(fnName)) {
+	      defineDeprecationWarning(fnName, deprecatedAPIs[fnName]);
+	    }
+	  }
+	}
+	
+	/**
+	 * Base class helpers for the updating state of a component.
+	 */
+	function ReactPureComponent(props, context, updater) {
+	  // Duplicated from ReactComponent.
+	  this.props = props;
+	  this.context = context;
+	  this.refs = emptyObject;
+	  // We initialize the default updater but the real one gets injected by the
+	  // renderer.
+	  this.updater = updater || ReactNoopUpdateQueue;
+	}
+	
+	function ComponentDummy() {}
+	ComponentDummy.prototype = ReactComponent.prototype;
+	ReactPureComponent.prototype = new ComponentDummy();
+	ReactPureComponent.prototype.constructor = ReactPureComponent;
+	// Avoid an extra prototype jump for these methods.
+	_assign(ReactPureComponent.prototype, ReactComponent.prototype);
+	ReactPureComponent.prototype.isPureReactComponent = true;
+	
+	module.exports = {
+	  Component: ReactComponent,
+	  PureComponent: ReactPureComponent
+	};
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 *
+	 * 
+	 */
+	'use strict';
+	
+	/**
+	 * WARNING: DO NOT manually require this module.
+	 * This is a replacement for `invariant(...)` used by the error code system
+	 * and will _only_ be required by the corresponding babel pass.
+	 * It always throws.
+	 */
+	
+	function reactProdInvariant(code) {
+	  var argCount = arguments.length - 1;
+	
+	  var message = 'Minified React error #' + code + '; visit ' + 'http://facebook.github.io/react/docs/error-decoder.html?invariant=' + code;
+	
+	  for (var argIdx = 0; argIdx < argCount; argIdx++) {
+	    message += '&args[]=' + encodeURIComponent(arguments[argIdx + 1]);
+	  }
+	
+	  message += ' for the full message or use the non-minified dev environment' + ' for full errors and additional helpful warnings.';
+	
+	  var error = new Error(message);
+	  error.name = 'Invariant Violation';
+	  error.framesToPop = 1; // we don't care about reactProdInvariant's own frame
+	
+	  throw error;
+	}
+	
+	module.exports = reactProdInvariant;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2015-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 *
+	 */
+	
+	'use strict';
+	
+	var warning = __webpack_require__(8);
+	
+	function warnNoop(publicInstance, callerName) {
+	  if (process.env.NODE_ENV !== 'production') {
+	    var constructor = publicInstance.constructor;
+	    process.env.NODE_ENV !== 'production' ? warning(false, '%s(...): Can only update a mounted or mounting component. ' + 'This usually means you called %s() on an unmounted component. ' + 'This is a no-op. Please check the code for the %s component.', callerName, callerName, constructor && (constructor.displayName || constructor.name) || 'ReactClass') : void 0;
+	  }
+	}
+	
+	/**
+	 * This is the abstract API for an update queue.
+	 */
+	var ReactNoopUpdateQueue = {
+	  /**
+	   * Checks whether or not this composite component is mounted.
+	   * @param {ReactClass} publicInstance The instance we want to test.
+	   * @return {boolean} True if mounted, false otherwise.
+	   * @protected
+	   * @final
+	   */
+	  isMounted: function (publicInstance) {
+	    return false;
+	  },
+	
+	  /**
+	   * Enqueue a callback that will be executed after all the pending updates
+	   * have processed.
+	   *
+	   * @param {ReactClass} publicInstance The instance to use as `this` context.
+	   * @param {?function} callback Called after state is updated.
+	   * @internal
+	   */
+	  enqueueCallback: function (publicInstance, callback) {},
+	
+	  /**
+	   * Forces an update. This should only be invoked when it is known with
+	   * certainty that we are **not** in a DOM transaction.
+	   *
+	   * You may want to call this when you know that some deeper aspect of the
+	   * component's state has changed but `setState` was not called.
+	   *
+	   * This will not invoke `shouldComponentUpdate`, but it will invoke
+	   * `componentWillUpdate` and `componentDidUpdate`.
+	   *
+	   * @param {ReactClass} publicInstance The instance that should rerender.
+	   * @internal
+	   */
+	  enqueueForceUpdate: function (publicInstance) {
+	    warnNoop(publicInstance, 'forceUpdate');
+	  },
+	
+	  /**
+	   * Replaces all of the state. Always use this or `setState` to mutate state.
+	   * You should treat `this.state` as immutable.
+	   *
+	   * There is no guarantee that `this.state` will be immediately updated, so
+	   * accessing `this.state` after calling this method may return the old value.
+	   *
+	   * @param {ReactClass} publicInstance The instance that should rerender.
+	   * @param {object} completeState Next state.
+	   * @internal
+	   */
+	  enqueueReplaceState: function (publicInstance, completeState) {
+	    warnNoop(publicInstance, 'replaceState');
+	  },
+	
+	  /**
+	   * Sets a subset of the state. This only exists because _pendingState is
+	   * internal. This provides a merging strategy that is not available to deep
+	   * properties which is confusing. TODO: Expose pendingState or don't use it
+	   * during the merge.
+	   *
+	   * @param {ReactClass} publicInstance The instance that should rerender.
+	   * @param {object} partialState Next partial state to be merged with state.
+	   * @internal
+	   */
+	  enqueueSetState: function (publicInstance, partialState) {
+	    warnNoop(publicInstance, 'setState');
+	  }
+	};
+	
+	module.exports = ReactNoopUpdateQueue;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2014-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 *
+	 */
+	
+	'use strict';
+	
+	var emptyFunction = __webpack_require__(9);
+	
+	/**
+	 * Similar to invariant but only logs a warning if the condition is not met.
+	 * This can be used to log issues in development environments in critical
+	 * paths. Removing the logging code for production environments will keep the
+	 * same logic and follow the same code paths.
+	 */
+	
+	var warning = emptyFunction;
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  var printWarning = function printWarning(format) {
+	    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	      args[_key - 1] = arguments[_key];
+	    }
+	
+	    var argIndex = 0;
+	    var message = 'Warning: ' + format.replace(/%s/g, function () {
+	      return args[argIndex++];
+	    });
+	    if (typeof console !== 'undefined') {
+	      console.error(message);
+	    }
+	    try {
+	      // --- Welcome to debugging React ---
+	      // This error was thrown as a convenience so that you can use this stack
+	      // to find the callsite that caused this warning to fire.
+	      throw new Error(message);
+	    } catch (x) {}
+	  };
+	
+	  warning = function warning(condition, format) {
+	    if (format === undefined) {
+	      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+	    }
+	
+	    if (format.indexOf('Failed Composite propType: ') === 0) {
+	      return; // Ignore CompositeComponent proptype check.
+	    }
+	
+	    if (!condition) {
+	      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+	        args[_key2 - 2] = arguments[_key2];
+	      }
+	
+	      printWarning.apply(undefined, [format].concat(args));
+	    }
+	  };
+	}
+	
+	module.exports = warning;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 *
+	 * 
+	 */
+	
+	function makeEmptyFunction(arg) {
+	  return function () {
+	    return arg;
+	  };
+	}
+	
+	/**
+	 * This function accepts and discards inputs; it has no side effects. This is
+	 * primarily useful idiomatically for overridable function endpoints which
+	 * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
+	 */
+	var emptyFunction = function emptyFunction() {};
+	
+	emptyFunction.thatReturns = makeEmptyFunction;
+	emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
+	emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
+	emptyFunction.thatReturnsNull = makeEmptyFunction(null);
+	emptyFunction.thatReturnsThis = function () {
+	  return this;
+	};
+	emptyFunction.thatReturnsArgument = function (arg) {
+	  return arg;
+	};
+	
+	module.exports = emptyFunction;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 *
+	 * 
+	 */
+	
+	'use strict';
+	
+	var canDefineProperty = false;
+	if (process.env.NODE_ENV !== 'production') {
+	  try {
+	    // $FlowFixMe https://github.com/facebook/flow/issues/285
+	    Object.defineProperty({}, 'x', { get: function () {} });
+	    canDefineProperty = true;
+	  } catch (x) {
+	    // IE will fail on defineProperty
+	  }
+	}
+	
+	module.exports = canDefineProperty;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 *
+	 */
+	
+	'use strict';
+	
+	var emptyObject = {};
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  Object.freeze(emptyObject);
+	}
+	
+	module.exports = emptyObject;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 *
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Use invariant() to assert state which your program assumes to be true.
+	 *
+	 * Provide sprintf-style format (only %s is supported) and arguments
+	 * to provide information about what broke and what you were
+	 * expecting.
+	 *
+	 * The invariant message will be stripped in production, but the invariant
+	 * will remain to ensure logic does not differ in production.
+	 */
+	
+	var validateFormat = function validateFormat(format) {};
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  validateFormat = function validateFormat(format) {
+	    if (format === undefined) {
+	      throw new Error('invariant requires an error message argument');
+	    }
+	  };
+	}
+	
+	function invariant(condition, format, a, b, c, d, e, f) {
+	  validateFormat(format);
+	
+	  if (!condition) {
+	    var error;
+	    if (format === undefined) {
+	      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+	    } else {
+	      var args = [a, b, c, d, e, f];
+	      var argIndex = 0;
+	      error = new Error(format.replace(/%s/g, function () {
+	        return args[argIndex++];
+	      }));
+	      error.name = 'Invariant Violation';
+	    }
+	
+	    error.framesToPop = 1; // we don't care about invariant's own frame
+	    throw error;
+	  }
+	}
+	
+	module.exports = invariant;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2014-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 *
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Forked from fbjs/warning:
+	 * https://github.com/facebook/fbjs/blob/e66ba20ad5be433eb54423f2b097d829324d9de6/packages/fbjs/src/__forks__/warning.js
+	 *
+	 * Only change is we use console.warn instead of console.error,
+	 * and do nothing when 'console' is not supported.
+	 * This really simplifies the code.
+	 * ---
+	 * Similar to invariant but only logs a warning if the condition is not met.
+	 * This can be used to log issues in development environments in critical
+	 * paths. Removing the logging code for production environments will keep the
+	 * same logic and follow the same code paths.
+	 */
+	
+	var lowPriorityWarning = function () {};
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  var printWarning = function (format) {
+	    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	      args[_key - 1] = arguments[_key];
+	    }
+	
+	    var argIndex = 0;
+	    var message = 'Warning: ' + format.replace(/%s/g, function () {
+	      return args[argIndex++];
+	    });
+	    if (typeof console !== 'undefined') {
+	      console.warn(message);
+	    }
+	    try {
+	      // --- Welcome to debugging React ---
+	      // This error was thrown as a convenience so that you can use this stack
+	      // to find the callsite that caused this warning to fire.
+	      throw new Error(message);
+	    } catch (x) {}
+	  };
+	
+	  lowPriorityWarning = function (condition, format) {
+	    if (format === undefined) {
+	      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+	    }
+	    if (!condition) {
+	      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+	        args[_key2 - 2] = arguments[_key2];
+	      }
+	
+	      printWarning.apply(undefined, [format].concat(args));
+	    }
+	  };
+	}
+	
+	module.exports = lowPriorityWarning;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 *
+	 */
+	
+	'use strict';
+	
+	var PooledClass = __webpack_require__(15);
+	var ReactElement = __webpack_require__(16);
+	
+	var emptyFunction = __webpack_require__(9);
+	var traverseAllChildren = __webpack_require__(19);
 	
 	var twoArgumentPooler = PooledClass.twoArgumentPooler;
 	var fourArgumentPooler = PooledClass.fourArgumentPooler;
@@ -754,25 +1359,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ReactChildren;
 
 /***/ }),
-/* 6 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * 
 	 */
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(7);
+	var _prodInvariant = __webpack_require__(6);
 	
-	var invariant = __webpack_require__(8);
+	var invariant = __webpack_require__(12);
 	
 	/**
 	 * Static poolers. Several custom versions for each potential number of
@@ -871,120 +1474,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-	/**
-	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * 
-	 */
-	'use strict';
-	
-	/**
-	 * WARNING: DO NOT manually require this module.
-	 * This is a replacement for `invariant(...)` used by the error code system
-	 * and will _only_ be required by the corresponding babel pass.
-	 * It always throws.
-	 */
-	
-	function reactProdInvariant(code) {
-	  var argCount = arguments.length - 1;
-	
-	  var message = 'Minified React error #' + code + '; visit ' + 'http://facebook.github.io/react/docs/error-decoder.html?invariant=' + code;
-	
-	  for (var argIdx = 0; argIdx < argCount; argIdx++) {
-	    message += '&args[]=' + encodeURIComponent(arguments[argIdx + 1]);
-	  }
-	
-	  message += ' for the full message or use the non-minified dev environment' + ' for full errors and additional helpful warnings.';
-	
-	  var error = new Error(message);
-	  error.name = 'Invariant Violation';
-	  error.framesToPop = 1; // we don't care about reactProdInvariant's own frame
-	
-	  throw error;
-	}
-	
-	module.exports = reactProdInvariant;
-
-/***/ }),
-/* 8 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2014-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 */
-	
-	'use strict';
-	
-	/**
-	 * Use invariant() to assert state which your program assumes to be true.
-	 *
-	 * Provide sprintf-style format (only %s is supported) and arguments
-	 * to provide information about what broke and what you were
-	 * expecting.
-	 *
-	 * The invariant message will be stripped in production, but the invariant
-	 * will remain to ensure logic does not differ in production.
-	 */
-	
-	var validateFormat = function validateFormat(format) {};
-	
-	if (process.env.NODE_ENV !== 'production') {
-	  validateFormat = function validateFormat(format) {
-	    if (format === undefined) {
-	      throw new Error('invariant requires an error message argument');
-	    }
-	  };
-	}
-	
-	function invariant(condition, format, a, b, c, d, e, f) {
-	  validateFormat(format);
-	
-	  if (!condition) {
-	    var error;
-	    if (format === undefined) {
-	      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
-	    } else {
-	      var args = [a, b, c, d, e, f];
-	      var argIndex = 0;
-	      error = new Error(format.replace(/%s/g, function () {
-	        return args[argIndex++];
-	      }));
-	      error.name = 'Invariant Violation';
-	    }
-	
-	    error.framesToPop = 1; // we don't care about invariant's own frame
-	    throw error;
-	  }
-	}
-	
-	module.exports = invariant;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2014-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 */
 	
@@ -992,13 +1489,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _assign = __webpack_require__(4);
 	
-	var ReactCurrentOwner = __webpack_require__(10);
+	var ReactCurrentOwner = __webpack_require__(17);
 	
-	var warning = __webpack_require__(11);
-	var canDefineProperty = __webpack_require__(13);
+	var warning = __webpack_require__(8);
+	var canDefineProperty = __webpack_require__(10);
 	var hasOwnProperty = Object.prototype.hasOwnProperty;
 	
-	var REACT_ELEMENT_TYPE = __webpack_require__(14);
+	var REACT_ELEMENT_TYPE = __webpack_require__(18);
 	
 	var RESERVED_PROPS = {
 	  key: true,
@@ -1321,16 +1818,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 10 */
+/* 17 */
 /***/ (function(module, exports) {
 
 	/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * 
 	 */
@@ -1344,174 +1839,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * currently being constructed.
 	 */
 	var ReactCurrentOwner = {
-	
 	  /**
 	   * @internal
 	   * @type {ReactComponent}
 	   */
 	  current: null
-	
 	};
 	
 	module.exports = ReactCurrentOwner;
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2014-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 */
-	
-	'use strict';
-	
-	var emptyFunction = __webpack_require__(12);
-	
-	/**
-	 * Similar to invariant but only logs a warning if the condition is not met.
-	 * This can be used to log issues in development environments in critical
-	 * paths. Removing the logging code for production environments will keep the
-	 * same logic and follow the same code paths.
-	 */
-	
-	var warning = emptyFunction;
-	
-	if (process.env.NODE_ENV !== 'production') {
-	  (function () {
-	    var printWarning = function printWarning(format) {
-	      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	        args[_key - 1] = arguments[_key];
-	      }
-	
-	      var argIndex = 0;
-	      var message = 'Warning: ' + format.replace(/%s/g, function () {
-	        return args[argIndex++];
-	      });
-	      if (typeof console !== 'undefined') {
-	        console.error(message);
-	      }
-	      try {
-	        // --- Welcome to debugging React ---
-	        // This error was thrown as a convenience so that you can use this stack
-	        // to find the callsite that caused this warning to fire.
-	        throw new Error(message);
-	      } catch (x) {}
-	    };
-	
-	    warning = function warning(condition, format) {
-	      if (format === undefined) {
-	        throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
-	      }
-	
-	      if (format.indexOf('Failed Composite propType: ') === 0) {
-	        return; // Ignore CompositeComponent proptype check.
-	      }
-	
-	      if (!condition) {
-	        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-	          args[_key2 - 2] = arguments[_key2];
-	        }
-	
-	        printWarning.apply(undefined, [format].concat(args));
-	      }
-	    };
-	  })();
-	}
-	
-	module.exports = warning;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	
-	/**
-	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * 
-	 */
-	
-	function makeEmptyFunction(arg) {
-	  return function () {
-	    return arg;
-	  };
-	}
-	
-	/**
-	 * This function accepts and discards inputs; it has no side effects. This is
-	 * primarily useful idiomatically for overridable function endpoints which
-	 * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
-	 */
-	var emptyFunction = function emptyFunction() {};
-	
-	emptyFunction.thatReturns = makeEmptyFunction;
-	emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
-	emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
-	emptyFunction.thatReturnsNull = makeEmptyFunction(null);
-	emptyFunction.thatReturnsThis = function () {
-	  return this;
-	};
-	emptyFunction.thatReturnsArgument = function (arg) {
-	  return arg;
-	};
-	
-	module.exports = emptyFunction;
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * 
-	 */
-	
-	'use strict';
-	
-	var canDefineProperty = false;
-	if (process.env.NODE_ENV !== 'production') {
-	  try {
-	    // $FlowFixMe https://github.com/facebook/flow/issues/285
-	    Object.defineProperty({}, 'x', { get: function () {} });
-	    canDefineProperty = true;
-	  } catch (x) {
-	    // IE will fail on defineProperty
-	  }
-	}
-	
-	module.exports = canDefineProperty;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ }),
-/* 14 */
+/* 18 */
 /***/ (function(module, exports) {
 
 	/**
-	 * Copyright 2014-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2014-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * 
 	 */
@@ -1526,30 +1871,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = REACT_ELEMENT_TYPE;
 
 /***/ }),
-/* 15 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 */
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(7);
+	var _prodInvariant = __webpack_require__(6);
 	
-	var ReactCurrentOwner = __webpack_require__(10);
-	var REACT_ELEMENT_TYPE = __webpack_require__(14);
+	var ReactCurrentOwner = __webpack_require__(17);
+	var REACT_ELEMENT_TYPE = __webpack_require__(18);
 	
-	var getIteratorFn = __webpack_require__(16);
-	var invariant = __webpack_require__(8);
-	var KeyEscapeUtils = __webpack_require__(17);
-	var warning = __webpack_require__(11);
+	var getIteratorFn = __webpack_require__(20);
+	var invariant = __webpack_require__(12);
+	var KeyEscapeUtils = __webpack_require__(21);
+	var warning = __webpack_require__(8);
 	
 	var SEPARATOR = '.';
 	var SUBSEPARATOR = ':';
@@ -1662,7 +2005,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (process.env.NODE_ENV !== 'production') {
 	        addendum = ' If you meant to render a collection of children, use an array ' + 'instead or wrap the object using createFragment(object) from the ' + 'React add-ons.';
 	        if (children._isReactElement) {
-	          addendum = ' It looks like you\'re using an element created by a different ' + 'version of React. Make sure to use only one copy of React.';
+	          addendum = " It looks like you're using an element created by a different " + 'version of React. Make sure to use only one copy of React.';
 	        }
 	        if (ReactCurrentOwner.current) {
 	          var name = ReactCurrentOwner.current.getName();
@@ -1707,16 +2050,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 16 */
+/* 20 */
 /***/ (function(module, exports) {
 
 	/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * 
 	 */
@@ -1752,16 +2093,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = getIteratorFn;
 
 /***/ }),
-/* 17 */
+/* 21 */
 /***/ (function(module, exports) {
 
 	/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * 
 	 */
@@ -1815,1075 +2154,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = KeyEscapeUtils;
 
 /***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 */
-	
-	'use strict';
-	
-	var _prodInvariant = __webpack_require__(7);
-	
-	var ReactNoopUpdateQueue = __webpack_require__(19);
-	
-	var canDefineProperty = __webpack_require__(13);
-	var emptyObject = __webpack_require__(20);
-	var invariant = __webpack_require__(8);
-	var warning = __webpack_require__(11);
-	
-	/**
-	 * Base class helpers for the updating state of a component.
-	 */
-	function ReactComponent(props, context, updater) {
-	  this.props = props;
-	  this.context = context;
-	  this.refs = emptyObject;
-	  // We initialize the default updater but the real one gets injected by the
-	  // renderer.
-	  this.updater = updater || ReactNoopUpdateQueue;
-	}
-	
-	ReactComponent.prototype.isReactComponent = {};
-	
-	/**
-	 * Sets a subset of the state. Always use this to mutate
-	 * state. You should treat `this.state` as immutable.
-	 *
-	 * There is no guarantee that `this.state` will be immediately updated, so
-	 * accessing `this.state` after calling this method may return the old value.
-	 *
-	 * There is no guarantee that calls to `setState` will run synchronously,
-	 * as they may eventually be batched together.  You can provide an optional
-	 * callback that will be executed when the call to setState is actually
-	 * completed.
-	 *
-	 * When a function is provided to setState, it will be called at some point in
-	 * the future (not synchronously). It will be called with the up to date
-	 * component arguments (state, props, context). These values can be different
-	 * from this.* because your function may be called after receiveProps but before
-	 * shouldComponentUpdate, and this new state, props, and context will not yet be
-	 * assigned to this.
-	 *
-	 * @param {object|function} partialState Next partial state or function to
-	 *        produce next partial state to be merged with current state.
-	 * @param {?function} callback Called after state is updated.
-	 * @final
-	 * @protected
-	 */
-	ReactComponent.prototype.setState = function (partialState, callback) {
-	  !(typeof partialState === 'object' || typeof partialState === 'function' || partialState == null) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'setState(...): takes an object of state variables to update or a function which returns an object of state variables.') : _prodInvariant('85') : void 0;
-	  this.updater.enqueueSetState(this, partialState);
-	  if (callback) {
-	    this.updater.enqueueCallback(this, callback, 'setState');
-	  }
-	};
-	
-	/**
-	 * Forces an update. This should only be invoked when it is known with
-	 * certainty that we are **not** in a DOM transaction.
-	 *
-	 * You may want to call this when you know that some deeper aspect of the
-	 * component's state has changed but `setState` was not called.
-	 *
-	 * This will not invoke `shouldComponentUpdate`, but it will invoke
-	 * `componentWillUpdate` and `componentDidUpdate`.
-	 *
-	 * @param {?function} callback Called after update is complete.
-	 * @final
-	 * @protected
-	 */
-	ReactComponent.prototype.forceUpdate = function (callback) {
-	  this.updater.enqueueForceUpdate(this);
-	  if (callback) {
-	    this.updater.enqueueCallback(this, callback, 'forceUpdate');
-	  }
-	};
-	
-	/**
-	 * Deprecated APIs. These APIs used to exist on classic React classes but since
-	 * we would like to deprecate them, we're not going to move them over to this
-	 * modern base class. Instead, we define a getter that warns if it's accessed.
-	 */
-	if (process.env.NODE_ENV !== 'production') {
-	  var deprecatedAPIs = {
-	    isMounted: ['isMounted', 'Instead, make sure to clean up subscriptions and pending requests in ' + 'componentWillUnmount to prevent memory leaks.'],
-	    replaceState: ['replaceState', 'Refactor your code to use setState instead (see ' + 'https://github.com/facebook/react/issues/3236).']
-	  };
-	  var defineDeprecationWarning = function (methodName, info) {
-	    if (canDefineProperty) {
-	      Object.defineProperty(ReactComponent.prototype, methodName, {
-	        get: function () {
-	          process.env.NODE_ENV !== 'production' ? warning(false, '%s(...) is deprecated in plain JavaScript React classes. %s', info[0], info[1]) : void 0;
-	          return undefined;
-	        }
-	      });
-	    }
-	  };
-	  for (var fnName in deprecatedAPIs) {
-	    if (deprecatedAPIs.hasOwnProperty(fnName)) {
-	      defineDeprecationWarning(fnName, deprecatedAPIs[fnName]);
-	    }
-	  }
-	}
-	
-	module.exports = ReactComponent;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2015-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 */
-	
-	'use strict';
-	
-	var warning = __webpack_require__(11);
-	
-	function warnNoop(publicInstance, callerName) {
-	  if (process.env.NODE_ENV !== 'production') {
-	    var constructor = publicInstance.constructor;
-	    process.env.NODE_ENV !== 'production' ? warning(false, '%s(...): Can only update a mounted or mounting component. ' + 'This usually means you called %s() on an unmounted component. ' + 'This is a no-op. Please check the code for the %s component.', callerName, callerName, constructor && (constructor.displayName || constructor.name) || 'ReactClass') : void 0;
-	  }
-	}
-	
-	/**
-	 * This is the abstract API for an update queue.
-	 */
-	var ReactNoopUpdateQueue = {
-	
-	  /**
-	   * Checks whether or not this composite component is mounted.
-	   * @param {ReactClass} publicInstance The instance we want to test.
-	   * @return {boolean} True if mounted, false otherwise.
-	   * @protected
-	   * @final
-	   */
-	  isMounted: function (publicInstance) {
-	    return false;
-	  },
-	
-	  /**
-	   * Enqueue a callback that will be executed after all the pending updates
-	   * have processed.
-	   *
-	   * @param {ReactClass} publicInstance The instance to use as `this` context.
-	   * @param {?function} callback Called after state is updated.
-	   * @internal
-	   */
-	  enqueueCallback: function (publicInstance, callback) {},
-	
-	  /**
-	   * Forces an update. This should only be invoked when it is known with
-	   * certainty that we are **not** in a DOM transaction.
-	   *
-	   * You may want to call this when you know that some deeper aspect of the
-	   * component's state has changed but `setState` was not called.
-	   *
-	   * This will not invoke `shouldComponentUpdate`, but it will invoke
-	   * `componentWillUpdate` and `componentDidUpdate`.
-	   *
-	   * @param {ReactClass} publicInstance The instance that should rerender.
-	   * @internal
-	   */
-	  enqueueForceUpdate: function (publicInstance) {
-	    warnNoop(publicInstance, 'forceUpdate');
-	  },
-	
-	  /**
-	   * Replaces all of the state. Always use this or `setState` to mutate state.
-	   * You should treat `this.state` as immutable.
-	   *
-	   * There is no guarantee that `this.state` will be immediately updated, so
-	   * accessing `this.state` after calling this method may return the old value.
-	   *
-	   * @param {ReactClass} publicInstance The instance that should rerender.
-	   * @param {object} completeState Next state.
-	   * @internal
-	   */
-	  enqueueReplaceState: function (publicInstance, completeState) {
-	    warnNoop(publicInstance, 'replaceState');
-	  },
-	
-	  /**
-	   * Sets a subset of the state. This only exists because _pendingState is
-	   * internal. This provides a merging strategy that is not available to deep
-	   * properties which is confusing. TODO: Expose pendingState or don't use it
-	   * during the merge.
-	   *
-	   * @param {ReactClass} publicInstance The instance that should rerender.
-	   * @param {object} partialState Next partial state to be merged with state.
-	   * @internal
-	   */
-	  enqueueSetState: function (publicInstance, partialState) {
-	    warnNoop(publicInstance, 'setState');
-	  }
-	};
-	
-	module.exports = ReactNoopUpdateQueue;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 */
-	
-	'use strict';
-	
-	var emptyObject = {};
-	
-	if (process.env.NODE_ENV !== 'production') {
-	  Object.freeze(emptyObject);
-	}
-	
-	module.exports = emptyObject;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 */
-	
-	'use strict';
-	
-	var _assign = __webpack_require__(4);
-	
-	var ReactComponent = __webpack_require__(18);
-	var ReactNoopUpdateQueue = __webpack_require__(19);
-	
-	var emptyObject = __webpack_require__(20);
-	
-	/**
-	 * Base class helpers for the updating state of a component.
-	 */
-	function ReactPureComponent(props, context, updater) {
-	  // Duplicated from ReactComponent.
-	  this.props = props;
-	  this.context = context;
-	  this.refs = emptyObject;
-	  // We initialize the default updater but the real one gets injected by the
-	  // renderer.
-	  this.updater = updater || ReactNoopUpdateQueue;
-	}
-	
-	function ComponentDummy() {}
-	ComponentDummy.prototype = ReactComponent.prototype;
-	ReactPureComponent.prototype = new ComponentDummy();
-	ReactPureComponent.prototype.constructor = ReactPureComponent;
-	// Avoid an extra prototype jump for these methods.
-	_assign(ReactPureComponent.prototype, ReactComponent.prototype);
-	ReactPureComponent.prototype.isPureReactComponent = true;
-	
-	module.exports = ReactPureComponent;
-
-/***/ }),
 /* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 */
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(7),
-	    _assign = __webpack_require__(4);
-	
-	var ReactComponent = __webpack_require__(18);
-	var ReactElement = __webpack_require__(9);
-	var ReactPropTypeLocationNames = __webpack_require__(23);
-	var ReactNoopUpdateQueue = __webpack_require__(19);
-	
-	var emptyObject = __webpack_require__(20);
-	var invariant = __webpack_require__(8);
-	var warning = __webpack_require__(11);
-	
-	var MIXINS_KEY = 'mixins';
-	
-	// Helper function to allow the creation of anonymous functions which do not
-	// have .name set to the name of the variable being assigned to.
-	function identity(fn) {
-	  return fn;
-	}
-	
-	/**
-	 * Policies that describe methods in `ReactClassInterface`.
-	 */
-	
-	
-	var injectedMixins = [];
-	
-	/**
-	 * Composite components are higher-level components that compose other composite
-	 * or host components.
-	 *
-	 * To create a new type of `ReactClass`, pass a specification of
-	 * your new class to `React.createClass`. The only requirement of your class
-	 * specification is that you implement a `render` method.
-	 *
-	 *   var MyComponent = React.createClass({
-	 *     render: function() {
-	 *       return <div>Hello World</div>;
-	 *     }
-	 *   });
-	 *
-	 * The class specification supports a specific protocol of methods that have
-	 * special meaning (e.g. `render`). See `ReactClassInterface` for
-	 * more the comprehensive protocol. Any other properties and methods in the
-	 * class specification will be available on the prototype.
-	 *
-	 * @interface ReactClassInterface
-	 * @internal
-	 */
-	var ReactClassInterface = {
-	
-	  /**
-	   * An array of Mixin objects to include when defining your component.
-	   *
-	   * @type {array}
-	   * @optional
-	   */
-	  mixins: 'DEFINE_MANY',
-	
-	  /**
-	   * An object containing properties and methods that should be defined on
-	   * the component's constructor instead of its prototype (static methods).
-	   *
-	   * @type {object}
-	   * @optional
-	   */
-	  statics: 'DEFINE_MANY',
-	
-	  /**
-	   * Definition of prop types for this component.
-	   *
-	   * @type {object}
-	   * @optional
-	   */
-	  propTypes: 'DEFINE_MANY',
-	
-	  /**
-	   * Definition of context types for this component.
-	   *
-	   * @type {object}
-	   * @optional
-	   */
-	  contextTypes: 'DEFINE_MANY',
-	
-	  /**
-	   * Definition of context types this component sets for its children.
-	   *
-	   * @type {object}
-	   * @optional
-	   */
-	  childContextTypes: 'DEFINE_MANY',
-	
-	  // ==== Definition methods ====
-	
-	  /**
-	   * Invoked when the component is mounted. Values in the mapping will be set on
-	   * `this.props` if that prop is not specified (i.e. using an `in` check).
-	   *
-	   * This method is invoked before `getInitialState` and therefore cannot rely
-	   * on `this.state` or use `this.setState`.
-	   *
-	   * @return {object}
-	   * @optional
-	   */
-	  getDefaultProps: 'DEFINE_MANY_MERGED',
-	
-	  /**
-	   * Invoked once before the component is mounted. The return value will be used
-	   * as the initial value of `this.state`.
-	   *
-	   *   getInitialState: function() {
-	   *     return {
-	   *       isOn: false,
-	   *       fooBaz: new BazFoo()
-	   *     }
-	   *   }
-	   *
-	   * @return {object}
-	   * @optional
-	   */
-	  getInitialState: 'DEFINE_MANY_MERGED',
-	
-	  /**
-	   * @return {object}
-	   * @optional
-	   */
-	  getChildContext: 'DEFINE_MANY_MERGED',
-	
-	  /**
-	   * Uses props from `this.props` and state from `this.state` to render the
-	   * structure of the component.
-	   *
-	   * No guarantees are made about when or how often this method is invoked, so
-	   * it must not have side effects.
-	   *
-	   *   render: function() {
-	   *     var name = this.props.name;
-	   *     return <div>Hello, {name}!</div>;
-	   *   }
-	   *
-	   * @return {ReactComponent}
-	   * @required
-	   */
-	  render: 'DEFINE_ONCE',
-	
-	  // ==== Delegate methods ====
-	
-	  /**
-	   * Invoked when the component is initially created and about to be mounted.
-	   * This may have side effects, but any external subscriptions or data created
-	   * by this method must be cleaned up in `componentWillUnmount`.
-	   *
-	   * @optional
-	   */
-	  componentWillMount: 'DEFINE_MANY',
-	
-	  /**
-	   * Invoked when the component has been mounted and has a DOM representation.
-	   * However, there is no guarantee that the DOM node is in the document.
-	   *
-	   * Use this as an opportunity to operate on the DOM when the component has
-	   * been mounted (initialized and rendered) for the first time.
-	   *
-	   * @param {DOMElement} rootNode DOM element representing the component.
-	   * @optional
-	   */
-	  componentDidMount: 'DEFINE_MANY',
-	
-	  /**
-	   * Invoked before the component receives new props.
-	   *
-	   * Use this as an opportunity to react to a prop transition by updating the
-	   * state using `this.setState`. Current props are accessed via `this.props`.
-	   *
-	   *   componentWillReceiveProps: function(nextProps, nextContext) {
-	   *     this.setState({
-	   *       likesIncreasing: nextProps.likeCount > this.props.likeCount
-	   *     });
-	   *   }
-	   *
-	   * NOTE: There is no equivalent `componentWillReceiveState`. An incoming prop
-	   * transition may cause a state change, but the opposite is not true. If you
-	   * need it, you are probably looking for `componentWillUpdate`.
-	   *
-	   * @param {object} nextProps
-	   * @optional
-	   */
-	  componentWillReceiveProps: 'DEFINE_MANY',
-	
-	  /**
-	   * Invoked while deciding if the component should be updated as a result of
-	   * receiving new props, state and/or context.
-	   *
-	   * Use this as an opportunity to `return false` when you're certain that the
-	   * transition to the new props/state/context will not require a component
-	   * update.
-	   *
-	   *   shouldComponentUpdate: function(nextProps, nextState, nextContext) {
-	   *     return !equal(nextProps, this.props) ||
-	   *       !equal(nextState, this.state) ||
-	   *       !equal(nextContext, this.context);
-	   *   }
-	   *
-	   * @param {object} nextProps
-	   * @param {?object} nextState
-	   * @param {?object} nextContext
-	   * @return {boolean} True if the component should update.
-	   * @optional
-	   */
-	  shouldComponentUpdate: 'DEFINE_ONCE',
-	
-	  /**
-	   * Invoked when the component is about to update due to a transition from
-	   * `this.props`, `this.state` and `this.context` to `nextProps`, `nextState`
-	   * and `nextContext`.
-	   *
-	   * Use this as an opportunity to perform preparation before an update occurs.
-	   *
-	   * NOTE: You **cannot** use `this.setState()` in this method.
-	   *
-	   * @param {object} nextProps
-	   * @param {?object} nextState
-	   * @param {?object} nextContext
-	   * @param {ReactReconcileTransaction} transaction
-	   * @optional
-	   */
-	  componentWillUpdate: 'DEFINE_MANY',
-	
-	  /**
-	   * Invoked when the component's DOM representation has been updated.
-	   *
-	   * Use this as an opportunity to operate on the DOM when the component has
-	   * been updated.
-	   *
-	   * @param {object} prevProps
-	   * @param {?object} prevState
-	   * @param {?object} prevContext
-	   * @param {DOMElement} rootNode DOM element representing the component.
-	   * @optional
-	   */
-	  componentDidUpdate: 'DEFINE_MANY',
-	
-	  /**
-	   * Invoked when the component is about to be removed from its parent and have
-	   * its DOM representation destroyed.
-	   *
-	   * Use this as an opportunity to deallocate any external resources.
-	   *
-	   * NOTE: There is no `componentDidUnmount` since your component will have been
-	   * destroyed by that point.
-	   *
-	   * @optional
-	   */
-	  componentWillUnmount: 'DEFINE_MANY',
-	
-	  // ==== Advanced methods ====
-	
-	  /**
-	   * Updates the component's currently mounted DOM representation.
-	   *
-	   * By default, this implements React's rendering and reconciliation algorithm.
-	   * Sophisticated clients may wish to override this.
-	   *
-	   * @param {ReactReconcileTransaction} transaction
-	   * @internal
-	   * @overridable
-	   */
-	  updateComponent: 'OVERRIDE_BASE'
-	
-	};
-	
-	/**
-	 * Mapping from class specification keys to special processing functions.
-	 *
-	 * Although these are declared like instance properties in the specification
-	 * when defining classes using `React.createClass`, they are actually static
-	 * and are accessible on the constructor instead of the prototype. Despite
-	 * being static, they must be defined outside of the "statics" key under
-	 * which all other static methods are defined.
-	 */
-	var RESERVED_SPEC_KEYS = {
-	  displayName: function (Constructor, displayName) {
-	    Constructor.displayName = displayName;
-	  },
-	  mixins: function (Constructor, mixins) {
-	    if (mixins) {
-	      for (var i = 0; i < mixins.length; i++) {
-	        mixSpecIntoComponent(Constructor, mixins[i]);
-	      }
-	    }
-	  },
-	  childContextTypes: function (Constructor, childContextTypes) {
-	    if (process.env.NODE_ENV !== 'production') {
-	      validateTypeDef(Constructor, childContextTypes, 'childContext');
-	    }
-	    Constructor.childContextTypes = _assign({}, Constructor.childContextTypes, childContextTypes);
-	  },
-	  contextTypes: function (Constructor, contextTypes) {
-	    if (process.env.NODE_ENV !== 'production') {
-	      validateTypeDef(Constructor, contextTypes, 'context');
-	    }
-	    Constructor.contextTypes = _assign({}, Constructor.contextTypes, contextTypes);
-	  },
-	  /**
-	   * Special case getDefaultProps which should move into statics but requires
-	   * automatic merging.
-	   */
-	  getDefaultProps: function (Constructor, getDefaultProps) {
-	    if (Constructor.getDefaultProps) {
-	      Constructor.getDefaultProps = createMergedResultFunction(Constructor.getDefaultProps, getDefaultProps);
-	    } else {
-	      Constructor.getDefaultProps = getDefaultProps;
-	    }
-	  },
-	  propTypes: function (Constructor, propTypes) {
-	    if (process.env.NODE_ENV !== 'production') {
-	      validateTypeDef(Constructor, propTypes, 'prop');
-	    }
-	    Constructor.propTypes = _assign({}, Constructor.propTypes, propTypes);
-	  },
-	  statics: function (Constructor, statics) {
-	    mixStaticSpecIntoComponent(Constructor, statics);
-	  },
-	  autobind: function () {} };
-	
-	function validateTypeDef(Constructor, typeDef, location) {
-	  for (var propName in typeDef) {
-	    if (typeDef.hasOwnProperty(propName)) {
-	      // use a warning instead of an invariant so components
-	      // don't show up in prod but only in __DEV__
-	      process.env.NODE_ENV !== 'production' ? warning(typeof typeDef[propName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'React.PropTypes.', Constructor.displayName || 'ReactClass', ReactPropTypeLocationNames[location], propName) : void 0;
-	    }
-	  }
-	}
-	
-	function validateMethodOverride(isAlreadyDefined, name) {
-	  var specPolicy = ReactClassInterface.hasOwnProperty(name) ? ReactClassInterface[name] : null;
-	
-	  // Disallow overriding of base class methods unless explicitly allowed.
-	  if (ReactClassMixin.hasOwnProperty(name)) {
-	    !(specPolicy === 'OVERRIDE_BASE') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactClassInterface: You are attempting to override `%s` from your class specification. Ensure that your method names do not overlap with React methods.', name) : _prodInvariant('73', name) : void 0;
-	  }
-	
-	  // Disallow defining methods more than once unless explicitly allowed.
-	  if (isAlreadyDefined) {
-	    !(specPolicy === 'DEFINE_MANY' || specPolicy === 'DEFINE_MANY_MERGED') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactClassInterface: You are attempting to define `%s` on your component more than once. This conflict may be due to a mixin.', name) : _prodInvariant('74', name) : void 0;
-	  }
-	}
-	
-	/**
-	 * Mixin helper which handles policy validation and reserved
-	 * specification keys when building React classes.
-	 */
-	function mixSpecIntoComponent(Constructor, spec) {
-	  if (!spec) {
-	    if (process.env.NODE_ENV !== 'production') {
-	      var typeofSpec = typeof spec;
-	      var isMixinValid = typeofSpec === 'object' && spec !== null;
-	
-	      process.env.NODE_ENV !== 'production' ? warning(isMixinValid, '%s: You\'re attempting to include a mixin that is either null ' + 'or not an object. Check the mixins included by the component, ' + 'as well as any mixins they include themselves. ' + 'Expected object but got %s.', Constructor.displayName || 'ReactClass', spec === null ? null : typeofSpec) : void 0;
-	    }
-	
-	    return;
-	  }
-	
-	  !(typeof spec !== 'function') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactClass: You\'re attempting to use a component class or function as a mixin. Instead, just use a regular object.') : _prodInvariant('75') : void 0;
-	  !!ReactElement.isValidElement(spec) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactClass: You\'re attempting to use a component as a mixin. Instead, just use a regular object.') : _prodInvariant('76') : void 0;
-	
-	  var proto = Constructor.prototype;
-	  var autoBindPairs = proto.__reactAutoBindPairs;
-	
-	  // By handling mixins before any other properties, we ensure the same
-	  // chaining order is applied to methods with DEFINE_MANY policy, whether
-	  // mixins are listed before or after these methods in the spec.
-	  if (spec.hasOwnProperty(MIXINS_KEY)) {
-	    RESERVED_SPEC_KEYS.mixins(Constructor, spec.mixins);
-	  }
-	
-	  for (var name in spec) {
-	    if (!spec.hasOwnProperty(name)) {
-	      continue;
-	    }
-	
-	    if (name === MIXINS_KEY) {
-	      // We have already handled mixins in a special case above.
-	      continue;
-	    }
-	
-	    var property = spec[name];
-	    var isAlreadyDefined = proto.hasOwnProperty(name);
-	    validateMethodOverride(isAlreadyDefined, name);
-	
-	    if (RESERVED_SPEC_KEYS.hasOwnProperty(name)) {
-	      RESERVED_SPEC_KEYS[name](Constructor, property);
-	    } else {
-	      // Setup methods on prototype:
-	      // The following member methods should not be automatically bound:
-	      // 1. Expected ReactClass methods (in the "interface").
-	      // 2. Overridden methods (that were mixed in).
-	      var isReactClassMethod = ReactClassInterface.hasOwnProperty(name);
-	      var isFunction = typeof property === 'function';
-	      var shouldAutoBind = isFunction && !isReactClassMethod && !isAlreadyDefined && spec.autobind !== false;
-	
-	      if (shouldAutoBind) {
-	        autoBindPairs.push(name, property);
-	        proto[name] = property;
-	      } else {
-	        if (isAlreadyDefined) {
-	          var specPolicy = ReactClassInterface[name];
-	
-	          // These cases should already be caught by validateMethodOverride.
-	          !(isReactClassMethod && (specPolicy === 'DEFINE_MANY_MERGED' || specPolicy === 'DEFINE_MANY')) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactClass: Unexpected spec policy %s for key %s when mixing in component specs.', specPolicy, name) : _prodInvariant('77', specPolicy, name) : void 0;
-	
-	          // For methods which are defined more than once, call the existing
-	          // methods before calling the new property, merging if appropriate.
-	          if (specPolicy === 'DEFINE_MANY_MERGED') {
-	            proto[name] = createMergedResultFunction(proto[name], property);
-	          } else if (specPolicy === 'DEFINE_MANY') {
-	            proto[name] = createChainedFunction(proto[name], property);
-	          }
-	        } else {
-	          proto[name] = property;
-	          if (process.env.NODE_ENV !== 'production') {
-	            // Add verbose displayName to the function, which helps when looking
-	            // at profiling tools.
-	            if (typeof property === 'function' && spec.displayName) {
-	              proto[name].displayName = spec.displayName + '_' + name;
-	            }
-	          }
-	        }
-	      }
-	    }
-	  }
-	}
-	
-	function mixStaticSpecIntoComponent(Constructor, statics) {
-	  if (!statics) {
-	    return;
-	  }
-	  for (var name in statics) {
-	    var property = statics[name];
-	    if (!statics.hasOwnProperty(name)) {
-	      continue;
-	    }
-	
-	    var isReserved = name in RESERVED_SPEC_KEYS;
-	    !!isReserved ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactClass: You are attempting to define a reserved property, `%s`, that shouldn\'t be on the "statics" key. Define it as an instance property instead; it will still be accessible on the constructor.', name) : _prodInvariant('78', name) : void 0;
-	
-	    var isInherited = name in Constructor;
-	    !!isInherited ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactClass: You are attempting to define `%s` on your component more than once. This conflict may be due to a mixin.', name) : _prodInvariant('79', name) : void 0;
-	    Constructor[name] = property;
-	  }
-	}
-	
-	/**
-	 * Merge two objects, but throw if both contain the same key.
-	 *
-	 * @param {object} one The first object, which is mutated.
-	 * @param {object} two The second object
-	 * @return {object} one after it has been mutated to contain everything in two.
-	 */
-	function mergeIntoWithNoDuplicateKeys(one, two) {
-	  !(one && two && typeof one === 'object' && typeof two === 'object') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'mergeIntoWithNoDuplicateKeys(): Cannot merge non-objects.') : _prodInvariant('80') : void 0;
-	
-	  for (var key in two) {
-	    if (two.hasOwnProperty(key)) {
-	      !(one[key] === undefined) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'mergeIntoWithNoDuplicateKeys(): Tried to merge two objects with the same key: `%s`. This conflict may be due to a mixin; in particular, this may be caused by two getInitialState() or getDefaultProps() methods returning objects with clashing keys.', key) : _prodInvariant('81', key) : void 0;
-	      one[key] = two[key];
-	    }
-	  }
-	  return one;
-	}
-	
-	/**
-	 * Creates a function that invokes two functions and merges their return values.
-	 *
-	 * @param {function} one Function to invoke first.
-	 * @param {function} two Function to invoke second.
-	 * @return {function} Function that invokes the two argument functions.
-	 * @private
-	 */
-	function createMergedResultFunction(one, two) {
-	  return function mergedResult() {
-	    var a = one.apply(this, arguments);
-	    var b = two.apply(this, arguments);
-	    if (a == null) {
-	      return b;
-	    } else if (b == null) {
-	      return a;
-	    }
-	    var c = {};
-	    mergeIntoWithNoDuplicateKeys(c, a);
-	    mergeIntoWithNoDuplicateKeys(c, b);
-	    return c;
-	  };
-	}
-	
-	/**
-	 * Creates a function that invokes two functions and ignores their return vales.
-	 *
-	 * @param {function} one Function to invoke first.
-	 * @param {function} two Function to invoke second.
-	 * @return {function} Function that invokes the two argument functions.
-	 * @private
-	 */
-	function createChainedFunction(one, two) {
-	  return function chainedFunction() {
-	    one.apply(this, arguments);
-	    two.apply(this, arguments);
-	  };
-	}
-	
-	/**
-	 * Binds a method to the component.
-	 *
-	 * @param {object} component Component whose method is going to be bound.
-	 * @param {function} method Method to be bound.
-	 * @return {function} The bound method.
-	 */
-	function bindAutoBindMethod(component, method) {
-	  var boundMethod = method.bind(component);
-	  if (process.env.NODE_ENV !== 'production') {
-	    boundMethod.__reactBoundContext = component;
-	    boundMethod.__reactBoundMethod = method;
-	    boundMethod.__reactBoundArguments = null;
-	    var componentName = component.constructor.displayName;
-	    var _bind = boundMethod.bind;
-	    boundMethod.bind = function (newThis) {
-	      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	        args[_key - 1] = arguments[_key];
-	      }
-	
-	      // User is trying to bind() an autobound method; we effectively will
-	      // ignore the value of "this" that the user is trying to use, so
-	      // let's warn.
-	      if (newThis !== component && newThis !== null) {
-	        process.env.NODE_ENV !== 'production' ? warning(false, 'bind(): React component methods may only be bound to the ' + 'component instance. See %s', componentName) : void 0;
-	      } else if (!args.length) {
-	        process.env.NODE_ENV !== 'production' ? warning(false, 'bind(): You are binding a component method to the component. ' + 'React does this for you automatically in a high-performance ' + 'way, so you can safely remove this call. See %s', componentName) : void 0;
-	        return boundMethod;
-	      }
-	      var reboundMethod = _bind.apply(boundMethod, arguments);
-	      reboundMethod.__reactBoundContext = component;
-	      reboundMethod.__reactBoundMethod = method;
-	      reboundMethod.__reactBoundArguments = args;
-	      return reboundMethod;
-	    };
-	  }
-	  return boundMethod;
-	}
-	
-	/**
-	 * Binds all auto-bound methods in a component.
-	 *
-	 * @param {object} component Component whose method is going to be bound.
-	 */
-	function bindAutoBindMethods(component) {
-	  var pairs = component.__reactAutoBindPairs;
-	  for (var i = 0; i < pairs.length; i += 2) {
-	    var autoBindKey = pairs[i];
-	    var method = pairs[i + 1];
-	    component[autoBindKey] = bindAutoBindMethod(component, method);
-	  }
-	}
-	
-	/**
-	 * Add more to the ReactClass base class. These are all legacy features and
-	 * therefore not already part of the modern ReactComponent.
-	 */
-	var ReactClassMixin = {
-	
-	  /**
-	   * TODO: This will be deprecated because state should always keep a consistent
-	   * type signature and the only use case for this, is to avoid that.
-	   */
-	  replaceState: function (newState, callback) {
-	    this.updater.enqueueReplaceState(this, newState);
-	    if (callback) {
-	      this.updater.enqueueCallback(this, callback, 'replaceState');
-	    }
-	  },
-	
-	  /**
-	   * Checks whether or not this composite component is mounted.
-	   * @return {boolean} True if mounted, false otherwise.
-	   * @protected
-	   * @final
-	   */
-	  isMounted: function () {
-	    return this.updater.isMounted(this);
-	  }
-	};
-	
-	var ReactClassComponent = function () {};
-	_assign(ReactClassComponent.prototype, ReactComponent.prototype, ReactClassMixin);
-	
-	var didWarnDeprecated = false;
-	
-	/**
-	 * Module for creating composite components.
-	 *
-	 * @class ReactClass
-	 */
-	var ReactClass = {
-	
-	  /**
-	   * Creates a composite component class given a class specification.
-	   * See https://facebook.github.io/react/docs/top-level-api.html#react.createclass
-	   *
-	   * @param {object} spec Class specification (which must define `render`).
-	   * @return {function} Component constructor function.
-	   * @public
-	   */
-	  createClass: function (spec) {
-	    if (process.env.NODE_ENV !== 'production') {
-	      process.env.NODE_ENV !== 'production' ? warning(didWarnDeprecated, '%s: React.createClass is deprecated and will be removed in version 16. ' + 'Use plain JavaScript classes instead. If you\'re not yet ready to ' + 'migrate, create-react-class is available on npm as a ' + 'drop-in replacement.', spec && spec.displayName || 'A Component') : void 0;
-	      didWarnDeprecated = true;
-	    }
-	
-	    // To keep our warnings more understandable, we'll use a little hack here to
-	    // ensure that Constructor.name !== 'Constructor'. This makes sure we don't
-	    // unnecessarily identify a class without displayName as 'Constructor'.
-	    var Constructor = identity(function (props, context, updater) {
-	      // This constructor gets overridden by mocks. The argument is used
-	      // by mocks to assert on what gets mounted.
-	
-	      if (process.env.NODE_ENV !== 'production') {
-	        process.env.NODE_ENV !== 'production' ? warning(this instanceof Constructor, 'Something is calling a React component directly. Use a factory or ' + 'JSX instead. See: https://fb.me/react-legacyfactory') : void 0;
-	      }
-	
-	      // Wire up auto-binding
-	      if (this.__reactAutoBindPairs.length) {
-	        bindAutoBindMethods(this);
-	      }
-	
-	      this.props = props;
-	      this.context = context;
-	      this.refs = emptyObject;
-	      this.updater = updater || ReactNoopUpdateQueue;
-	
-	      this.state = null;
-	
-	      // ReactClasses doesn't have constructors. Instead, they use the
-	      // getInitialState and componentWillMount methods for initialization.
-	
-	      var initialState = this.getInitialState ? this.getInitialState() : null;
-	      if (process.env.NODE_ENV !== 'production') {
-	        // We allow auto-mocks to proceed as if they're returning null.
-	        if (initialState === undefined && this.getInitialState._isMockFunction) {
-	          // This is probably bad practice. Consider warning here and
-	          // deprecating this convenience.
-	          initialState = null;
-	        }
-	      }
-	      !(typeof initialState === 'object' && !Array.isArray(initialState)) ? process.env.NODE_ENV !== 'production' ? invariant(false, '%s.getInitialState(): must return an object or null', Constructor.displayName || 'ReactCompositeComponent') : _prodInvariant('82', Constructor.displayName || 'ReactCompositeComponent') : void 0;
-	
-	      this.state = initialState;
-	    });
-	    Constructor.prototype = new ReactClassComponent();
-	    Constructor.prototype.constructor = Constructor;
-	    Constructor.prototype.__reactAutoBindPairs = [];
-	
-	    injectedMixins.forEach(mixSpecIntoComponent.bind(null, Constructor));
-	
-	    mixSpecIntoComponent(Constructor, spec);
-	
-	    // Initialize the defaultProps property after all mixins have been merged.
-	    if (Constructor.getDefaultProps) {
-	      Constructor.defaultProps = Constructor.getDefaultProps();
-	    }
-	
-	    if (process.env.NODE_ENV !== 'production') {
-	      // This is a tag to indicate that the use of these method names is ok,
-	      // since it's used with createClass. If it's not, then it's likely a
-	      // mistake so we'll warn you to use the static property, property
-	      // initializer or constructor respectively.
-	      if (Constructor.getDefaultProps) {
-	        Constructor.getDefaultProps.isReactClassApproved = {};
-	      }
-	      if (Constructor.prototype.getInitialState) {
-	        Constructor.prototype.getInitialState.isReactClassApproved = {};
-	      }
-	    }
-	
-	    !Constructor.prototype.render ? process.env.NODE_ENV !== 'production' ? invariant(false, 'createClass(...): Class specification must implement a `render` method.') : _prodInvariant('83') : void 0;
-	
-	    if (process.env.NODE_ENV !== 'production') {
-	      process.env.NODE_ENV !== 'production' ? warning(!Constructor.prototype.componentShouldUpdate, '%s has a method called ' + 'componentShouldUpdate(). Did you mean shouldComponentUpdate()? ' + 'The name is phrased as a question because the function is ' + 'expected to return a value.', spec.displayName || 'A component') : void 0;
-	      process.env.NODE_ENV !== 'production' ? warning(!Constructor.prototype.componentWillRecieveProps, '%s has a method called ' + 'componentWillRecieveProps(). Did you mean componentWillReceiveProps()?', spec.displayName || 'A component') : void 0;
-	    }
-	
-	    // Reduce time spent doing lookups by setting these on the prototype.
-	    for (var methodName in ReactClassInterface) {
-	      if (!Constructor.prototype[methodName]) {
-	        Constructor.prototype[methodName] = null;
-	      }
-	    }
-	
-	    return Constructor;
-	  },
-	
-	  injection: {
-	    injectMixin: function (mixin) {
-	      injectedMixins.push(mixin);
-	    }
-	  }
-	
-	};
-	
-	module.exports = ReactClass;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * 
-	 */
-	
-	'use strict';
-	
-	var ReactPropTypeLocationNames = {};
-	
-	if (process.env.NODE_ENV !== 'production') {
-	  ReactPropTypeLocationNames = {
-	    prop: 'prop',
-	    context: 'context',
-	    childContext: 'child context'
-	  };
-	}
-	
-	module.exports = ReactPropTypeLocationNames;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 */
-	
-	'use strict';
-	
-	var ReactElement = __webpack_require__(9);
+	var ReactElement = __webpack_require__(16);
 	
 	/**
 	 * Create a factory that creates HTML tag elements.
@@ -2892,13 +2176,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	var createDOMFactory = ReactElement.createFactory;
 	if (process.env.NODE_ENV !== 'production') {
-	  var ReactElementValidator = __webpack_require__(25);
+	  var ReactElementValidator = __webpack_require__(23);
 	  createDOMFactory = ReactElementValidator.createFactory;
 	}
 	
 	/**
 	 * Creates a mapping from supported HTML tags to `ReactDOMComponent` classes.
-	 * This is also accessible via `React.DOM`.
 	 *
 	 * @public
 	 */
@@ -3043,16 +2326,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 25 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2014-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2014-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 */
 	
@@ -3065,15 +2346,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	'use strict';
 	
-	var ReactCurrentOwner = __webpack_require__(10);
-	var ReactComponentTreeHook = __webpack_require__(26);
-	var ReactElement = __webpack_require__(9);
+	var ReactCurrentOwner = __webpack_require__(17);
+	var ReactComponentTreeHook = __webpack_require__(24);
+	var ReactElement = __webpack_require__(16);
 	
-	var checkReactTypeSpec = __webpack_require__(27);
+	var checkReactTypeSpec = __webpack_require__(25);
 	
-	var canDefineProperty = __webpack_require__(13);
-	var getIteratorFn = __webpack_require__(16);
-	var warning = __webpack_require__(11);
+	var canDefineProperty = __webpack_require__(10);
+	var getIteratorFn = __webpack_require__(20);
+	var warning = __webpack_require__(8);
+	var lowPriorityWarning = __webpack_require__(13);
 	
 	function getDeclarationErrorAddendum() {
 	  if (ReactCurrentOwner.current) {
@@ -3214,7 +2496,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	var ReactElementValidator = {
-	
 	  createElement: function (type, props, children) {
 	    var validType = typeof type === 'string' || typeof type === 'function';
 	    // We warn in this case but don't throw. We expect the element creation to
@@ -3223,7 +2504,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (typeof type !== 'function' && typeof type !== 'string') {
 	        var info = '';
 	        if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
-	          info += ' You likely forgot to export your component from the file ' + 'it\'s defined in.';
+	          info += ' You likely forgot to export your component from the file ' + "it's defined in.";
 	        }
 	
 	        var sourceInfo = getSourceInfoErrorAddendum(props);
@@ -3235,7 +2516,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        info += ReactComponentTreeHook.getCurrentStackAddendum();
 	
+	        var currentSource = props !== null && props !== undefined && props.__source !== undefined ? props.__source : null;
+	        ReactComponentTreeHook.pushNonStandardWarningStack(true, currentSource);
 	        process.env.NODE_ENV !== 'production' ? warning(false, 'React.createElement: type is invalid -- expected a string (for ' + 'built-in components) or a class/function (for composite ' + 'components) but got: %s.%s', type == null ? type : typeof type, info) : void 0;
+	        ReactComponentTreeHook.popNonStandardWarningStack();
 	      }
 	    }
 	
@@ -3273,7 +2557,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        Object.defineProperty(validatedFactory, 'type', {
 	          enumerable: false,
 	          get: function () {
-	            process.env.NODE_ENV !== 'production' ? warning(false, 'Factory.type is deprecated. Access the class directly ' + 'before passing it to createFactory.') : void 0;
+	            lowPriorityWarning(false, 'Factory.type is deprecated. Access the class directly ' + 'before passing it to createFactory.');
 	            Object.defineProperty(this, 'type', {
 	              value: type
 	            });
@@ -3294,35 +2578,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	    validatePropTypes(newElement);
 	    return newElement;
 	  }
-	
 	};
 	
 	module.exports = ReactElementValidator;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 26 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2016-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2016-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * 
 	 */
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(7);
+	var _prodInvariant = __webpack_require__(6);
 	
-	var ReactCurrentOwner = __webpack_require__(10);
+	var ReactCurrentOwner = __webpack_require__(17);
 	
-	var invariant = __webpack_require__(8);
-	var warning = __webpack_require__(11);
+	var invariant = __webpack_require__(12);
+	var warning = __webpack_require__(8);
 	
 	function isNative(fn) {
 	  // Based on isNative() from Lodash
@@ -3330,11 +2611,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var hasOwnProperty = Object.prototype.hasOwnProperty;
 	  var reIsNative = RegExp('^' + funcToString
 	  // Take an example native function source for comparison
-	  .call(hasOwnProperty)
+	  .call(hasOwnProperty
 	  // Strip regex characters so we can use it for regex
-	  .replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
+	  ).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&'
 	  // Remove hasOwnProperty from the template to make it generic
-	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$');
+	  ).replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$');
 	  try {
 	    var source = funcToString.call(fn);
 	    return reIsNative.test(source);
@@ -3633,35 +2914,78 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  getRootIDs: getRootIDs,
-	  getRegisteredIDs: getItemIDs
+	  getRegisteredIDs: getItemIDs,
+	
+	  pushNonStandardWarningStack: function (isCreatingElement, currentSource) {
+	    if (typeof console.reactStack !== 'function') {
+	      return;
+	    }
+	
+	    var stack = [];
+	    var currentOwner = ReactCurrentOwner.current;
+	    var id = currentOwner && currentOwner._debugID;
+	
+	    try {
+	      if (isCreatingElement) {
+	        stack.push({
+	          name: id ? ReactComponentTreeHook.getDisplayName(id) : null,
+	          fileName: currentSource ? currentSource.fileName : null,
+	          lineNumber: currentSource ? currentSource.lineNumber : null
+	        });
+	      }
+	
+	      while (id) {
+	        var element = ReactComponentTreeHook.getElement(id);
+	        var parentID = ReactComponentTreeHook.getParentID(id);
+	        var ownerID = ReactComponentTreeHook.getOwnerID(id);
+	        var ownerName = ownerID ? ReactComponentTreeHook.getDisplayName(ownerID) : null;
+	        var source = element && element._source;
+	        stack.push({
+	          name: ownerName,
+	          fileName: source ? source.fileName : null,
+	          lineNumber: source ? source.lineNumber : null
+	        });
+	        id = parentID;
+	      }
+	    } catch (err) {
+	      // Internal state is messed up.
+	      // Stop building the stack (it's just a nice to have).
+	    }
+	
+	    console.reactStack(stack);
+	  },
+	  popNonStandardWarningStack: function () {
+	    if (typeof console.reactStackEnd !== 'function') {
+	      return;
+	    }
+	    console.reactStackEnd();
+	  }
 	};
 	
 	module.exports = ReactComponentTreeHook;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 27 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 */
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(7);
+	var _prodInvariant = __webpack_require__(6);
 	
-	var ReactPropTypeLocationNames = __webpack_require__(23);
-	var ReactPropTypesSecret = __webpack_require__(28);
+	var ReactPropTypeLocationNames = __webpack_require__(26);
+	var ReactPropTypesSecret = __webpack_require__(27);
 	
-	var invariant = __webpack_require__(8);
-	var warning = __webpack_require__(11);
+	var invariant = __webpack_require__(12);
+	var warning = __webpack_require__(8);
 	
 	var ReactComponentTreeHook;
 	
@@ -3671,7 +2995,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // https://github.com/facebook/react/issues/7240
 	  // Remove the inline requires when we don't need them anymore:
 	  // https://github.com/facebook/react/pull/7178
-	  ReactComponentTreeHook = __webpack_require__(26);
+	  ReactComponentTreeHook = __webpack_require__(24);
 	}
 	
 	var loggedTypeFailures = {};
@@ -3713,7 +3037,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        if (process.env.NODE_ENV !== 'production') {
 	          if (!ReactComponentTreeHook) {
-	            ReactComponentTreeHook = __webpack_require__(26);
+	            ReactComponentTreeHook = __webpack_require__(24);
 	          }
 	          if (debugID !== null) {
 	            componentStackInfo = ReactComponentTreeHook.getStackAddendumByID(debugID);
@@ -3732,16 +3056,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 28 */
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 *
+	 * 
+	 */
+	
+	'use strict';
+	
+	var ReactPropTypeLocationNames = {};
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  ReactPropTypeLocationNames = {
+	    prop: 'prop',
+	    context: 'context',
+	    childContext: 'child context'
+	  };
+	}
+	
+	module.exports = ReactPropTypeLocationNames;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ }),
+/* 27 */
 /***/ (function(module, exports) {
 
 	/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 * 
 	 */
@@ -3753,39 +3103,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ReactPropTypesSecret;
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 */
 	
 	'use strict';
 	
-	var _require = __webpack_require__(9),
+	var _require = __webpack_require__(16),
 	    isValidElement = _require.isValidElement;
 	
-	var factory = __webpack_require__(30);
+	var factory = __webpack_require__(29);
 	
 	module.exports = factory(isValidElement);
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 */
 	
 	'use strict';
@@ -3794,7 +3140,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Therefore we re-export development-only version with all the PropTypes checks here.
 	// However if one is migrating to the `prop-types` npm library, they will go through the
 	// `index.js` entry point, and it will branch depending on the environment.
-	var factory = __webpack_require__(31);
+	var factory = __webpack_require__(30);
 	module.exports = function(isValidElement) {
 	  // It is still allowed in 15.5.
 	  var throwOnDirectAccess = false;
@@ -3803,26 +3149,25 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 */
 	
 	'use strict';
 	
-	var emptyFunction = __webpack_require__(12);
-	var invariant = __webpack_require__(8);
-	var warning = __webpack_require__(11);
+	var emptyFunction = __webpack_require__(9);
+	var invariant = __webpack_require__(12);
+	var warning = __webpack_require__(8);
+	var assign = __webpack_require__(4);
 	
-	var ReactPropTypesSecret = __webpack_require__(32);
-	var checkPropTypes = __webpack_require__(33);
+	var ReactPropTypesSecret = __webpack_require__(31);
+	var checkPropTypes = __webpack_require__(32);
 	
 	module.exports = function(isValidElement, throwOnDirectAccess) {
 	  /* global Symbol */
@@ -3918,7 +3263,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    objectOf: createObjectOfTypeChecker,
 	    oneOf: createEnumTypeChecker,
 	    oneOfType: createUnionTypeChecker,
-	    shape: createShapeTypeChecker
+	    shape: createShapeTypeChecker,
+	    exact: createStrictShapeTypeChecker,
 	  };
 	
 	  /**
@@ -4128,6 +3474,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return emptyFunction.thatReturnsNull;
 	    }
 	
+	    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+	      var checker = arrayOfTypeCheckers[i];
+	      if (typeof checker !== 'function') {
+	        warning(
+	          false,
+	          'Invalid argument supplied to oneOfType. Expected an array of check functions, but ' +
+	          'received %s at index %s.',
+	          getPostfixForTypeWarning(checker),
+	          i
+	        );
+	        return emptyFunction.thatReturnsNull;
+	      }
+	    }
+	
 	    function validate(props, propName, componentName, location, propFullName) {
 	      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
 	        var checker = arrayOfTypeCheckers[i];
@@ -4170,6 +3530,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	      return null;
 	    }
+	    return createChainableTypeChecker(validate);
+	  }
+	
+	  function createStrictShapeTypeChecker(shapeTypes) {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      var propValue = props[propName];
+	      var propType = getPropType(propValue);
+	      if (propType !== 'object') {
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+	      }
+	      // We need to check all keys in case some are required but missing from
+	      // props.
+	      var allKeys = assign({}, props[propName], shapeTypes);
+	      for (var key in allKeys) {
+	        var checker = shapeTypes[key];
+	        if (!checker) {
+	          return new PropTypeError(
+	            'Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' +
+	            '\nBad object: ' + JSON.stringify(props[propName], null, '  ') +
+	            '\nValid keys: ' +  JSON.stringify(Object.keys(shapeTypes), null, '  ')
+	          );
+	        }
+	        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+	        if (error) {
+	          return error;
+	        }
+	      }
+	      return null;
+	    }
+	
 	    return createChainableTypeChecker(validate);
 	  }
 	
@@ -4260,6 +3650,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // This handles more types than `getPropType`. Only used for error messages.
 	  // See `createPrimitiveTypeChecker`.
 	  function getPreciseType(propValue) {
+	    if (typeof propValue === 'undefined' || propValue === null) {
+	      return '' + propValue;
+	    }
 	    var propType = getPropType(propValue);
 	    if (propType === 'object') {
 	      if (propValue instanceof Date) {
@@ -4269,6 +3662,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    }
 	    return propType;
+	  }
+	
+	  // Returns a string that is postfixed to a warning about an invalid type.
+	  // For example, "undefined" or "of type array"
+	  function getPostfixForTypeWarning(value) {
+	    var type = getPreciseType(value);
+	    switch (type) {
+	      case 'array':
+	      case 'object':
+	        return 'an ' + type;
+	      case 'boolean':
+	      case 'date':
+	      case 'regexp':
+	        return 'a ' + type;
+	      default:
+	        return type;
+	    }
 	  }
 	
 	  // Returns class name of the object, if any.
@@ -4288,16 +3698,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, exports) {
 
 	/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 */
 	
 	'use strict';
@@ -4308,24 +3716,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 */
 	
 	'use strict';
 	
 	if (process.env.NODE_ENV !== 'production') {
-	  var invariant = __webpack_require__(8);
-	  var warning = __webpack_require__(11);
-	  var ReactPropTypesSecret = __webpack_require__(32);
+	  var invariant = __webpack_require__(12);
+	  var warning = __webpack_require__(8);
+	  var ReactPropTypesSecret = __webpack_require__(31);
 	  var loggedTypeFailures = {};
 	}
 	
@@ -4351,7 +3757,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        try {
 	          // This is intentionally an invariant that gets caught. It's the same
 	          // behavior as without this statement except with a better message.
-	          invariant(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'React.PropTypes.', componentName || 'React class', location, typeSpecName);
+	          invariant(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'the `prop-types` package, but received `%s`.', componentName || 'React class', location, typeSpecName, typeof typeSpecs[typeSpecName]);
 	          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret);
 	        } catch (ex) {
 	          error = ex;
@@ -4376,43 +3782,997 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, exports) {
 
 	/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 */
 	
 	'use strict';
 	
-	module.exports = '15.5.4';
+	module.exports = '15.6.2';
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 *
+	 */
+	
+	'use strict';
+	
+	var _require = __webpack_require__(5),
+	    Component = _require.Component;
+	
+	var _require2 = __webpack_require__(16),
+	    isValidElement = _require2.isValidElement;
+	
+	var ReactNoopUpdateQueue = __webpack_require__(7);
+	var factory = __webpack_require__(35);
+	
+	module.exports = factory(Component, isValidElement, ReactNoopUpdateQueue);
 
 /***/ }),
 /* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 *
+	 */
+	
+	'use strict';
+	
+	var _assign = __webpack_require__(4);
+	
+	var emptyObject = __webpack_require__(11);
+	var _invariant = __webpack_require__(12);
+	
+	if (process.env.NODE_ENV !== 'production') {
+	  var warning = __webpack_require__(8);
+	}
+	
+	var MIXINS_KEY = 'mixins';
+	
+	// Helper function to allow the creation of anonymous functions which do not
+	// have .name set to the name of the variable being assigned to.
+	function identity(fn) {
+	  return fn;
+	}
+	
+	var ReactPropTypeLocationNames;
+	if (process.env.NODE_ENV !== 'production') {
+	  ReactPropTypeLocationNames = {
+	    prop: 'prop',
+	    context: 'context',
+	    childContext: 'child context'
+	  };
+	} else {
+	  ReactPropTypeLocationNames = {};
+	}
+	
+	function factory(ReactComponent, isValidElement, ReactNoopUpdateQueue) {
+	  /**
+	   * Policies that describe methods in `ReactClassInterface`.
+	   */
+	
+	  var injectedMixins = [];
+	
+	  /**
+	   * Composite components are higher-level components that compose other composite
+	   * or host components.
+	   *
+	   * To create a new type of `ReactClass`, pass a specification of
+	   * your new class to `React.createClass`. The only requirement of your class
+	   * specification is that you implement a `render` method.
+	   *
+	   *   var MyComponent = React.createClass({
+	   *     render: function() {
+	   *       return <div>Hello World</div>;
+	   *     }
+	   *   });
+	   *
+	   * The class specification supports a specific protocol of methods that have
+	   * special meaning (e.g. `render`). See `ReactClassInterface` for
+	   * more the comprehensive protocol. Any other properties and methods in the
+	   * class specification will be available on the prototype.
+	   *
+	   * @interface ReactClassInterface
+	   * @internal
+	   */
+	  var ReactClassInterface = {
+	    /**
+	     * An array of Mixin objects to include when defining your component.
+	     *
+	     * @type {array}
+	     * @optional
+	     */
+	    mixins: 'DEFINE_MANY',
+	
+	    /**
+	     * An object containing properties and methods that should be defined on
+	     * the component's constructor instead of its prototype (static methods).
+	     *
+	     * @type {object}
+	     * @optional
+	     */
+	    statics: 'DEFINE_MANY',
+	
+	    /**
+	     * Definition of prop types for this component.
+	     *
+	     * @type {object}
+	     * @optional
+	     */
+	    propTypes: 'DEFINE_MANY',
+	
+	    /**
+	     * Definition of context types for this component.
+	     *
+	     * @type {object}
+	     * @optional
+	     */
+	    contextTypes: 'DEFINE_MANY',
+	
+	    /**
+	     * Definition of context types this component sets for its children.
+	     *
+	     * @type {object}
+	     * @optional
+	     */
+	    childContextTypes: 'DEFINE_MANY',
+	
+	    // ==== Definition methods ====
+	
+	    /**
+	     * Invoked when the component is mounted. Values in the mapping will be set on
+	     * `this.props` if that prop is not specified (i.e. using an `in` check).
+	     *
+	     * This method is invoked before `getInitialState` and therefore cannot rely
+	     * on `this.state` or use `this.setState`.
+	     *
+	     * @return {object}
+	     * @optional
+	     */
+	    getDefaultProps: 'DEFINE_MANY_MERGED',
+	
+	    /**
+	     * Invoked once before the component is mounted. The return value will be used
+	     * as the initial value of `this.state`.
+	     *
+	     *   getInitialState: function() {
+	     *     return {
+	     *       isOn: false,
+	     *       fooBaz: new BazFoo()
+	     *     }
+	     *   }
+	     *
+	     * @return {object}
+	     * @optional
+	     */
+	    getInitialState: 'DEFINE_MANY_MERGED',
+	
+	    /**
+	     * @return {object}
+	     * @optional
+	     */
+	    getChildContext: 'DEFINE_MANY_MERGED',
+	
+	    /**
+	     * Uses props from `this.props` and state from `this.state` to render the
+	     * structure of the component.
+	     *
+	     * No guarantees are made about when or how often this method is invoked, so
+	     * it must not have side effects.
+	     *
+	     *   render: function() {
+	     *     var name = this.props.name;
+	     *     return <div>Hello, {name}!</div>;
+	     *   }
+	     *
+	     * @return {ReactComponent}
+	     * @required
+	     */
+	    render: 'DEFINE_ONCE',
+	
+	    // ==== Delegate methods ====
+	
+	    /**
+	     * Invoked when the component is initially created and about to be mounted.
+	     * This may have side effects, but any external subscriptions or data created
+	     * by this method must be cleaned up in `componentWillUnmount`.
+	     *
+	     * @optional
+	     */
+	    componentWillMount: 'DEFINE_MANY',
+	
+	    /**
+	     * Invoked when the component has been mounted and has a DOM representation.
+	     * However, there is no guarantee that the DOM node is in the document.
+	     *
+	     * Use this as an opportunity to operate on the DOM when the component has
+	     * been mounted (initialized and rendered) for the first time.
+	     *
+	     * @param {DOMElement} rootNode DOM element representing the component.
+	     * @optional
+	     */
+	    componentDidMount: 'DEFINE_MANY',
+	
+	    /**
+	     * Invoked before the component receives new props.
+	     *
+	     * Use this as an opportunity to react to a prop transition by updating the
+	     * state using `this.setState`. Current props are accessed via `this.props`.
+	     *
+	     *   componentWillReceiveProps: function(nextProps, nextContext) {
+	     *     this.setState({
+	     *       likesIncreasing: nextProps.likeCount > this.props.likeCount
+	     *     });
+	     *   }
+	     *
+	     * NOTE: There is no equivalent `componentWillReceiveState`. An incoming prop
+	     * transition may cause a state change, but the opposite is not true. If you
+	     * need it, you are probably looking for `componentWillUpdate`.
+	     *
+	     * @param {object} nextProps
+	     * @optional
+	     */
+	    componentWillReceiveProps: 'DEFINE_MANY',
+	
+	    /**
+	     * Invoked while deciding if the component should be updated as a result of
+	     * receiving new props, state and/or context.
+	     *
+	     * Use this as an opportunity to `return false` when you're certain that the
+	     * transition to the new props/state/context will not require a component
+	     * update.
+	     *
+	     *   shouldComponentUpdate: function(nextProps, nextState, nextContext) {
+	     *     return !equal(nextProps, this.props) ||
+	     *       !equal(nextState, this.state) ||
+	     *       !equal(nextContext, this.context);
+	     *   }
+	     *
+	     * @param {object} nextProps
+	     * @param {?object} nextState
+	     * @param {?object} nextContext
+	     * @return {boolean} True if the component should update.
+	     * @optional
+	     */
+	    shouldComponentUpdate: 'DEFINE_ONCE',
+	
+	    /**
+	     * Invoked when the component is about to update due to a transition from
+	     * `this.props`, `this.state` and `this.context` to `nextProps`, `nextState`
+	     * and `nextContext`.
+	     *
+	     * Use this as an opportunity to perform preparation before an update occurs.
+	     *
+	     * NOTE: You **cannot** use `this.setState()` in this method.
+	     *
+	     * @param {object} nextProps
+	     * @param {?object} nextState
+	     * @param {?object} nextContext
+	     * @param {ReactReconcileTransaction} transaction
+	     * @optional
+	     */
+	    componentWillUpdate: 'DEFINE_MANY',
+	
+	    /**
+	     * Invoked when the component's DOM representation has been updated.
+	     *
+	     * Use this as an opportunity to operate on the DOM when the component has
+	     * been updated.
+	     *
+	     * @param {object} prevProps
+	     * @param {?object} prevState
+	     * @param {?object} prevContext
+	     * @param {DOMElement} rootNode DOM element representing the component.
+	     * @optional
+	     */
+	    componentDidUpdate: 'DEFINE_MANY',
+	
+	    /**
+	     * Invoked when the component is about to be removed from its parent and have
+	     * its DOM representation destroyed.
+	     *
+	     * Use this as an opportunity to deallocate any external resources.
+	     *
+	     * NOTE: There is no `componentDidUnmount` since your component will have been
+	     * destroyed by that point.
+	     *
+	     * @optional
+	     */
+	    componentWillUnmount: 'DEFINE_MANY',
+	
+	    /**
+	     * Replacement for (deprecated) `componentWillMount`.
+	     *
+	     * @optional
+	     */
+	    UNSAFE_componentWillMount: 'DEFINE_MANY',
+	
+	    /**
+	     * Replacement for (deprecated) `componentWillReceiveProps`.
+	     *
+	     * @optional
+	     */
+	    UNSAFE_componentWillReceiveProps: 'DEFINE_MANY',
+	
+	    /**
+	     * Replacement for (deprecated) `componentWillUpdate`.
+	     *
+	     * @optional
+	     */
+	    UNSAFE_componentWillUpdate: 'DEFINE_MANY',
+	
+	    // ==== Advanced methods ====
+	
+	    /**
+	     * Updates the component's currently mounted DOM representation.
+	     *
+	     * By default, this implements React's rendering and reconciliation algorithm.
+	     * Sophisticated clients may wish to override this.
+	     *
+	     * @param {ReactReconcileTransaction} transaction
+	     * @internal
+	     * @overridable
+	     */
+	    updateComponent: 'OVERRIDE_BASE'
+	  };
+	
+	  /**
+	   * Similar to ReactClassInterface but for static methods.
+	   */
+	  var ReactClassStaticInterface = {
+	    /**
+	     * This method is invoked after a component is instantiated and when it
+	     * receives new props. Return an object to update state in response to
+	     * prop changes. Return null to indicate no change to state.
+	     *
+	     * If an object is returned, its keys will be merged into the existing state.
+	     *
+	     * @return {object || null}
+	     * @optional
+	     */
+	    getDerivedStateFromProps: 'DEFINE_MANY_MERGED'
+	  };
+	
+	  /**
+	   * Mapping from class specification keys to special processing functions.
+	   *
+	   * Although these are declared like instance properties in the specification
+	   * when defining classes using `React.createClass`, they are actually static
+	   * and are accessible on the constructor instead of the prototype. Despite
+	   * being static, they must be defined outside of the "statics" key under
+	   * which all other static methods are defined.
+	   */
+	  var RESERVED_SPEC_KEYS = {
+	    displayName: function(Constructor, displayName) {
+	      Constructor.displayName = displayName;
+	    },
+	    mixins: function(Constructor, mixins) {
+	      if (mixins) {
+	        for (var i = 0; i < mixins.length; i++) {
+	          mixSpecIntoComponent(Constructor, mixins[i]);
+	        }
+	      }
+	    },
+	    childContextTypes: function(Constructor, childContextTypes) {
+	      if (process.env.NODE_ENV !== 'production') {
+	        validateTypeDef(Constructor, childContextTypes, 'childContext');
+	      }
+	      Constructor.childContextTypes = _assign(
+	        {},
+	        Constructor.childContextTypes,
+	        childContextTypes
+	      );
+	    },
+	    contextTypes: function(Constructor, contextTypes) {
+	      if (process.env.NODE_ENV !== 'production') {
+	        validateTypeDef(Constructor, contextTypes, 'context');
+	      }
+	      Constructor.contextTypes = _assign(
+	        {},
+	        Constructor.contextTypes,
+	        contextTypes
+	      );
+	    },
+	    /**
+	     * Special case getDefaultProps which should move into statics but requires
+	     * automatic merging.
+	     */
+	    getDefaultProps: function(Constructor, getDefaultProps) {
+	      if (Constructor.getDefaultProps) {
+	        Constructor.getDefaultProps = createMergedResultFunction(
+	          Constructor.getDefaultProps,
+	          getDefaultProps
+	        );
+	      } else {
+	        Constructor.getDefaultProps = getDefaultProps;
+	      }
+	    },
+	    propTypes: function(Constructor, propTypes) {
+	      if (process.env.NODE_ENV !== 'production') {
+	        validateTypeDef(Constructor, propTypes, 'prop');
+	      }
+	      Constructor.propTypes = _assign({}, Constructor.propTypes, propTypes);
+	    },
+	    statics: function(Constructor, statics) {
+	      mixStaticSpecIntoComponent(Constructor, statics);
+	    },
+	    autobind: function() {}
+	  };
+	
+	  function validateTypeDef(Constructor, typeDef, location) {
+	    for (var propName in typeDef) {
+	      if (typeDef.hasOwnProperty(propName)) {
+	        // use a warning instead of an _invariant so components
+	        // don't show up in prod but only in __DEV__
+	        if (process.env.NODE_ENV !== 'production') {
+	          warning(
+	            typeof typeDef[propName] === 'function',
+	            '%s: %s type `%s` is invalid; it must be a function, usually from ' +
+	              'React.PropTypes.',
+	            Constructor.displayName || 'ReactClass',
+	            ReactPropTypeLocationNames[location],
+	            propName
+	          );
+	        }
+	      }
+	    }
+	  }
+	
+	  function validateMethodOverride(isAlreadyDefined, name) {
+	    var specPolicy = ReactClassInterface.hasOwnProperty(name)
+	      ? ReactClassInterface[name]
+	      : null;
+	
+	    // Disallow overriding of base class methods unless explicitly allowed.
+	    if (ReactClassMixin.hasOwnProperty(name)) {
+	      _invariant(
+	        specPolicy === 'OVERRIDE_BASE',
+	        'ReactClassInterface: You are attempting to override ' +
+	          '`%s` from your class specification. Ensure that your method names ' +
+	          'do not overlap with React methods.',
+	        name
+	      );
+	    }
+	
+	    // Disallow defining methods more than once unless explicitly allowed.
+	    if (isAlreadyDefined) {
+	      _invariant(
+	        specPolicy === 'DEFINE_MANY' || specPolicy === 'DEFINE_MANY_MERGED',
+	        'ReactClassInterface: You are attempting to define ' +
+	          '`%s` on your component more than once. This conflict may be due ' +
+	          'to a mixin.',
+	        name
+	      );
+	    }
+	  }
+	
+	  /**
+	   * Mixin helper which handles policy validation and reserved
+	   * specification keys when building React classes.
+	   */
+	  function mixSpecIntoComponent(Constructor, spec) {
+	    if (!spec) {
+	      if (process.env.NODE_ENV !== 'production') {
+	        var typeofSpec = typeof spec;
+	        var isMixinValid = typeofSpec === 'object' && spec !== null;
+	
+	        if (process.env.NODE_ENV !== 'production') {
+	          warning(
+	            isMixinValid,
+	            "%s: You're attempting to include a mixin that is either null " +
+	              'or not an object. Check the mixins included by the component, ' +
+	              'as well as any mixins they include themselves. ' +
+	              'Expected object but got %s.',
+	            Constructor.displayName || 'ReactClass',
+	            spec === null ? null : typeofSpec
+	          );
+	        }
+	      }
+	
+	      return;
+	    }
+	
+	    _invariant(
+	      typeof spec !== 'function',
+	      "ReactClass: You're attempting to " +
+	        'use a component class or function as a mixin. Instead, just use a ' +
+	        'regular object.'
+	    );
+	    _invariant(
+	      !isValidElement(spec),
+	      "ReactClass: You're attempting to " +
+	        'use a component as a mixin. Instead, just use a regular object.'
+	    );
+	
+	    var proto = Constructor.prototype;
+	    var autoBindPairs = proto.__reactAutoBindPairs;
+	
+	    // By handling mixins before any other properties, we ensure the same
+	    // chaining order is applied to methods with DEFINE_MANY policy, whether
+	    // mixins are listed before or after these methods in the spec.
+	    if (spec.hasOwnProperty(MIXINS_KEY)) {
+	      RESERVED_SPEC_KEYS.mixins(Constructor, spec.mixins);
+	    }
+	
+	    for (var name in spec) {
+	      if (!spec.hasOwnProperty(name)) {
+	        continue;
+	      }
+	
+	      if (name === MIXINS_KEY) {
+	        // We have already handled mixins in a special case above.
+	        continue;
+	      }
+	
+	      var property = spec[name];
+	      var isAlreadyDefined = proto.hasOwnProperty(name);
+	      validateMethodOverride(isAlreadyDefined, name);
+	
+	      if (RESERVED_SPEC_KEYS.hasOwnProperty(name)) {
+	        RESERVED_SPEC_KEYS[name](Constructor, property);
+	      } else {
+	        // Setup methods on prototype:
+	        // The following member methods should not be automatically bound:
+	        // 1. Expected ReactClass methods (in the "interface").
+	        // 2. Overridden methods (that were mixed in).
+	        var isReactClassMethod = ReactClassInterface.hasOwnProperty(name);
+	        var isFunction = typeof property === 'function';
+	        var shouldAutoBind =
+	          isFunction &&
+	          !isReactClassMethod &&
+	          !isAlreadyDefined &&
+	          spec.autobind !== false;
+	
+	        if (shouldAutoBind) {
+	          autoBindPairs.push(name, property);
+	          proto[name] = property;
+	        } else {
+	          if (isAlreadyDefined) {
+	            var specPolicy = ReactClassInterface[name];
+	
+	            // These cases should already be caught by validateMethodOverride.
+	            _invariant(
+	              isReactClassMethod &&
+	                (specPolicy === 'DEFINE_MANY_MERGED' ||
+	                  specPolicy === 'DEFINE_MANY'),
+	              'ReactClass: Unexpected spec policy %s for key %s ' +
+	                'when mixing in component specs.',
+	              specPolicy,
+	              name
+	            );
+	
+	            // For methods which are defined more than once, call the existing
+	            // methods before calling the new property, merging if appropriate.
+	            if (specPolicy === 'DEFINE_MANY_MERGED') {
+	              proto[name] = createMergedResultFunction(proto[name], property);
+	            } else if (specPolicy === 'DEFINE_MANY') {
+	              proto[name] = createChainedFunction(proto[name], property);
+	            }
+	          } else {
+	            proto[name] = property;
+	            if (process.env.NODE_ENV !== 'production') {
+	              // Add verbose displayName to the function, which helps when looking
+	              // at profiling tools.
+	              if (typeof property === 'function' && spec.displayName) {
+	                proto[name].displayName = spec.displayName + '_' + name;
+	              }
+	            }
+	          }
+	        }
+	      }
+	    }
+	  }
+	
+	  function mixStaticSpecIntoComponent(Constructor, statics) {
+	    if (!statics) {
+	      return;
+	    }
+	
+	    for (var name in statics) {
+	      var property = statics[name];
+	      if (!statics.hasOwnProperty(name)) {
+	        continue;
+	      }
+	
+	      var isReserved = name in RESERVED_SPEC_KEYS;
+	      _invariant(
+	        !isReserved,
+	        'ReactClass: You are attempting to define a reserved ' +
+	          'property, `%s`, that shouldn\'t be on the "statics" key. Define it ' +
+	          'as an instance property instead; it will still be accessible on the ' +
+	          'constructor.',
+	        name
+	      );
+	
+	      var isAlreadyDefined = name in Constructor;
+	      if (isAlreadyDefined) {
+	        var specPolicy = ReactClassStaticInterface.hasOwnProperty(name)
+	          ? ReactClassStaticInterface[name]
+	          : null;
+	
+	        _invariant(
+	          specPolicy === 'DEFINE_MANY_MERGED',
+	          'ReactClass: You are attempting to define ' +
+	            '`%s` on your component more than once. This conflict may be ' +
+	            'due to a mixin.',
+	          name
+	        );
+	
+	        Constructor[name] = createMergedResultFunction(Constructor[name], property);
+	
+	        return;
+	      }
+	
+	      Constructor[name] = property;
+	    }
+	  }
+	
+	  /**
+	   * Merge two objects, but throw if both contain the same key.
+	   *
+	   * @param {object} one The first object, which is mutated.
+	   * @param {object} two The second object
+	   * @return {object} one after it has been mutated to contain everything in two.
+	   */
+	  function mergeIntoWithNoDuplicateKeys(one, two) {
+	    _invariant(
+	      one && two && typeof one === 'object' && typeof two === 'object',
+	      'mergeIntoWithNoDuplicateKeys(): Cannot merge non-objects.'
+	    );
+	
+	    for (var key in two) {
+	      if (two.hasOwnProperty(key)) {
+	        _invariant(
+	          one[key] === undefined,
+	          'mergeIntoWithNoDuplicateKeys(): ' +
+	            'Tried to merge two objects with the same key: `%s`. This conflict ' +
+	            'may be due to a mixin; in particular, this may be caused by two ' +
+	            'getInitialState() or getDefaultProps() methods returning objects ' +
+	            'with clashing keys.',
+	          key
+	        );
+	        one[key] = two[key];
+	      }
+	    }
+	    return one;
+	  }
+	
+	  /**
+	   * Creates a function that invokes two functions and merges their return values.
+	   *
+	   * @param {function} one Function to invoke first.
+	   * @param {function} two Function to invoke second.
+	   * @return {function} Function that invokes the two argument functions.
+	   * @private
+	   */
+	  function createMergedResultFunction(one, two) {
+	    return function mergedResult() {
+	      var a = one.apply(this, arguments);
+	      var b = two.apply(this, arguments);
+	      if (a == null) {
+	        return b;
+	      } else if (b == null) {
+	        return a;
+	      }
+	      var c = {};
+	      mergeIntoWithNoDuplicateKeys(c, a);
+	      mergeIntoWithNoDuplicateKeys(c, b);
+	      return c;
+	    };
+	  }
+	
+	  /**
+	   * Creates a function that invokes two functions and ignores their return vales.
+	   *
+	   * @param {function} one Function to invoke first.
+	   * @param {function} two Function to invoke second.
+	   * @return {function} Function that invokes the two argument functions.
+	   * @private
+	   */
+	  function createChainedFunction(one, two) {
+	    return function chainedFunction() {
+	      one.apply(this, arguments);
+	      two.apply(this, arguments);
+	    };
+	  }
+	
+	  /**
+	   * Binds a method to the component.
+	   *
+	   * @param {object} component Component whose method is going to be bound.
+	   * @param {function} method Method to be bound.
+	   * @return {function} The bound method.
+	   */
+	  function bindAutoBindMethod(component, method) {
+	    var boundMethod = method.bind(component);
+	    if (process.env.NODE_ENV !== 'production') {
+	      boundMethod.__reactBoundContext = component;
+	      boundMethod.__reactBoundMethod = method;
+	      boundMethod.__reactBoundArguments = null;
+	      var componentName = component.constructor.displayName;
+	      var _bind = boundMethod.bind;
+	      boundMethod.bind = function(newThis) {
+	        for (
+	          var _len = arguments.length,
+	            args = Array(_len > 1 ? _len - 1 : 0),
+	            _key = 1;
+	          _key < _len;
+	          _key++
+	        ) {
+	          args[_key - 1] = arguments[_key];
+	        }
+	
+	        // User is trying to bind() an autobound method; we effectively will
+	        // ignore the value of "this" that the user is trying to use, so
+	        // let's warn.
+	        if (newThis !== component && newThis !== null) {
+	          if (process.env.NODE_ENV !== 'production') {
+	            warning(
+	              false,
+	              'bind(): React component methods may only be bound to the ' +
+	                'component instance. See %s',
+	              componentName
+	            );
+	          }
+	        } else if (!args.length) {
+	          if (process.env.NODE_ENV !== 'production') {
+	            warning(
+	              false,
+	              'bind(): You are binding a component method to the component. ' +
+	                'React does this for you automatically in a high-performance ' +
+	                'way, so you can safely remove this call. See %s',
+	              componentName
+	            );
+	          }
+	          return boundMethod;
+	        }
+	        var reboundMethod = _bind.apply(boundMethod, arguments);
+	        reboundMethod.__reactBoundContext = component;
+	        reboundMethod.__reactBoundMethod = method;
+	        reboundMethod.__reactBoundArguments = args;
+	        return reboundMethod;
+	      };
+	    }
+	    return boundMethod;
+	  }
+	
+	  /**
+	   * Binds all auto-bound methods in a component.
+	   *
+	   * @param {object} component Component whose method is going to be bound.
+	   */
+	  function bindAutoBindMethods(component) {
+	    var pairs = component.__reactAutoBindPairs;
+	    for (var i = 0; i < pairs.length; i += 2) {
+	      var autoBindKey = pairs[i];
+	      var method = pairs[i + 1];
+	      component[autoBindKey] = bindAutoBindMethod(component, method);
+	    }
+	  }
+	
+	  var IsMountedPreMixin = {
+	    componentDidMount: function() {
+	      this.__isMounted = true;
+	    }
+	  };
+	
+	  var IsMountedPostMixin = {
+	    componentWillUnmount: function() {
+	      this.__isMounted = false;
+	    }
+	  };
+	
+	  /**
+	   * Add more to the ReactClass base class. These are all legacy features and
+	   * therefore not already part of the modern ReactComponent.
+	   */
+	  var ReactClassMixin = {
+	    /**
+	     * TODO: This will be deprecated because state should always keep a consistent
+	     * type signature and the only use case for this, is to avoid that.
+	     */
+	    replaceState: function(newState, callback) {
+	      this.updater.enqueueReplaceState(this, newState, callback);
+	    },
+	
+	    /**
+	     * Checks whether or not this composite component is mounted.
+	     * @return {boolean} True if mounted, false otherwise.
+	     * @protected
+	     * @final
+	     */
+	    isMounted: function() {
+	      if (process.env.NODE_ENV !== 'production') {
+	        warning(
+	          this.__didWarnIsMounted,
+	          '%s: isMounted is deprecated. Instead, make sure to clean up ' +
+	            'subscriptions and pending requests in componentWillUnmount to ' +
+	            'prevent memory leaks.',
+	          (this.constructor && this.constructor.displayName) ||
+	            this.name ||
+	            'Component'
+	        );
+	        this.__didWarnIsMounted = true;
+	      }
+	      return !!this.__isMounted;
+	    }
+	  };
+	
+	  var ReactClassComponent = function() {};
+	  _assign(
+	    ReactClassComponent.prototype,
+	    ReactComponent.prototype,
+	    ReactClassMixin
+	  );
+	
+	  /**
+	   * Creates a composite component class given a class specification.
+	   * See https://facebook.github.io/react/docs/top-level-api.html#react.createclass
+	   *
+	   * @param {object} spec Class specification (which must define `render`).
+	   * @return {function} Component constructor function.
+	   * @public
+	   */
+	  function createClass(spec) {
+	    // To keep our warnings more understandable, we'll use a little hack here to
+	    // ensure that Constructor.name !== 'Constructor'. This makes sure we don't
+	    // unnecessarily identify a class without displayName as 'Constructor'.
+	    var Constructor = identity(function(props, context, updater) {
+	      // This constructor gets overridden by mocks. The argument is used
+	      // by mocks to assert on what gets mounted.
+	
+	      if (process.env.NODE_ENV !== 'production') {
+	        warning(
+	          this instanceof Constructor,
+	          'Something is calling a React component directly. Use a factory or ' +
+	            'JSX instead. See: https://fb.me/react-legacyfactory'
+	        );
+	      }
+	
+	      // Wire up auto-binding
+	      if (this.__reactAutoBindPairs.length) {
+	        bindAutoBindMethods(this);
+	      }
+	
+	      this.props = props;
+	      this.context = context;
+	      this.refs = emptyObject;
+	      this.updater = updater || ReactNoopUpdateQueue;
+	
+	      this.state = null;
+	
+	      // ReactClasses doesn't have constructors. Instead, they use the
+	      // getInitialState and componentWillMount methods for initialization.
+	
+	      var initialState = this.getInitialState ? this.getInitialState() : null;
+	      if (process.env.NODE_ENV !== 'production') {
+	        // We allow auto-mocks to proceed as if they're returning null.
+	        if (
+	          initialState === undefined &&
+	          this.getInitialState._isMockFunction
+	        ) {
+	          // This is probably bad practice. Consider warning here and
+	          // deprecating this convenience.
+	          initialState = null;
+	        }
+	      }
+	      _invariant(
+	        typeof initialState === 'object' && !Array.isArray(initialState),
+	        '%s.getInitialState(): must return an object or null',
+	        Constructor.displayName || 'ReactCompositeComponent'
+	      );
+	
+	      this.state = initialState;
+	    });
+	    Constructor.prototype = new ReactClassComponent();
+	    Constructor.prototype.constructor = Constructor;
+	    Constructor.prototype.__reactAutoBindPairs = [];
+	
+	    injectedMixins.forEach(mixSpecIntoComponent.bind(null, Constructor));
+	
+	    mixSpecIntoComponent(Constructor, IsMountedPreMixin);
+	    mixSpecIntoComponent(Constructor, spec);
+	    mixSpecIntoComponent(Constructor, IsMountedPostMixin);
+	
+	    // Initialize the defaultProps property after all mixins have been merged.
+	    if (Constructor.getDefaultProps) {
+	      Constructor.defaultProps = Constructor.getDefaultProps();
+	    }
+	
+	    if (process.env.NODE_ENV !== 'production') {
+	      // This is a tag to indicate that the use of these method names is ok,
+	      // since it's used with createClass. If it's not, then it's likely a
+	      // mistake so we'll warn you to use the static property, property
+	      // initializer or constructor respectively.
+	      if (Constructor.getDefaultProps) {
+	        Constructor.getDefaultProps.isReactClassApproved = {};
+	      }
+	      if (Constructor.prototype.getInitialState) {
+	        Constructor.prototype.getInitialState.isReactClassApproved = {};
+	      }
+	    }
+	
+	    _invariant(
+	      Constructor.prototype.render,
+	      'createClass(...): Class specification must implement a `render` method.'
+	    );
+	
+	    if (process.env.NODE_ENV !== 'production') {
+	      warning(
+	        !Constructor.prototype.componentShouldUpdate,
+	        '%s has a method called ' +
+	          'componentShouldUpdate(). Did you mean shouldComponentUpdate()? ' +
+	          'The name is phrased as a question because the function is ' +
+	          'expected to return a value.',
+	        spec.displayName || 'A component'
+	      );
+	      warning(
+	        !Constructor.prototype.componentWillRecieveProps,
+	        '%s has a method called ' +
+	          'componentWillRecieveProps(). Did you mean componentWillReceiveProps()?',
+	        spec.displayName || 'A component'
+	      );
+	      warning(
+	        !Constructor.prototype.UNSAFE_componentWillRecieveProps,
+	        '%s has a method called UNSAFE_componentWillRecieveProps(). ' +
+	          'Did you mean UNSAFE_componentWillReceiveProps()?',
+	        spec.displayName || 'A component'
+	      );
+	    }
+	
+	    // Reduce time spent doing lookups by setting these on the prototype.
+	    for (var methodName in ReactClassInterface) {
+	      if (!Constructor.prototype[methodName]) {
+	        Constructor.prototype[methodName] = null;
+	      }
+	    }
+	
+	    return Constructor;
+	  }
+	
+	  return createClass;
+	}
+	
+	module.exports = factory;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
 	 */
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(7);
+	var _prodInvariant = __webpack_require__(6);
 	
-	var ReactElement = __webpack_require__(9);
+	var ReactElement = __webpack_require__(16);
 	
-	var invariant = __webpack_require__(8);
+	var invariant = __webpack_require__(12);
 	
 	/**
 	 * Returns the first child in a collection of children and verifies that there
@@ -4437,7 +4797,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -4449,7 +4809,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -4457,23 +4817,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = function () {};
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/*global require,module*/
 	"use strict";
-	var CodeMirror = __webpack_require__(39);
-	__webpack_require__(40);
+	var CodeMirror = __webpack_require__(40);
 	__webpack_require__(41);
 	__webpack_require__(42);
 	__webpack_require__(43);
-	__webpack_require__(46);
+	__webpack_require__(44);
 	__webpack_require__(47);
 	__webpack_require__(48);
 	__webpack_require__(49);
-	__webpack_require__(44);
-	var CodeMirrorSpellChecker = __webpack_require__(50);
-	var marked = __webpack_require__(57);
+	__webpack_require__(50);
+	__webpack_require__(45);
+	var CodeMirrorSpellChecker = __webpack_require__(51);
+	var marked = __webpack_require__(58);
 	
 	
 	// Some variables
@@ -6490,7 +6850,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SimpleMDE;
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -6774,13 +7134,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	// Returns the value from the range [`from`; `to`] that satisfies
-	// `pred` and is closest to `from`. Assumes that at least `to` satisfies `pred`.
+	// `pred` and is closest to `from`. Assumes that at least `to`
+	// satisfies `pred`. Supports `from` being greater than `to`.
 	function findFirst(pred, from, to) {
+	  // At any point we are certain `to` satisfies `pred`, don't know
+	  // whether `from` does.
+	  var dir = from > to ? -1 : 1;
 	  for (;;) {
-	    if (Math.abs(from - to) <= 1) { return pred(from) ? from : to }
-	    var mid = Math.floor((from + to) / 2);
+	    if (from == to) { return from }
+	    var midF = (from + to) / 2, mid = dir < 0 ? Math.ceil(midF) : Math.floor(midF);
+	    if (mid == from) { return pred(mid) ? from : to }
 	    if (pred(mid)) { to = mid; }
-	    else { from = mid; }
+	    else { from = mid + dir; }
 	  }
 	}
 	
@@ -7392,12 +7757,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	// BIDI HELPERS
 	
 	function iterateBidiSections(order, from, to, f) {
-	  if (!order) { return f(from, to, "ltr") }
+	  if (!order) { return f(from, to, "ltr", 0) }
 	  var found = false;
 	  for (var i = 0; i < order.length; ++i) {
 	    var part = order[i];
 	    if (part.from < to && part.to > from || from == to && part.to == from) {
-	      f(Math.max(part.from, from), Math.min(part.to, to), part.level == 1 ? "rtl" : "ltr");
+	      f(Math.max(part.from, from), Math.min(part.to, to), part.level == 1 ? "rtl" : "ltr", i);
 	      found = true;
 	    }
 	  }
@@ -7578,13 +7943,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (pos < i$7) { order.splice(at, 0, new BidiSpan(1, pos, i$7)); }
 	      }
 	    }
-	    if (order[0].level == 1 && (m = str.match(/^\s+/))) {
-	      order[0].from = m[0].length;
-	      order.unshift(new BidiSpan(0, 0, m[0].length));
-	    }
-	    if (lst(order).level == 1 && (m = str.match(/\s+$/))) {
-	      lst(order).to -= m[0].length;
-	      order.push(new BidiSpan(0, len - m[0].length, len));
+	    if (direction == "ltr") {
+	      if (order[0].level == 1 && (m = str.match(/^\s+/))) {
+	        order[0].from = m[0].length;
+	        order.unshift(new BidiSpan(0, 0, m[0].length));
+	      }
+	      if (lst(order).level == 1 && (m = str.match(/\s+$/))) {
+	        lst(order).to -= m[0].length;
+	        order.push(new BidiSpan(0, len - m[0].length, len));
+	      }
 	    }
 	
 	    return direction == "rtl" ? order.reverse() : order
@@ -7598,112 +7965,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var order = line.order;
 	  if (order == null) { order = line.order = bidiOrdering(line.text, direction); }
 	  return order
-	}
-	
-	function moveCharLogically(line, ch, dir) {
-	  var target = skipExtendingChars(line.text, ch + dir, dir);
-	  return target < 0 || target > line.text.length ? null : target
-	}
-	
-	function moveLogically(line, start, dir) {
-	  var ch = moveCharLogically(line, start.ch, dir);
-	  return ch == null ? null : new Pos(start.line, ch, dir < 0 ? "after" : "before")
-	}
-	
-	function endOfLine(visually, cm, lineObj, lineNo, dir) {
-	  if (visually) {
-	    var order = getOrder(lineObj, cm.doc.direction);
-	    if (order) {
-	      var part = dir < 0 ? lst(order) : order[0];
-	      var moveInStorageOrder = (dir < 0) == (part.level == 1);
-	      var sticky = moveInStorageOrder ? "after" : "before";
-	      var ch;
-	      // With a wrapped rtl chunk (possibly spanning multiple bidi parts),
-	      // it could be that the last bidi part is not on the last visual line,
-	      // since visual lines contain content order-consecutive chunks.
-	      // Thus, in rtl, we are looking for the first (content-order) character
-	      // in the rtl chunk that is on the last line (that is, the same line
-	      // as the last (content-order) character).
-	      if (part.level > 0) {
-	        var prep = prepareMeasureForLine(cm, lineObj);
-	        ch = dir < 0 ? lineObj.text.length - 1 : 0;
-	        var targetTop = measureCharPrepared(cm, prep, ch).top;
-	        ch = findFirst(function (ch) { return measureCharPrepared(cm, prep, ch).top == targetTop; }, (dir < 0) == (part.level == 1) ? part.from : part.to - 1, ch);
-	        if (sticky == "before") { ch = moveCharLogically(lineObj, ch, 1, true); }
-	      } else { ch = dir < 0 ? part.to : part.from; }
-	      return new Pos(lineNo, ch, sticky)
-	    }
-	  }
-	  return new Pos(lineNo, dir < 0 ? lineObj.text.length : 0, dir < 0 ? "before" : "after")
-	}
-	
-	function moveVisually(cm, line, start, dir) {
-	  var bidi = getOrder(line, cm.doc.direction);
-	  if (!bidi) { return moveLogically(line, start, dir) }
-	  if (start.ch >= line.text.length) {
-	    start.ch = line.text.length;
-	    start.sticky = "before";
-	  } else if (start.ch <= 0) {
-	    start.ch = 0;
-	    start.sticky = "after";
-	  }
-	  var partPos = getBidiPartAt(bidi, start.ch, start.sticky), part = bidi[partPos];
-	  if (cm.doc.direction == "ltr" && part.level % 2 == 0 && (dir > 0 ? part.to > start.ch : part.from < start.ch)) {
-	    // Case 1: We move within an ltr part in an ltr editor. Even with wrapped lines,
-	    // nothing interesting happens.
-	    return moveLogically(line, start, dir)
-	  }
-	
-	  var mv = function (pos, dir) { return moveCharLogically(line, pos instanceof Pos ? pos.ch : pos, dir); };
-	  var prep;
-	  var getWrappedLineExtent = function (ch) {
-	    if (!cm.options.lineWrapping) { return {begin: 0, end: line.text.length} }
-	    prep = prep || prepareMeasureForLine(cm, line);
-	    return wrappedLineExtentChar(cm, line, prep, ch)
-	  };
-	  var wrappedLineExtent = getWrappedLineExtent(start.sticky == "before" ? mv(start, -1) : start.ch);
-	
-	  if (cm.doc.direction == "rtl" || part.level == 1) {
-	    var moveInStorageOrder = (part.level == 1) == (dir < 0);
-	    var ch = mv(start, moveInStorageOrder ? 1 : -1);
-	    if (ch != null && (!moveInStorageOrder ? ch >= part.from && ch >= wrappedLineExtent.begin : ch <= part.to && ch <= wrappedLineExtent.end)) {
-	      // Case 2: We move within an rtl part or in an rtl editor on the same visual line
-	      var sticky = moveInStorageOrder ? "before" : "after";
-	      return new Pos(start.line, ch, sticky)
-	    }
-	  }
-	
-	  // Case 3: Could not move within this bidi part in this visual line, so leave
-	  // the current bidi part
-	
-	  var searchInVisualLine = function (partPos, dir, wrappedLineExtent) {
-	    var getRes = function (ch, moveInStorageOrder) { return moveInStorageOrder
-	      ? new Pos(start.line, mv(ch, 1), "before")
-	      : new Pos(start.line, ch, "after"); };
-	
-	    for (; partPos >= 0 && partPos < bidi.length; partPos += dir) {
-	      var part = bidi[partPos];
-	      var moveInStorageOrder = (dir > 0) == (part.level != 1);
-	      var ch = moveInStorageOrder ? wrappedLineExtent.begin : mv(wrappedLineExtent.end, -1);
-	      if (part.from <= ch && ch < part.to) { return getRes(ch, moveInStorageOrder) }
-	      ch = moveInStorageOrder ? part.from : mv(part.to, -1);
-	      if (wrappedLineExtent.begin <= ch && ch < wrappedLineExtent.end) { return getRes(ch, moveInStorageOrder) }
-	    }
-	  };
-	
-	  // Case 3a: Look for other bidi parts on the same visual line
-	  var res = searchInVisualLine(partPos + dir, dir, wrappedLineExtent);
-	  if (res) { return res }
-	
-	  // Case 3b: Look for other bidi parts on the next visual line
-	  var nextCh = dir > 0 ? wrappedLineExtent.end : mv(wrappedLineExtent.begin, -1);
-	  if (nextCh != null && !(dir > 0 && nextCh == line.text.length)) {
-	    res = searchInVisualLine(dir > 0 ? 0 : bidi.length - 1, dir, getWrappedLineExtent(nextCh));
-	    if (res) { return res }
-	  }
-	
-	  // Case 4: Nowhere to move
-	  return null
 	}
 	
 	// EVENT HANDLING
@@ -7990,12 +8251,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Fed to the mode parsers, provides helper functions to make
 	// parsers more succinct.
 	
-	var StringStream = function(string, tabSize) {
+	var StringStream = function(string, tabSize, lineOracle) {
 	  this.pos = this.start = 0;
 	  this.string = string;
 	  this.tabSize = tabSize || 8;
 	  this.lastColumnPos = this.lastColumnValue = 0;
 	  this.lineStart = 0;
+	  this.lineOracle = lineOracle;
 	};
 	
 	StringStream.prototype.eol = function () {return this.pos >= this.string.length};
@@ -8062,23 +8324,83 @@ return /******/ (function(modules) { // webpackBootstrap
 	  try { return inner() }
 	  finally { this.lineStart -= n; }
 	};
+	StringStream.prototype.lookAhead = function (n) {
+	  var oracle = this.lineOracle;
+	  return oracle && oracle.lookAhead(n)
+	};
+	StringStream.prototype.baseToken = function () {
+	  var oracle = this.lineOracle;
+	  return oracle && oracle.baseToken(this.pos)
+	};
+	
+	var SavedContext = function(state, lookAhead) {
+	  this.state = state;
+	  this.lookAhead = lookAhead;
+	};
+	
+	var Context = function(doc, state, line, lookAhead) {
+	  this.state = state;
+	  this.doc = doc;
+	  this.line = line;
+	  this.maxLookAhead = lookAhead || 0;
+	  this.baseTokens = null;
+	  this.baseTokenPos = 1;
+	};
+	
+	Context.prototype.lookAhead = function (n) {
+	  var line = this.doc.getLine(this.line + n);
+	  if (line != null && n > this.maxLookAhead) { this.maxLookAhead = n; }
+	  return line
+	};
+	
+	Context.prototype.baseToken = function (n) {
+	    var this$1 = this;
+	
+	  if (!this.baseTokens) { return null }
+	  while (this.baseTokens[this.baseTokenPos] <= n)
+	    { this$1.baseTokenPos += 2; }
+	  var type = this.baseTokens[this.baseTokenPos + 1];
+	  return {type: type && type.replace(/( |^)overlay .*/, ""),
+	          size: this.baseTokens[this.baseTokenPos] - n}
+	};
+	
+	Context.prototype.nextLine = function () {
+	  this.line++;
+	  if (this.maxLookAhead > 0) { this.maxLookAhead--; }
+	};
+	
+	Context.fromSaved = function (doc, saved, line) {
+	  if (saved instanceof SavedContext)
+	    { return new Context(doc, copyState(doc.mode, saved.state), line, saved.lookAhead) }
+	  else
+	    { return new Context(doc, copyState(doc.mode, saved), line) }
+	};
+	
+	Context.prototype.save = function (copy) {
+	  var state = copy !== false ? copyState(this.doc.mode, this.state) : this.state;
+	  return this.maxLookAhead > 0 ? new SavedContext(state, this.maxLookAhead) : state
+	};
+	
 	
 	// Compute a style array (an array starting with a mode generation
 	// -- for invalidation -- followed by pairs of end positions and
 	// style strings), which is used to highlight the tokens on the
 	// line.
-	function highlightLine(cm, line, state, forceToEnd) {
+	function highlightLine(cm, line, context, forceToEnd) {
 	  // A styles array always starts with a number identifying the
 	  // mode/overlays that it is based on (for easy invalidation).
 	  var st = [cm.state.modeGen], lineClasses = {};
 	  // Compute the base array of styles
-	  runMode(cm, line.text, cm.doc.mode, state, function (end, style) { return st.push(end, style); },
-	    lineClasses, forceToEnd);
+	  runMode(cm, line.text, cm.doc.mode, context, function (end, style) { return st.push(end, style); },
+	          lineClasses, forceToEnd);
+	  var state = context.state;
 	
 	  // Run overlays, adjust style array.
 	  var loop = function ( o ) {
+	    context.baseTokens = st;
 	    var overlay = cm.state.overlays[o], i = 1, at = 0;
-	    runMode(cm, line.text, overlay.mode, true, function (end, style) {
+	    context.state = true;
+	    runMode(cm, line.text, overlay.mode, context, function (end, style) {
 	      var start = i;
 	      // Ensure there's a token end at the current position, and that i points at it
 	      while (at < end) {
@@ -8099,6 +8421,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	      }
 	    }, lineClasses);
+	    context.state = state;
+	    context.baseTokens = null;
+	    context.baseTokenPos = 1;
 	  };
 	
 	  for (var o = 0; o < cm.state.overlays.length; ++o) loop( o );
@@ -8108,43 +8433,47 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function getLineStyles(cm, line, updateFrontier) {
 	  if (!line.styles || line.styles[0] != cm.state.modeGen) {
-	    var state = getStateBefore(cm, lineNo(line));
-	    var result = highlightLine(cm, line, line.text.length > cm.options.maxHighlightLength ? copyState(cm.doc.mode, state) : state);
-	    line.stateAfter = state;
+	    var context = getContextBefore(cm, lineNo(line));
+	    var resetState = line.text.length > cm.options.maxHighlightLength && copyState(cm.doc.mode, context.state);
+	    var result = highlightLine(cm, line, context);
+	    if (resetState) { context.state = resetState; }
+	    line.stateAfter = context.save(!resetState);
 	    line.styles = result.styles;
 	    if (result.classes) { line.styleClasses = result.classes; }
 	    else if (line.styleClasses) { line.styleClasses = null; }
-	    if (updateFrontier === cm.doc.frontier) { cm.doc.frontier++; }
+	    if (updateFrontier === cm.doc.highlightFrontier)
+	      { cm.doc.modeFrontier = Math.max(cm.doc.modeFrontier, ++cm.doc.highlightFrontier); }
 	  }
 	  return line.styles
 	}
 	
-	function getStateBefore(cm, n, precise) {
+	function getContextBefore(cm, n, precise) {
 	  var doc = cm.doc, display = cm.display;
-	  if (!doc.mode.startState) { return true }
-	  var pos = findStartLine(cm, n, precise), state = pos > doc.first && getLine(doc, pos-1).stateAfter;
-	  if (!state) { state = startState(doc.mode); }
-	  else { state = copyState(doc.mode, state); }
-	  doc.iter(pos, n, function (line) {
-	    processLine(cm, line.text, state);
-	    var save = pos == n - 1 || pos % 5 == 0 || pos >= display.viewFrom && pos < display.viewTo;
-	    line.stateAfter = save ? copyState(doc.mode, state) : null;
-	    ++pos;
+	  if (!doc.mode.startState) { return new Context(doc, true, n) }
+	  var start = findStartLine(cm, n, precise);
+	  var saved = start > doc.first && getLine(doc, start - 1).stateAfter;
+	  var context = saved ? Context.fromSaved(doc, saved, start) : new Context(doc, startState(doc.mode), start);
+	
+	  doc.iter(start, n, function (line) {
+	    processLine(cm, line.text, context);
+	    var pos = context.line;
+	    line.stateAfter = pos == n - 1 || pos % 5 == 0 || pos >= display.viewFrom && pos < display.viewTo ? context.save() : null;
+	    context.nextLine();
 	  });
-	  if (precise) { doc.frontier = pos; }
-	  return state
+	  if (precise) { doc.modeFrontier = context.line; }
+	  return context
 	}
 	
 	// Lightweight form of highlight -- proceed over this line and
 	// update state, but don't save a style array. Used for lines that
 	// aren't currently visible.
-	function processLine(cm, text, state, startAt) {
+	function processLine(cm, text, context, startAt) {
 	  var mode = cm.doc.mode;
-	  var stream = new StringStream(text, cm.options.tabSize);
+	  var stream = new StringStream(text, cm.options.tabSize, context);
 	  stream.start = stream.pos = startAt || 0;
-	  if (text == "") { callBlankLine(mode, state); }
+	  if (text == "") { callBlankLine(mode, context.state); }
 	  while (!stream.eol()) {
-	    readToken(mode, stream, state);
+	    readToken(mode, stream, context.state);
 	    stream.start = stream.pos;
 	  }
 	}
@@ -8165,26 +8494,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	  throw new Error("Mode " + mode.name + " failed to advance stream.")
 	}
 	
+	var Token = function(stream, type, state) {
+	  this.start = stream.start; this.end = stream.pos;
+	  this.string = stream.current();
+	  this.type = type || null;
+	  this.state = state;
+	};
+	
 	// Utility for getTokenAt and getLineTokens
 	function takeToken(cm, pos, precise, asArray) {
-	  var getObj = function (copy) { return ({
-	    start: stream.start, end: stream.pos,
-	    string: stream.current(),
-	    type: style || null,
-	    state: copy ? copyState(doc.mode, state) : state
-	  }); };
-	
 	  var doc = cm.doc, mode = doc.mode, style;
 	  pos = clipPos(doc, pos);
-	  var line = getLine(doc, pos.line), state = getStateBefore(cm, pos.line, precise);
-	  var stream = new StringStream(line.text, cm.options.tabSize), tokens;
+	  var line = getLine(doc, pos.line), context = getContextBefore(cm, pos.line, precise);
+	  var stream = new StringStream(line.text, cm.options.tabSize, context), tokens;
 	  if (asArray) { tokens = []; }
 	  while ((asArray || stream.pos < pos.ch) && !stream.eol()) {
 	    stream.start = stream.pos;
-	    style = readToken(mode, stream, state);
-	    if (asArray) { tokens.push(getObj(true)); }
+	    style = readToken(mode, stream, context.state);
+	    if (asArray) { tokens.push(new Token(stream, style, copyState(doc.mode, context.state))); }
 	  }
-	  return asArray ? tokens : getObj()
+	  return asArray ? tokens : new Token(stream, style, context.state)
 	}
 	
 	function extractLineClasses(type, output) {
@@ -8202,21 +8531,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	// Run the given mode's parser over a line, calling f for each token.
-	function runMode(cm, text, mode, state, f, lineClasses, forceToEnd) {
+	function runMode(cm, text, mode, context, f, lineClasses, forceToEnd) {
 	  var flattenSpans = mode.flattenSpans;
 	  if (flattenSpans == null) { flattenSpans = cm.options.flattenSpans; }
 	  var curStart = 0, curStyle = null;
-	  var stream = new StringStream(text, cm.options.tabSize), style;
+	  var stream = new StringStream(text, cm.options.tabSize, context), style;
 	  var inner = cm.options.addModeClass && [null];
-	  if (text == "") { extractLineClasses(callBlankLine(mode, state), lineClasses); }
+	  if (text == "") { extractLineClasses(callBlankLine(mode, context.state), lineClasses); }
 	  while (!stream.eol()) {
 	    if (stream.pos > cm.options.maxHighlightLength) {
 	      flattenSpans = false;
-	      if (forceToEnd) { processLine(cm, text, state, stream.pos); }
+	      if (forceToEnd) { processLine(cm, text, context, stream.pos); }
 	      stream.pos = text.length;
 	      style = null;
 	    } else {
-	      style = extractLineClasses(readToken(mode, stream, state, inner), lineClasses);
+	      style = extractLineClasses(readToken(mode, stream, context.state, inner), lineClasses);
 	    }
 	    if (inner) {
 	      var mName = inner[0].name;
@@ -8251,8 +8580,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var lim = precise ? -1 : n - (cm.doc.mode.innerMode ? 1000 : 100);
 	  for (var search = n; search > lim; --search) {
 	    if (search <= doc.first) { return doc.first }
-	    var line = getLine(doc, search - 1);
-	    if (line.stateAfter && (!precise || search <= doc.frontier)) { return search }
+	    var line = getLine(doc, search - 1), after = line.stateAfter;
+	    if (after && (!precise || search + (after instanceof SavedContext ? after.lookAhead : 0) <= doc.modeFrontier))
+	      { return search }
 	    var indented = countColumn(line.text, null, cm.options.tabSize);
 	    if (minline == null || minindent > indented) {
 	      minline = search - 1;
@@ -8260,6 +8590,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }
 	  return minline
+	}
+	
+	function retreatFrontier(doc, n) {
+	  doc.modeFrontier = Math.min(doc.modeFrontier, n);
+	  if (doc.highlightFrontier < n - 10) { return }
+	  var start = doc.first;
+	  for (var line = n - 1; line > start; line--) {
+	    var saved = getLine(doc, line).stateAfter;
+	    // change is on 3
+	    // state on line 1 looked ahead 2 -- so saw 3
+	    // test 1 + 2 < 3 should cover this
+	    if (saved && (!(saved instanceof SavedContext) || line + saved.lookAhead < n)) {
+	      start = line + 1;
+	      break
+	    }
+	  }
+	  doc.highlightFrontier = Math.min(doc.highlightFrontier, start);
 	}
 	
 	// LINE DATA STRUCTURE
@@ -9150,15 +9497,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return window.pageYOffset || (document.documentElement || document.body).scrollTop
 	}
 	
+	function widgetTopHeight(lineObj) {
+	  var height = 0;
+	  if (lineObj.widgets) { for (var i = 0; i < lineObj.widgets.length; ++i) { if (lineObj.widgets[i].above)
+	    { height += widgetHeight(lineObj.widgets[i]); } } }
+	  return height
+	}
+	
 	// Converts a {top, bottom, left, right} box from line-local
 	// coordinates into another coordinate system. Context may be one of
 	// "line", "div" (display.lineDiv), "local"./null (editor), "window",
 	// or "page".
 	function intoCoordSystem(cm, lineObj, rect, context, includeWidgets) {
-	  if (!includeWidgets && lineObj.widgets) { for (var i = 0; i < lineObj.widgets.length; ++i) { if (lineObj.widgets[i].above) {
-	    var size = widgetHeight(lineObj.widgets[i]);
-	    rect.top += size; rect.bottom += size;
-	  } } }
+	  if (!includeWidgets) {
+	    var height = widgetTopHeight(lineObj);
+	    rect.top += height; rect.bottom += height;
+	  }
 	  if (context == "line") { return rect }
 	  if (!context) { context = "local"; }
 	  var yOff = heightAtLine(lineObj);
@@ -9233,7 +9587,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (!order) { return get(sticky == "before" ? ch - 1 : ch, sticky == "before") }
 	
 	  function getBidi(ch, partPos, invert) {
-	    var part = order[partPos], right = (part.level % 2) != 0;
+	    var part = order[partPos], right = part.level == 1;
 	    return get(invert ? ch - 1 : ch, right != invert)
 	  }
 	  var partPos = getBidiPartAt(order, ch, sticky);
@@ -9291,67 +9645,147 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	function wrappedLineExtent(cm, lineObj, preparedMeasure, y) {
-	  var measure = function (ch) { return intoCoordSystem(cm, lineObj, measureCharPrepared(cm, preparedMeasure, ch), "line"); };
+	  y -= widgetTopHeight(lineObj);
 	  var end = lineObj.text.length;
-	  var begin = findFirst(function (ch) { return measure(ch - 1).bottom <= y; }, end, 0);
-	  end = findFirst(function (ch) { return measure(ch).top > y; }, begin, end);
+	  var begin = findFirst(function (ch) { return measureCharPrepared(cm, preparedMeasure, ch - 1).bottom <= y; }, end, 0);
+	  end = findFirst(function (ch) { return measureCharPrepared(cm, preparedMeasure, ch).top > y; }, begin, end);
 	  return {begin: begin, end: end}
 	}
 	
 	function wrappedLineExtentChar(cm, lineObj, preparedMeasure, target) {
+	  if (!preparedMeasure) { preparedMeasure = prepareMeasureForLine(cm, lineObj); }
 	  var targetTop = intoCoordSystem(cm, lineObj, measureCharPrepared(cm, preparedMeasure, target), "line").top;
 	  return wrappedLineExtent(cm, lineObj, preparedMeasure, targetTop)
 	}
 	
+	// Returns true if the given side of a box is after the given
+	// coordinates, in top-to-bottom, left-to-right order.
+	function boxIsAfter(box, x, y, left) {
+	  return box.bottom <= y ? false : box.top > y ? true : (left ? box.left : box.right) > x
+	}
+	
 	function coordsCharInner(cm, lineObj, lineNo$$1, x, y) {
+	  // Move y into line-local coordinate space
 	  y -= heightAtLine(lineObj);
-	  var begin = 0, end = lineObj.text.length;
 	  var preparedMeasure = prepareMeasureForLine(cm, lineObj);
-	  var pos;
+	  // When directly calling `measureCharPrepared`, we have to adjust
+	  // for the widgets at this line.
+	  var widgetHeight$$1 = widgetTopHeight(lineObj);
+	  var begin = 0, end = lineObj.text.length, ltr = true;
+	
 	  var order = getOrder(lineObj, cm.doc.direction);
+	  // If the line isn't plain left-to-right text, first figure out
+	  // which bidi section the coordinates fall into.
 	  if (order) {
-	    if (cm.options.lineWrapping) {
-	      var assign;
-	      ((assign = wrappedLineExtent(cm, lineObj, preparedMeasure, y), begin = assign.begin, end = assign.end, assign));
-	    }
-	    pos = new Pos(lineNo$$1, begin);
-	    var beginLeft = cursorCoords(cm, pos, "line", lineObj, preparedMeasure).left;
-	    var dir = beginLeft < x ? 1 : -1;
-	    var prevDiff, diff = beginLeft - x, prevPos;
-	    do {
-	      prevDiff = diff;
-	      prevPos = pos;
-	      pos = moveVisually(cm, lineObj, pos, dir);
-	      if (pos == null || pos.ch < begin || end <= (pos.sticky == "before" ? pos.ch - 1 : pos.ch)) {
-	        pos = prevPos;
-	        break
-	      }
-	      diff = cursorCoords(cm, pos, "line", lineObj, preparedMeasure).left - x;
-	    } while ((dir < 0) != (diff < 0) && (Math.abs(diff) <= Math.abs(prevDiff)))
-	    if (Math.abs(diff) > Math.abs(prevDiff)) {
-	      if ((diff < 0) == (prevDiff < 0)) { throw new Error("Broke out of infinite loop in coordsCharInner") }
-	      pos = prevPos;
-	    }
-	  } else {
-	    var ch = findFirst(function (ch) {
-	      var box = intoCoordSystem(cm, lineObj, measureCharPrepared(cm, preparedMeasure, ch), "line");
-	      if (box.top > y) {
-	        // For the cursor stickiness
-	        end = Math.min(ch, end);
-	        return true
-	      }
-	      else if (box.bottom <= y) { return false }
-	      else if (box.left > x) { return true }
-	      else if (box.right < x) { return false }
-	      else { return (x - box.left < box.right - x) }
-	    }, begin, end);
-	    ch = skipExtendingChars(lineObj.text, ch, 1);
-	    pos = new Pos(lineNo$$1, ch, ch == end ? "before" : "after");
+	    var part = (cm.options.lineWrapping ? coordsBidiPartWrapped : coordsBidiPart)
+	                 (cm, lineObj, lineNo$$1, preparedMeasure, order, x, y);
+	    ltr = part.level != 1;
+	    // The awkward -1 offsets are needed because findFirst (called
+	    // on these below) will treat its first bound as inclusive,
+	    // second as exclusive, but we want to actually address the
+	    // characters in the part's range
+	    begin = ltr ? part.from : part.to - 1;
+	    end = ltr ? part.to : part.from - 1;
 	  }
-	  var coords = cursorCoords(cm, pos, "line", lineObj, preparedMeasure);
-	  if (y < coords.top || coords.bottom < y) { pos.outside = true; }
-	  pos.xRel = x < coords.left ? -1 : (x > coords.right ? 1 : 0);
-	  return pos
+	
+	  // A binary search to find the first character whose bounding box
+	  // starts after the coordinates. If we run across any whose box wrap
+	  // the coordinates, store that.
+	  var chAround = null, boxAround = null;
+	  var ch = findFirst(function (ch) {
+	    var box = measureCharPrepared(cm, preparedMeasure, ch);
+	    box.top += widgetHeight$$1; box.bottom += widgetHeight$$1;
+	    if (!boxIsAfter(box, x, y, false)) { return false }
+	    if (box.top <= y && box.left <= x) {
+	      chAround = ch;
+	      boxAround = box;
+	    }
+	    return true
+	  }, begin, end);
+	
+	  var baseX, sticky, outside = false;
+	  // If a box around the coordinates was found, use that
+	  if (boxAround) {
+	    // Distinguish coordinates nearer to the left or right side of the box
+	    var atLeft = x - boxAround.left < boxAround.right - x, atStart = atLeft == ltr;
+	    ch = chAround + (atStart ? 0 : 1);
+	    sticky = atStart ? "after" : "before";
+	    baseX = atLeft ? boxAround.left : boxAround.right;
+	  } else {
+	    // (Adjust for extended bound, if necessary.)
+	    if (!ltr && (ch == end || ch == begin)) { ch++; }
+	    // To determine which side to associate with, get the box to the
+	    // left of the character and compare it's vertical position to the
+	    // coordinates
+	    sticky = ch == 0 ? "after" : ch == lineObj.text.length ? "before" :
+	      (measureCharPrepared(cm, preparedMeasure, ch - (ltr ? 1 : 0)).bottom + widgetHeight$$1 <= y) == ltr ?
+	      "after" : "before";
+	    // Now get accurate coordinates for this place, in order to get a
+	    // base X position
+	    var coords = cursorCoords(cm, Pos(lineNo$$1, ch, sticky), "line", lineObj, preparedMeasure);
+	    baseX = coords.left;
+	    outside = y < coords.top || y >= coords.bottom;
+	  }
+	
+	  ch = skipExtendingChars(lineObj.text, ch, 1);
+	  return PosWithInfo(lineNo$$1, ch, sticky, outside, x - baseX)
+	}
+	
+	function coordsBidiPart(cm, lineObj, lineNo$$1, preparedMeasure, order, x, y) {
+	  // Bidi parts are sorted left-to-right, and in a non-line-wrapping
+	  // situation, we can take this ordering to correspond to the visual
+	  // ordering. This finds the first part whose end is after the given
+	  // coordinates.
+	  var index = findFirst(function (i) {
+	    var part = order[i], ltr = part.level != 1;
+	    return boxIsAfter(cursorCoords(cm, Pos(lineNo$$1, ltr ? part.to : part.from, ltr ? "before" : "after"),
+	                                   "line", lineObj, preparedMeasure), x, y, true)
+	  }, 0, order.length - 1);
+	  var part = order[index];
+	  // If this isn't the first part, the part's start is also after
+	  // the coordinates, and the coordinates aren't on the same line as
+	  // that start, move one part back.
+	  if (index > 0) {
+	    var ltr = part.level != 1;
+	    var start = cursorCoords(cm, Pos(lineNo$$1, ltr ? part.from : part.to, ltr ? "after" : "before"),
+	                             "line", lineObj, preparedMeasure);
+	    if (boxIsAfter(start, x, y, true) && start.top > y)
+	      { part = order[index - 1]; }
+	  }
+	  return part
+	}
+	
+	function coordsBidiPartWrapped(cm, lineObj, _lineNo, preparedMeasure, order, x, y) {
+	  // In a wrapped line, rtl text on wrapping boundaries can do things
+	  // that don't correspond to the ordering in our `order` array at
+	  // all, so a binary search doesn't work, and we want to return a
+	  // part that only spans one line so that the binary search in
+	  // coordsCharInner is safe. As such, we first find the extent of the
+	  // wrapped line, and then do a flat search in which we discard any
+	  // spans that aren't on the line.
+	  var ref = wrappedLineExtent(cm, lineObj, preparedMeasure, y);
+	  var begin = ref.begin;
+	  var end = ref.end;
+	  if (/\s/.test(lineObj.text.charAt(end - 1))) { end--; }
+	  var part = null, closestDist = null;
+	  for (var i = 0; i < order.length; i++) {
+	    var p = order[i];
+	    if (p.from >= end || p.to <= begin) { continue }
+	    var ltr = p.level != 1;
+	    var endX = measureCharPrepared(cm, preparedMeasure, ltr ? Math.min(end, p.to) - 1 : Math.max(begin, p.from)).right;
+	    // Weigh against spans ending before this, so that they are only
+	    // picked if nothing ends after
+	    var dist = endX < x ? x - endX + 1e9 : endX - x;
+	    if (!part || closestDist > dist) {
+	      part = p;
+	      closestDist = dist;
+	    }
+	  }
+	  if (!part) { part = order[order.length - 1]; }
+	  // Clip the part to the wrapped line.
+	  if (part.from < begin) { part = {from: begin, to: part.to, level: part.level}; }
+	  if (part.to > end) { part = {from: part.from, to: end, level: part.level}; }
+	  return part
 	}
 	
 	var measureText;
@@ -9477,12 +9911,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	function prepareSelection(cm, primary) {
+	  if ( primary === void 0 ) primary = true;
+	
 	  var doc = cm.doc, result = {};
 	  var curFragment = result.cursors = document.createDocumentFragment();
 	  var selFragment = result.selection = document.createDocumentFragment();
 	
 	  for (var i = 0; i < doc.sel.ranges.length; i++) {
-	    if (primary === false && i == doc.sel.primIndex) { continue }
+	    if (!primary && i == doc.sel.primIndex) { continue }
 	    var range$$1 = doc.sel.ranges[i];
 	    if (range$$1.from().line >= cm.display.viewTo || range$$1.to().line < cm.display.viewFrom) { continue }
 	    var collapsed = range$$1.empty();
@@ -9513,12 +9949,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	}
 	
+	function cmpCoords(a, b) { return a.top - b.top || a.left - b.left }
+	
 	// Draws the given range as a highlighted selection
 	function drawSelectionRange(cm, range$$1, output) {
 	  var display = cm.display, doc = cm.doc;
 	  var fragment = document.createDocumentFragment();
 	  var padding = paddingH(cm.display), leftSide = padding.left;
 	  var rightSide = Math.max(display.sizerWidth, displayWidth(cm) - display.sizer.offsetLeft) - padding.right;
+	  var docLTR = doc.direction == "ltr";
 	
 	  function add(left, top, width, bottom) {
 	    if (top < 0) { top = 0; }
@@ -9535,30 +9974,49 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return charCoords(cm, Pos(line, ch), "div", lineObj, bias)
 	    }
 	
-	    iterateBidiSections(getOrder(lineObj, doc.direction), fromArg || 0, toArg == null ? lineLen : toArg, function (from, to, dir) {
-	      var leftPos = coords(from, "left"), rightPos, left, right;
-	      if (from == to) {
-	        rightPos = leftPos;
-	        left = right = leftPos.left;
-	      } else {
-	        rightPos = coords(to - 1, "right");
-	        if (dir == "rtl") { var tmp = leftPos; leftPos = rightPos; rightPos = tmp; }
-	        left = leftPos.left;
-	        right = rightPos.right;
+	    function wrapX(pos, dir, side) {
+	      var extent = wrappedLineExtentChar(cm, lineObj, null, pos);
+	      var prop = (dir == "ltr") == (side == "after") ? "left" : "right";
+	      var ch = side == "after" ? extent.begin : extent.end - (/\s/.test(lineObj.text.charAt(extent.end - 1)) ? 2 : 1);
+	      return coords(ch, prop)[prop]
+	    }
+	
+	    var order = getOrder(lineObj, doc.direction);
+	    iterateBidiSections(order, fromArg || 0, toArg == null ? lineLen : toArg, function (from, to, dir, i) {
+	      var ltr = dir == "ltr";
+	      var fromPos = coords(from, ltr ? "left" : "right");
+	      var toPos = coords(to - 1, ltr ? "right" : "left");
+	
+	      var openStart = fromArg == null && from == 0, openEnd = toArg == null && to == lineLen;
+	      var first = i == 0, last = !order || i == order.length - 1;
+	      if (toPos.top - fromPos.top <= 3) { // Single line
+	        var openLeft = (docLTR ? openStart : openEnd) && first;
+	        var openRight = (docLTR ? openEnd : openStart) && last;
+	        var left = openLeft ? leftSide : (ltr ? fromPos : toPos).left;
+	        var right = openRight ? rightSide : (ltr ? toPos : fromPos).right;
+	        add(left, fromPos.top, right - left, fromPos.bottom);
+	      } else { // Multiple lines
+	        var topLeft, topRight, botLeft, botRight;
+	        if (ltr) {
+	          topLeft = docLTR && openStart && first ? leftSide : fromPos.left;
+	          topRight = docLTR ? rightSide : wrapX(from, dir, "before");
+	          botLeft = docLTR ? leftSide : wrapX(to, dir, "after");
+	          botRight = docLTR && openEnd && last ? rightSide : toPos.right;
+	        } else {
+	          topLeft = !docLTR ? leftSide : wrapX(from, dir, "before");
+	          topRight = !docLTR && openStart && first ? rightSide : fromPos.right;
+	          botLeft = !docLTR && openEnd && last ? leftSide : toPos.left;
+	          botRight = !docLTR ? rightSide : wrapX(to, dir, "after");
+	        }
+	        add(topLeft, fromPos.top, topRight - topLeft, fromPos.bottom);
+	        if (fromPos.bottom < toPos.top) { add(leftSide, fromPos.bottom, null, toPos.top); }
+	        add(botLeft, toPos.top, botRight - botLeft, toPos.bottom);
 	      }
-	      if (fromArg == null && from == 0) { left = leftSide; }
-	      if (rightPos.top - leftPos.top > 3) { // Different lines, draw top part
-	        add(left, leftPos.top, null, leftPos.bottom);
-	        left = leftSide;
-	        if (leftPos.bottom < rightPos.top) { add(left, leftPos.bottom, null, rightPos.top); }
-	      }
-	      if (toArg == null && to == lineLen) { right = rightSide; }
-	      if (!start || leftPos.top < start.top || leftPos.top == start.top && leftPos.left < start.left)
-	        { start = leftPos; }
-	      if (!end || rightPos.bottom > end.bottom || rightPos.bottom == end.bottom && rightPos.right > end.right)
-	        { end = rightPos; }
-	      if (left < leftSide + 1) { left = leftSide; }
-	      add(left, rightPos.top, right - left, rightPos.bottom);
+	
+	      if (!start || cmpCoords(fromPos, start) < 0) { start = fromPos; }
+	      if (cmpCoords(toPos, start) < 0) { start = toPos; }
+	      if (!end || cmpCoords(fromPos, end) < 0) { end = fromPos; }
+	      if (cmpCoords(toPos, end) < 0) { end = toPos; }
 	    });
 	    return {start: start, end: end}
 	  }
@@ -9643,6 +10101,66 @@ return /******/ (function(modules) { // webpackBootstrap
 	  setTimeout(function () { if (!cm.state.focused) { cm.display.shift = false; } }, 150);
 	}
 	
+	// Read the actual heights of the rendered lines, and update their
+	// stored heights to match.
+	function updateHeightsInViewport(cm) {
+	  var display = cm.display;
+	  var prevBottom = display.lineDiv.offsetTop;
+	  for (var i = 0; i < display.view.length; i++) {
+	    var cur = display.view[i], height = (void 0);
+	    if (cur.hidden) { continue }
+	    if (ie && ie_version < 8) {
+	      var bot = cur.node.offsetTop + cur.node.offsetHeight;
+	      height = bot - prevBottom;
+	      prevBottom = bot;
+	    } else {
+	      var box = cur.node.getBoundingClientRect();
+	      height = box.bottom - box.top;
+	    }
+	    var diff = cur.line.height - height;
+	    if (height < 2) { height = textHeight(display); }
+	    if (diff > .005 || diff < -.005) {
+	      updateLineHeight(cur.line, height);
+	      updateWidgetHeight(cur.line);
+	      if (cur.rest) { for (var j = 0; j < cur.rest.length; j++)
+	        { updateWidgetHeight(cur.rest[j]); } }
+	    }
+	  }
+	}
+	
+	// Read and store the height of line widgets associated with the
+	// given line.
+	function updateWidgetHeight(line) {
+	  if (line.widgets) { for (var i = 0; i < line.widgets.length; ++i) {
+	    var w = line.widgets[i], parent = w.node.parentNode;
+	    if (parent) { w.height = parent.offsetHeight; }
+	  } }
+	}
+	
+	// Compute the lines that are visible in a given viewport (defaults
+	// the the current scroll position). viewport may contain top,
+	// height, and ensure (see op.scrollToPos) properties.
+	function visibleLines(display, doc, viewport) {
+	  var top = viewport && viewport.top != null ? Math.max(0, viewport.top) : display.scroller.scrollTop;
+	  top = Math.floor(top - paddingTop(display));
+	  var bottom = viewport && viewport.bottom != null ? viewport.bottom : top + display.wrapper.clientHeight;
+	
+	  var from = lineAtHeight(doc, top), to = lineAtHeight(doc, bottom);
+	  // Ensure is a {from: {line, ch}, to: {line, ch}} object, and
+	  // forces those lines into the viewport (if possible).
+	  if (viewport && viewport.ensure) {
+	    var ensureFrom = viewport.ensure.from.line, ensureTo = viewport.ensure.to.line;
+	    if (ensureFrom < from) {
+	      from = ensureFrom;
+	      to = lineAtHeight(doc, heightAtLine(getLine(doc, ensureFrom)) + display.wrapper.clientHeight);
+	    } else if (Math.min(ensureTo, doc.lastLine()) >= to) {
+	      from = lineAtHeight(doc, heightAtLine(getLine(doc, ensureTo)) - display.wrapper.clientHeight);
+	      to = ensureTo;
+	    }
+	  }
+	  return {from: from, to: Math.max(to, from + 1)}
+	}
+	
 	// Re-align line numbers and gutter marks to compensate for
 	// horizontal scrolling.
 	function alignHorizontally(cm) {
@@ -9686,195 +10204,176 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return false
 	}
 	
-	// Read the actual heights of the rendered lines, and update their
-	// stored heights to match.
-	function updateHeightsInViewport(cm) {
-	  var display = cm.display;
-	  var prevBottom = display.lineDiv.offsetTop;
-	  for (var i = 0; i < display.view.length; i++) {
-	    var cur = display.view[i], height = (void 0);
-	    if (cur.hidden) { continue }
-	    if (ie && ie_version < 8) {
-	      var bot = cur.node.offsetTop + cur.node.offsetHeight;
-	      height = bot - prevBottom;
-	      prevBottom = bot;
-	    } else {
-	      var box = cur.node.getBoundingClientRect();
-	      height = box.bottom - box.top;
-	    }
-	    var diff = cur.line.height - height;
-	    if (height < 2) { height = textHeight(display); }
-	    if (diff > .001 || diff < -.001) {
-	      updateLineHeight(cur.line, height);
-	      updateWidgetHeight(cur.line);
-	      if (cur.rest) { for (var j = 0; j < cur.rest.length; j++)
-	        { updateWidgetHeight(cur.rest[j]); } }
-	    }
+	// SCROLLING THINGS INTO VIEW
+	
+	// If an editor sits on the top or bottom of the window, partially
+	// scrolled out of view, this ensures that the cursor is visible.
+	function maybeScrollWindow(cm, rect) {
+	  if (signalDOMEvent(cm, "scrollCursorIntoView")) { return }
+	
+	  var display = cm.display, box = display.sizer.getBoundingClientRect(), doScroll = null;
+	  if (rect.top + box.top < 0) { doScroll = true; }
+	  else if (rect.bottom + box.top > (window.innerHeight || document.documentElement.clientHeight)) { doScroll = false; }
+	  if (doScroll != null && !phantom) {
+	    var scrollNode = elt("div", "\u200b", null, ("position: absolute;\n                         top: " + (rect.top - display.viewOffset - paddingTop(cm.display)) + "px;\n                         height: " + (rect.bottom - rect.top + scrollGap(cm) + display.barHeight) + "px;\n                         left: " + (rect.left) + "px; width: " + (Math.max(2, rect.right - rect.left)) + "px;"));
+	    cm.display.lineSpace.appendChild(scrollNode);
+	    scrollNode.scrollIntoView(doScroll);
+	    cm.display.lineSpace.removeChild(scrollNode);
 	  }
 	}
 	
-	// Read and store the height of line widgets associated with the
-	// given line.
-	function updateWidgetHeight(line) {
-	  if (line.widgets) { for (var i = 0; i < line.widgets.length; ++i)
-	    { line.widgets[i].height = line.widgets[i].node.parentNode.offsetHeight; } }
+	// Scroll a given position into view (immediately), verifying that
+	// it actually became visible (as line heights are accurately
+	// measured, the position of something may 'drift' during drawing).
+	function scrollPosIntoView(cm, pos, end, margin) {
+	  if (margin == null) { margin = 0; }
+	  var rect;
+	  if (!cm.options.lineWrapping && pos == end) {
+	    // Set pos and end to the cursor positions around the character pos sticks to
+	    // If pos.sticky == "before", that is around pos.ch - 1, otherwise around pos.ch
+	    // If pos == Pos(_, 0, "before"), pos and end are unchanged
+	    pos = pos.ch ? Pos(pos.line, pos.sticky == "before" ? pos.ch - 1 : pos.ch, "after") : pos;
+	    end = pos.sticky == "before" ? Pos(pos.line, pos.ch + 1, "before") : pos;
+	  }
+	  for (var limit = 0; limit < 5; limit++) {
+	    var changed = false;
+	    var coords = cursorCoords(cm, pos);
+	    var endCoords = !end || end == pos ? coords : cursorCoords(cm, end);
+	    rect = {left: Math.min(coords.left, endCoords.left),
+	            top: Math.min(coords.top, endCoords.top) - margin,
+	            right: Math.max(coords.left, endCoords.left),
+	            bottom: Math.max(coords.bottom, endCoords.bottom) + margin};
+	    var scrollPos = calculateScrollPos(cm, rect);
+	    var startTop = cm.doc.scrollTop, startLeft = cm.doc.scrollLeft;
+	    if (scrollPos.scrollTop != null) {
+	      updateScrollTop(cm, scrollPos.scrollTop);
+	      if (Math.abs(cm.doc.scrollTop - startTop) > 1) { changed = true; }
+	    }
+	    if (scrollPos.scrollLeft != null) {
+	      setScrollLeft(cm, scrollPos.scrollLeft);
+	      if (Math.abs(cm.doc.scrollLeft - startLeft) > 1) { changed = true; }
+	    }
+	    if (!changed) { break }
+	  }
+	  return rect
 	}
 	
-	// Compute the lines that are visible in a given viewport (defaults
-	// the the current scroll position). viewport may contain top,
-	// height, and ensure (see op.scrollToPos) properties.
-	function visibleLines(display, doc, viewport) {
-	  var top = viewport && viewport.top != null ? Math.max(0, viewport.top) : display.scroller.scrollTop;
-	  top = Math.floor(top - paddingTop(display));
-	  var bottom = viewport && viewport.bottom != null ? viewport.bottom : top + display.wrapper.clientHeight;
+	// Scroll a given set of coordinates into view (immediately).
+	function scrollIntoView(cm, rect) {
+	  var scrollPos = calculateScrollPos(cm, rect);
+	  if (scrollPos.scrollTop != null) { updateScrollTop(cm, scrollPos.scrollTop); }
+	  if (scrollPos.scrollLeft != null) { setScrollLeft(cm, scrollPos.scrollLeft); }
+	}
 	
-	  var from = lineAtHeight(doc, top), to = lineAtHeight(doc, bottom);
-	  // Ensure is a {from: {line, ch}, to: {line, ch}} object, and
-	  // forces those lines into the viewport (if possible).
-	  if (viewport && viewport.ensure) {
-	    var ensureFrom = viewport.ensure.from.line, ensureTo = viewport.ensure.to.line;
-	    if (ensureFrom < from) {
-	      from = ensureFrom;
-	      to = lineAtHeight(doc, heightAtLine(getLine(doc, ensureFrom)) + display.wrapper.clientHeight);
-	    } else if (Math.min(ensureTo, doc.lastLine()) >= to) {
-	      from = lineAtHeight(doc, heightAtLine(getLine(doc, ensureTo)) - display.wrapper.clientHeight);
-	      to = ensureTo;
-	    }
+	// Calculate a new scroll position needed to scroll the given
+	// rectangle into view. Returns an object with scrollTop and
+	// scrollLeft properties. When these are undefined, the
+	// vertical/horizontal position does not need to be adjusted.
+	function calculateScrollPos(cm, rect) {
+	  var display = cm.display, snapMargin = textHeight(cm.display);
+	  if (rect.top < 0) { rect.top = 0; }
+	  var screentop = cm.curOp && cm.curOp.scrollTop != null ? cm.curOp.scrollTop : display.scroller.scrollTop;
+	  var screen = displayHeight(cm), result = {};
+	  if (rect.bottom - rect.top > screen) { rect.bottom = rect.top + screen; }
+	  var docBottom = cm.doc.height + paddingVert(display);
+	  var atTop = rect.top < snapMargin, atBottom = rect.bottom > docBottom - snapMargin;
+	  if (rect.top < screentop) {
+	    result.scrollTop = atTop ? 0 : rect.top;
+	  } else if (rect.bottom > screentop + screen) {
+	    var newTop = Math.min(rect.top, (atBottom ? docBottom : rect.bottom) - screen);
+	    if (newTop != screentop) { result.scrollTop = newTop; }
 	  }
-	  return {from: from, to: Math.max(to, from + 1)}
+	
+	  var screenleft = cm.curOp && cm.curOp.scrollLeft != null ? cm.curOp.scrollLeft : display.scroller.scrollLeft;
+	  var screenw = displayWidth(cm) - (cm.options.fixedGutter ? display.gutters.offsetWidth : 0);
+	  var tooWide = rect.right - rect.left > screenw;
+	  if (tooWide) { rect.right = rect.left + screenw; }
+	  if (rect.left < 10)
+	    { result.scrollLeft = 0; }
+	  else if (rect.left < screenleft)
+	    { result.scrollLeft = Math.max(0, rect.left - (tooWide ? 0 : 10)); }
+	  else if (rect.right > screenw + screenleft - 3)
+	    { result.scrollLeft = rect.right + (tooWide ? 0 : 10) - screenw; }
+	  return result
+	}
+	
+	// Store a relative adjustment to the scroll position in the current
+	// operation (to be applied when the operation finishes).
+	function addToScrollTop(cm, top) {
+	  if (top == null) { return }
+	  resolveScrollToPos(cm);
+	  cm.curOp.scrollTop = (cm.curOp.scrollTop == null ? cm.doc.scrollTop : cm.curOp.scrollTop) + top;
+	}
+	
+	// Make sure that at the end of the operation the current cursor is
+	// shown.
+	function ensureCursorVisible(cm) {
+	  resolveScrollToPos(cm);
+	  var cur = cm.getCursor();
+	  cm.curOp.scrollToPos = {from: cur, to: cur, margin: cm.options.cursorScrollMargin};
+	}
+	
+	function scrollToCoords(cm, x, y) {
+	  if (x != null || y != null) { resolveScrollToPos(cm); }
+	  if (x != null) { cm.curOp.scrollLeft = x; }
+	  if (y != null) { cm.curOp.scrollTop = y; }
+	}
+	
+	function scrollToRange(cm, range$$1) {
+	  resolveScrollToPos(cm);
+	  cm.curOp.scrollToPos = range$$1;
+	}
+	
+	// When an operation has its scrollToPos property set, and another
+	// scroll action is applied before the end of the operation, this
+	// 'simulates' scrolling that position into view in a cheap way, so
+	// that the effect of intermediate scroll commands is not ignored.
+	function resolveScrollToPos(cm) {
+	  var range$$1 = cm.curOp.scrollToPos;
+	  if (range$$1) {
+	    cm.curOp.scrollToPos = null;
+	    var from = estimateCoords(cm, range$$1.from), to = estimateCoords(cm, range$$1.to);
+	    scrollToCoordsRange(cm, from, to, range$$1.margin);
+	  }
+	}
+	
+	function scrollToCoordsRange(cm, from, to, margin) {
+	  var sPos = calculateScrollPos(cm, {
+	    left: Math.min(from.left, to.left),
+	    top: Math.min(from.top, to.top) - margin,
+	    right: Math.max(from.right, to.right),
+	    bottom: Math.max(from.bottom, to.bottom) + margin
+	  });
+	  scrollToCoords(cm, sPos.scrollLeft, sPos.scrollTop);
 	}
 	
 	// Sync the scrollable area and scrollbars, ensure the viewport
 	// covers the visible area.
-	function setScrollTop(cm, val) {
+	function updateScrollTop(cm, val) {
 	  if (Math.abs(cm.doc.scrollTop - val) < 2) { return }
-	  cm.doc.scrollTop = val;
 	  if (!gecko) { updateDisplaySimple(cm, {top: val}); }
-	  if (cm.display.scroller.scrollTop != val) { cm.display.scroller.scrollTop = val; }
-	  cm.display.scrollbars.setScrollTop(val);
+	  setScrollTop(cm, val, true);
 	  if (gecko) { updateDisplaySimple(cm); }
 	  startWorker(cm, 100);
 	}
+	
+	function setScrollTop(cm, val, forceScroll) {
+	  val = Math.min(cm.display.scroller.scrollHeight - cm.display.scroller.clientHeight, val);
+	  if (cm.display.scroller.scrollTop == val && !forceScroll) { return }
+	  cm.doc.scrollTop = val;
+	  cm.display.scrollbars.setScrollTop(val);
+	  if (cm.display.scroller.scrollTop != val) { cm.display.scroller.scrollTop = val; }
+	}
+	
 	// Sync scroller and scrollbar, ensure the gutter elements are
 	// aligned.
-	function setScrollLeft(cm, val, isScroller) {
-	  if (isScroller ? val == cm.doc.scrollLeft : Math.abs(cm.doc.scrollLeft - val) < 2) { return }
+	function setScrollLeft(cm, val, isScroller, forceScroll) {
 	  val = Math.min(val, cm.display.scroller.scrollWidth - cm.display.scroller.clientWidth);
+	  if ((isScroller ? val == cm.doc.scrollLeft : Math.abs(cm.doc.scrollLeft - val) < 2) && !forceScroll) { return }
 	  cm.doc.scrollLeft = val;
 	  alignHorizontally(cm);
 	  if (cm.display.scroller.scrollLeft != val) { cm.display.scroller.scrollLeft = val; }
 	  cm.display.scrollbars.setScrollLeft(val);
-	}
-	
-	// Since the delta values reported on mouse wheel events are
-	// unstandardized between browsers and even browser versions, and
-	// generally horribly unpredictable, this code starts by measuring
-	// the scroll effect that the first few mouse wheel events have,
-	// and, from that, detects the way it can convert deltas to pixel
-	// offsets afterwards.
-	//
-	// The reason we want to know the amount a wheel event will scroll
-	// is that it gives us a chance to update the display before the
-	// actual scrolling happens, reducing flickering.
-	
-	var wheelSamples = 0;
-	var wheelPixelsPerUnit = null;
-	// Fill in a browser-detected starting value on browsers where we
-	// know one. These don't have to be accurate -- the result of them
-	// being wrong would just be a slight flicker on the first wheel
-	// scroll (if it is large enough).
-	if (ie) { wheelPixelsPerUnit = -.53; }
-	else if (gecko) { wheelPixelsPerUnit = 15; }
-	else if (chrome) { wheelPixelsPerUnit = -.7; }
-	else if (safari) { wheelPixelsPerUnit = -1/3; }
-	
-	function wheelEventDelta(e) {
-	  var dx = e.wheelDeltaX, dy = e.wheelDeltaY;
-	  if (dx == null && e.detail && e.axis == e.HORIZONTAL_AXIS) { dx = e.detail; }
-	  if (dy == null && e.detail && e.axis == e.VERTICAL_AXIS) { dy = e.detail; }
-	  else if (dy == null) { dy = e.wheelDelta; }
-	  return {x: dx, y: dy}
-	}
-	function wheelEventPixels(e) {
-	  var delta = wheelEventDelta(e);
-	  delta.x *= wheelPixelsPerUnit;
-	  delta.y *= wheelPixelsPerUnit;
-	  return delta
-	}
-	
-	function onScrollWheel(cm, e) {
-	  var delta = wheelEventDelta(e), dx = delta.x, dy = delta.y;
-	
-	  var display = cm.display, scroll = display.scroller;
-	  // Quit if there's nothing to scroll here
-	  var canScrollX = scroll.scrollWidth > scroll.clientWidth;
-	  var canScrollY = scroll.scrollHeight > scroll.clientHeight;
-	  if (!(dx && canScrollX || dy && canScrollY)) { return }
-	
-	  // Webkit browsers on OS X abort momentum scrolls when the target
-	  // of the scroll event is removed from the scrollable element.
-	  // This hack (see related code in patchDisplay) makes sure the
-	  // element is kept around.
-	  if (dy && mac && webkit) {
-	    outer: for (var cur = e.target, view = display.view; cur != scroll; cur = cur.parentNode) {
-	      for (var i = 0; i < view.length; i++) {
-	        if (view[i].node == cur) {
-	          cm.display.currentWheelTarget = cur;
-	          break outer
-	        }
-	      }
-	    }
-	  }
-	
-	  // On some browsers, horizontal scrolling will cause redraws to
-	  // happen before the gutter has been realigned, causing it to
-	  // wriggle around in a most unseemly way. When we have an
-	  // estimated pixels/delta value, we just handle horizontal
-	  // scrolling entirely here. It'll be slightly off from native, but
-	  // better than glitching out.
-	  if (dx && !gecko && !presto && wheelPixelsPerUnit != null) {
-	    if (dy && canScrollY)
-	      { setScrollTop(cm, Math.max(0, Math.min(scroll.scrollTop + dy * wheelPixelsPerUnit, scroll.scrollHeight - scroll.clientHeight))); }
-	    setScrollLeft(cm, Math.max(0, Math.min(scroll.scrollLeft + dx * wheelPixelsPerUnit, scroll.scrollWidth - scroll.clientWidth)));
-	    // Only prevent default scrolling if vertical scrolling is
-	    // actually possible. Otherwise, it causes vertical scroll
-	    // jitter on OSX trackpads when deltaX is small and deltaY
-	    // is large (issue #3579)
-	    if (!dy || (dy && canScrollY))
-	      { e_preventDefault(e); }
-	    display.wheelStartX = null; // Abort measurement, if in progress
-	    return
-	  }
-	
-	  // 'Project' the visible viewport to cover the area that is being
-	  // scrolled into view (if we know enough to estimate it).
-	  if (dy && wheelPixelsPerUnit != null) {
-	    var pixels = dy * wheelPixelsPerUnit;
-	    var top = cm.doc.scrollTop, bot = top + display.wrapper.clientHeight;
-	    if (pixels < 0) { top = Math.max(0, top + pixels - 50); }
-	    else { bot = Math.min(cm.doc.height, bot + pixels + 50); }
-	    updateDisplaySimple(cm, {top: top, bottom: bot});
-	  }
-	
-	  if (wheelSamples < 20) {
-	    if (display.wheelStartX == null) {
-	      display.wheelStartX = scroll.scrollLeft; display.wheelStartY = scroll.scrollTop;
-	      display.wheelDX = dx; display.wheelDY = dy;
-	      setTimeout(function () {
-	        if (display.wheelStartX == null) { return }
-	        var movedX = scroll.scrollLeft - display.wheelStartX;
-	        var movedY = scroll.scrollTop - display.wheelStartY;
-	        var sample = (movedY && display.wheelDY && movedY / display.wheelDY) ||
-	          (movedX && display.wheelDX && movedX / display.wheelDX);
-	        display.wheelStartX = display.wheelStartY = null;
-	        if (!sample) { return }
-	        wheelPixelsPerUnit = (wheelPixelsPerUnit * wheelSamples + sample) / (wheelSamples + 1);
-	        ++wheelSamples;
-	      }, 200);
-	    } else {
-	      display.wheelDX += dx; display.wheelDY += dy;
-	    }
-	  }
 	}
 	
 	// SCROLLBARS
@@ -10053,137 +10552,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    node.setAttribute("cm-not-content", "true");
 	  }, function (pos, axis) {
 	    if (axis == "horizontal") { setScrollLeft(cm, pos); }
-	    else { setScrollTop(cm, pos); }
+	    else { updateScrollTop(cm, pos); }
 	  }, cm);
 	  if (cm.display.scrollbars.addClass)
 	    { addClass(cm.display.wrapper, cm.display.scrollbars.addClass); }
-	}
-	
-	// SCROLLING THINGS INTO VIEW
-	
-	// If an editor sits on the top or bottom of the window, partially
-	// scrolled out of view, this ensures that the cursor is visible.
-	function maybeScrollWindow(cm, rect) {
-	  if (signalDOMEvent(cm, "scrollCursorIntoView")) { return }
-	
-	  var display = cm.display, box = display.sizer.getBoundingClientRect(), doScroll = null;
-	  if (rect.top + box.top < 0) { doScroll = true; }
-	  else if (rect.bottom + box.top > (window.innerHeight || document.documentElement.clientHeight)) { doScroll = false; }
-	  if (doScroll != null && !phantom) {
-	    var scrollNode = elt("div", "\u200b", null, ("position: absolute;\n                         top: " + (rect.top - display.viewOffset - paddingTop(cm.display)) + "px;\n                         height: " + (rect.bottom - rect.top + scrollGap(cm) + display.barHeight) + "px;\n                         left: " + (rect.left) + "px; width: " + (Math.max(2, rect.right - rect.left)) + "px;"));
-	    cm.display.lineSpace.appendChild(scrollNode);
-	    scrollNode.scrollIntoView(doScroll);
-	    cm.display.lineSpace.removeChild(scrollNode);
-	  }
-	}
-	
-	// Scroll a given position into view (immediately), verifying that
-	// it actually became visible (as line heights are accurately
-	// measured, the position of something may 'drift' during drawing).
-	function scrollPosIntoView(cm, pos, end, margin) {
-	  if (margin == null) { margin = 0; }
-	  var rect;
-	  for (var limit = 0; limit < 5; limit++) {
-	    var changed = false;
-	    var coords = cursorCoords(cm, pos);
-	    var endCoords = !end || end == pos ? coords : cursorCoords(cm, end);
-	    rect = {left: Math.min(coords.left, endCoords.left),
-	            top: Math.min(coords.top, endCoords.top) - margin,
-	            right: Math.max(coords.left, endCoords.left),
-	            bottom: Math.max(coords.bottom, endCoords.bottom) + margin};
-	    var scrollPos = calculateScrollPos(cm, rect);
-	    var startTop = cm.doc.scrollTop, startLeft = cm.doc.scrollLeft;
-	    if (scrollPos.scrollTop != null) {
-	      setScrollTop(cm, scrollPos.scrollTop);
-	      if (Math.abs(cm.doc.scrollTop - startTop) > 1) { changed = true; }
-	    }
-	    if (scrollPos.scrollLeft != null) {
-	      setScrollLeft(cm, scrollPos.scrollLeft);
-	      if (Math.abs(cm.doc.scrollLeft - startLeft) > 1) { changed = true; }
-	    }
-	    if (!changed) { break }
-	  }
-	  return rect
-	}
-	
-	// Scroll a given set of coordinates into view (immediately).
-	function scrollIntoView(cm, rect) {
-	  var scrollPos = calculateScrollPos(cm, rect);
-	  if (scrollPos.scrollTop != null) { setScrollTop(cm, scrollPos.scrollTop); }
-	  if (scrollPos.scrollLeft != null) { setScrollLeft(cm, scrollPos.scrollLeft); }
-	}
-	
-	// Calculate a new scroll position needed to scroll the given
-	// rectangle into view. Returns an object with scrollTop and
-	// scrollLeft properties. When these are undefined, the
-	// vertical/horizontal position does not need to be adjusted.
-	function calculateScrollPos(cm, rect) {
-	  var display = cm.display, snapMargin = textHeight(cm.display);
-	  if (rect.top < 0) { rect.top = 0; }
-	  var screentop = cm.curOp && cm.curOp.scrollTop != null ? cm.curOp.scrollTop : display.scroller.scrollTop;
-	  var screen = displayHeight(cm), result = {};
-	  if (rect.bottom - rect.top > screen) { rect.bottom = rect.top + screen; }
-	  var docBottom = cm.doc.height + paddingVert(display);
-	  var atTop = rect.top < snapMargin, atBottom = rect.bottom > docBottom - snapMargin;
-	  if (rect.top < screentop) {
-	    result.scrollTop = atTop ? 0 : rect.top;
-	  } else if (rect.bottom > screentop + screen) {
-	    var newTop = Math.min(rect.top, (atBottom ? docBottom : rect.bottom) - screen);
-	    if (newTop != screentop) { result.scrollTop = newTop; }
-	  }
-	
-	  var screenleft = cm.curOp && cm.curOp.scrollLeft != null ? cm.curOp.scrollLeft : display.scroller.scrollLeft;
-	  var screenw = displayWidth(cm) - (cm.options.fixedGutter ? display.gutters.offsetWidth : 0);
-	  var tooWide = rect.right - rect.left > screenw;
-	  if (tooWide) { rect.right = rect.left + screenw; }
-	  if (rect.left < 10)
-	    { result.scrollLeft = 0; }
-	  else if (rect.left < screenleft)
-	    { result.scrollLeft = Math.max(0, rect.left - (tooWide ? 0 : 10)); }
-	  else if (rect.right > screenw + screenleft - 3)
-	    { result.scrollLeft = rect.right + (tooWide ? 0 : 10) - screenw; }
-	  return result
-	}
-	
-	// Store a relative adjustment to the scroll position in the current
-	// operation (to be applied when the operation finishes).
-	function addToScrollPos(cm, left, top) {
-	  if (left != null || top != null) { resolveScrollToPos(cm); }
-	  if (left != null)
-	    { cm.curOp.scrollLeft = (cm.curOp.scrollLeft == null ? cm.doc.scrollLeft : cm.curOp.scrollLeft) + left; }
-	  if (top != null)
-	    { cm.curOp.scrollTop = (cm.curOp.scrollTop == null ? cm.doc.scrollTop : cm.curOp.scrollTop) + top; }
-	}
-	
-	// Make sure that at the end of the operation the current cursor is
-	// shown.
-	function ensureCursorVisible(cm) {
-	  resolveScrollToPos(cm);
-	  var cur = cm.getCursor(), from = cur, to = cur;
-	  if (!cm.options.lineWrapping) {
-	    from = cur.ch ? Pos(cur.line, cur.ch - 1) : cur;
-	    to = Pos(cur.line, cur.ch + 1);
-	  }
-	  cm.curOp.scrollToPos = {from: from, to: to, margin: cm.options.cursorScrollMargin};
-	}
-	
-	// When an operation has its scrollToPos property set, and another
-	// scroll action is applied before the end of the operation, this
-	// 'simulates' scrolling that position into view in a cheap way, so
-	// that the effect of intermediate scroll commands is not ignored.
-	function resolveScrollToPos(cm) {
-	  var range$$1 = cm.curOp.scrollToPos;
-	  if (range$$1) {
-	    cm.curOp.scrollToPos = null;
-	    var from = estimateCoords(cm, range$$1.from), to = estimateCoords(cm, range$$1.to);
-	    var sPos = calculateScrollPos(cm, {
-	      left: Math.min(from.left, to.left),
-	      top: Math.min(from.top, to.top) - range$$1.margin,
-	      right: Math.max(from.right, to.right),
-	      bottom: Math.max(from.bottom, to.bottom) + range$$1.margin
-	    });
-	    cm.scrollTo(sPos.scrollLeft, sPos.scrollTop);
-	  }
 	}
 	
 	// Operations are used to wrap a series of changes to the editor
@@ -10276,7 +10648,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  if (op.updatedDisplay || op.selectionChanged)
-	    { op.preparedSelection = display.input.prepareSelection(op.focus); }
+	    { op.preparedSelection = display.input.prepareSelection(); }
 	}
 	
 	function endOperation_W2(op) {
@@ -10289,7 +10661,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    cm.display.maxLineChanged = false;
 	  }
 	
-	  var takeFocus = op.focus && op.focus == activeElt() && (!document.hasFocus || document.hasFocus());
+	  var takeFocus = op.focus && op.focus == activeElt();
 	  if (op.preparedSelection)
 	    { cm.display.input.showSelection(op.preparedSelection, takeFocus); }
 	  if (op.updatedDisplay || op.startHeight != cm.doc.height)
@@ -10314,17 +10686,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    { display.wheelStartX = display.wheelStartY = null; }
 	
 	  // Propagate the scroll position to the actual DOM scroller
-	  if (op.scrollTop != null && (display.scroller.scrollTop != op.scrollTop || op.forceScroll)) {
-	    doc.scrollTop = Math.max(0, Math.min(display.scroller.scrollHeight - display.scroller.clientHeight, op.scrollTop));
-	    display.scrollbars.setScrollTop(doc.scrollTop);
-	    display.scroller.scrollTop = doc.scrollTop;
-	  }
-	  if (op.scrollLeft != null && (display.scroller.scrollLeft != op.scrollLeft || op.forceScroll)) {
-	    doc.scrollLeft = Math.max(0, Math.min(display.scroller.scrollWidth - display.scroller.clientWidth, op.scrollLeft));
-	    display.scrollbars.setScrollLeft(doc.scrollLeft);
-	    display.scroller.scrollLeft = doc.scrollLeft;
-	    alignHorizontally(cm);
-	  }
+	  if (op.scrollTop != null) { setScrollTop(cm, op.scrollTop, op.forceScroll); }
+	
+	  if (op.scrollLeft != null) { setScrollLeft(cm, op.scrollLeft, true, true); }
 	  // If we need to scroll a specific position into view, do so.
 	  if (op.scrollToPos) {
 	    var rect = scrollPosIntoView(cm, clipPos(doc, op.scrollToPos.from),
@@ -10537,22 +10901,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	// HIGHLIGHT WORKER
 	
 	function startWorker(cm, time) {
-	  if (cm.doc.mode.startState && cm.doc.frontier < cm.display.viewTo)
+	  if (cm.doc.highlightFrontier < cm.display.viewTo)
 	    { cm.state.highlight.set(time, bind(highlightWorker, cm)); }
 	}
 	
 	function highlightWorker(cm) {
 	  var doc = cm.doc;
-	  if (doc.frontier < doc.first) { doc.frontier = doc.first; }
-	  if (doc.frontier >= cm.display.viewTo) { return }
+	  if (doc.highlightFrontier >= cm.display.viewTo) { return }
 	  var end = +new Date + cm.options.workTime;
-	  var state = copyState(doc.mode, getStateBefore(cm, doc.frontier));
+	  var context = getContextBefore(cm, doc.highlightFrontier);
 	  var changedLines = [];
 	
-	  doc.iter(doc.frontier, Math.min(doc.first + doc.size, cm.display.viewTo + 500), function (line) {
-	    if (doc.frontier >= cm.display.viewFrom) { // Visible
-	      var oldStyles = line.styles, tooLong = line.text.length > cm.options.maxHighlightLength;
-	      var highlighted = highlightLine(cm, line, tooLong ? copyState(doc.mode, state) : state, true);
+	  doc.iter(context.line, Math.min(doc.first + doc.size, cm.display.viewTo + 500), function (line) {
+	    if (context.line >= cm.display.viewFrom) { // Visible
+	      var oldStyles = line.styles;
+	      var resetState = line.text.length > cm.options.maxHighlightLength ? copyState(doc.mode, context.state) : null;
+	      var highlighted = highlightLine(cm, line, context, true);
+	      if (resetState) { context.state = resetState; }
 	      line.styles = highlighted.styles;
 	      var oldCls = line.styleClasses, newCls = highlighted.classes;
 	      if (newCls) { line.styleClasses = newCls; }
@@ -10560,19 +10925,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var ischange = !oldStyles || oldStyles.length != line.styles.length ||
 	        oldCls != newCls && (!oldCls || !newCls || oldCls.bgClass != newCls.bgClass || oldCls.textClass != newCls.textClass);
 	      for (var i = 0; !ischange && i < oldStyles.length; ++i) { ischange = oldStyles[i] != line.styles[i]; }
-	      if (ischange) { changedLines.push(doc.frontier); }
-	      line.stateAfter = tooLong ? state : copyState(doc.mode, state);
+	      if (ischange) { changedLines.push(context.line); }
+	      line.stateAfter = context.save();
+	      context.nextLine();
 	    } else {
 	      if (line.text.length <= cm.options.maxHighlightLength)
-	        { processLine(cm, line.text, state); }
-	      line.stateAfter = doc.frontier % 5 == 0 ? copyState(doc.mode, state) : null;
+	        { processLine(cm, line.text, context); }
+	      line.stateAfter = context.line % 5 == 0 ? context.save() : null;
+	      context.nextLine();
 	    }
-	    ++doc.frontier;
 	    if (+new Date > end) {
 	      startWorker(cm, cm.options.workDelay);
 	      return true
 	    }
 	  });
+	  doc.highlightFrontier = context.line;
+	  doc.modeFrontier = Math.max(doc.modeFrontier, context.line);
 	  if (changedLines.length) { runInOp(cm, function () {
 	    for (var i = 0; i < changedLines.length; i++)
 	      { regLineChange(cm, changedLines[i], "text"); }
@@ -10615,6 +10983,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	    display.sizer.style.marginBottom = -display.nativeBarWidth + "px";
 	    display.sizer.style.borderRightWidth = scrollGap(cm) + "px";
 	    display.scrollbarsClipped = true;
+	  }
+	}
+	
+	function selectionSnapshot(cm) {
+	  if (cm.hasFocus()) { return null }
+	  var active = activeElt();
+	  if (!active || !contains(cm.display.lineDiv, active)) { return null }
+	  var result = {activeElt: active};
+	  if (window.getSelection) {
+	    var sel = window.getSelection();
+	    if (sel.anchorNode && sel.extend && contains(cm.display.lineDiv, sel.anchorNode)) {
+	      result.anchorNode = sel.anchorNode;
+	      result.anchorOffset = sel.anchorOffset;
+	      result.focusNode = sel.focusNode;
+	      result.focusOffset = sel.focusOffset;
+	    }
+	  }
+	  return result
+	}
+	
+	function restoreSelection(snapshot) {
+	  if (!snapshot || !snapshot.activeElt || snapshot.activeElt == activeElt()) { return }
+	  snapshot.activeElt.focus();
+	  if (snapshot.anchorNode && contains(document.body, snapshot.anchorNode) && contains(document.body, snapshot.focusNode)) {
+	    var sel = window.getSelection(), range$$1 = document.createRange();
+	    range$$1.setEnd(snapshot.anchorNode, snapshot.anchorOffset);
+	    range$$1.collapse(false);
+	    sel.removeAllRanges();
+	    sel.addRange(range$$1);
+	    sel.extend(snapshot.focusNode, snapshot.focusOffset);
 	  }
 	}
 	
@@ -10667,14 +11065,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  // For big changes, we hide the enclosing element during the
 	  // update, since that speeds up the operations on most browsers.
-	  var focused = activeElt();
+	  var selSnapshot = selectionSnapshot(cm);
 	  if (toUpdate > 4) { display.lineDiv.style.display = "none"; }
 	  patchDisplay(cm, display.updateLineNumbers, update.dims);
 	  if (toUpdate > 4) { display.lineDiv.style.display = ""; }
 	  display.renderedView = display.view;
 	  // There might have been a widget with a focused element that got
 	  // hidden or updated, if so re-focus it.
-	  if (focused && activeElt() != focused && focused.offsetHeight) { focused.focus(); }
+	  restoreSelection(selSnapshot);
 	
 	  // Prevent selection and cursors from interfering with the scroll
 	  // width and height.
@@ -10713,6 +11111,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    updateSelection(cm);
 	    updateScrollbars(cm, barMeasure);
 	    setDocumentHeight(cm, barMeasure);
+	    update.force = false;
 	  }
 	
 	  update.signal(cm, "update", cm);
@@ -10819,6 +11218,117 @@ return /******/ (function(modules) { // webpackBootstrap
 	  } else if (found > -1 && !options.lineNumbers) {
 	    options.gutters = options.gutters.slice(0);
 	    options.gutters.splice(found, 1);
+	  }
+	}
+	
+	// Since the delta values reported on mouse wheel events are
+	// unstandardized between browsers and even browser versions, and
+	// generally horribly unpredictable, this code starts by measuring
+	// the scroll effect that the first few mouse wheel events have,
+	// and, from that, detects the way it can convert deltas to pixel
+	// offsets afterwards.
+	//
+	// The reason we want to know the amount a wheel event will scroll
+	// is that it gives us a chance to update the display before the
+	// actual scrolling happens, reducing flickering.
+	
+	var wheelSamples = 0;
+	var wheelPixelsPerUnit = null;
+	// Fill in a browser-detected starting value on browsers where we
+	// know one. These don't have to be accurate -- the result of them
+	// being wrong would just be a slight flicker on the first wheel
+	// scroll (if it is large enough).
+	if (ie) { wheelPixelsPerUnit = -.53; }
+	else if (gecko) { wheelPixelsPerUnit = 15; }
+	else if (chrome) { wheelPixelsPerUnit = -.7; }
+	else if (safari) { wheelPixelsPerUnit = -1/3; }
+	
+	function wheelEventDelta(e) {
+	  var dx = e.wheelDeltaX, dy = e.wheelDeltaY;
+	  if (dx == null && e.detail && e.axis == e.HORIZONTAL_AXIS) { dx = e.detail; }
+	  if (dy == null && e.detail && e.axis == e.VERTICAL_AXIS) { dy = e.detail; }
+	  else if (dy == null) { dy = e.wheelDelta; }
+	  return {x: dx, y: dy}
+	}
+	function wheelEventPixels(e) {
+	  var delta = wheelEventDelta(e);
+	  delta.x *= wheelPixelsPerUnit;
+	  delta.y *= wheelPixelsPerUnit;
+	  return delta
+	}
+	
+	function onScrollWheel(cm, e) {
+	  var delta = wheelEventDelta(e), dx = delta.x, dy = delta.y;
+	
+	  var display = cm.display, scroll = display.scroller;
+	  // Quit if there's nothing to scroll here
+	  var canScrollX = scroll.scrollWidth > scroll.clientWidth;
+	  var canScrollY = scroll.scrollHeight > scroll.clientHeight;
+	  if (!(dx && canScrollX || dy && canScrollY)) { return }
+	
+	  // Webkit browsers on OS X abort momentum scrolls when the target
+	  // of the scroll event is removed from the scrollable element.
+	  // This hack (see related code in patchDisplay) makes sure the
+	  // element is kept around.
+	  if (dy && mac && webkit) {
+	    outer: for (var cur = e.target, view = display.view; cur != scroll; cur = cur.parentNode) {
+	      for (var i = 0; i < view.length; i++) {
+	        if (view[i].node == cur) {
+	          cm.display.currentWheelTarget = cur;
+	          break outer
+	        }
+	      }
+	    }
+	  }
+	
+	  // On some browsers, horizontal scrolling will cause redraws to
+	  // happen before the gutter has been realigned, causing it to
+	  // wriggle around in a most unseemly way. When we have an
+	  // estimated pixels/delta value, we just handle horizontal
+	  // scrolling entirely here. It'll be slightly off from native, but
+	  // better than glitching out.
+	  if (dx && !gecko && !presto && wheelPixelsPerUnit != null) {
+	    if (dy && canScrollY)
+	      { updateScrollTop(cm, Math.max(0, scroll.scrollTop + dy * wheelPixelsPerUnit)); }
+	    setScrollLeft(cm, Math.max(0, scroll.scrollLeft + dx * wheelPixelsPerUnit));
+	    // Only prevent default scrolling if vertical scrolling is
+	    // actually possible. Otherwise, it causes vertical scroll
+	    // jitter on OSX trackpads when deltaX is small and deltaY
+	    // is large (issue #3579)
+	    if (!dy || (dy && canScrollY))
+	      { e_preventDefault(e); }
+	    display.wheelStartX = null; // Abort measurement, if in progress
+	    return
+	  }
+	
+	  // 'Project' the visible viewport to cover the area that is being
+	  // scrolled into view (if we know enough to estimate it).
+	  if (dy && wheelPixelsPerUnit != null) {
+	    var pixels = dy * wheelPixelsPerUnit;
+	    var top = cm.doc.scrollTop, bot = top + display.wrapper.clientHeight;
+	    if (pixels < 0) { top = Math.max(0, top + pixels - 50); }
+	    else { bot = Math.min(cm.doc.height, bot + pixels + 50); }
+	    updateDisplaySimple(cm, {top: top, bottom: bot});
+	  }
+	
+	  if (wheelSamples < 20) {
+	    if (display.wheelStartX == null) {
+	      display.wheelStartX = scroll.scrollLeft; display.wheelStartY = scroll.scrollTop;
+	      display.wheelDX = dx; display.wheelDY = dy;
+	      setTimeout(function () {
+	        if (display.wheelStartX == null) { return }
+	        var movedX = scroll.scrollLeft - display.wheelStartX;
+	        var movedY = scroll.scrollTop - display.wheelStartY;
+	        var sample = (movedY && display.wheelDY && movedY / display.wheelDY) ||
+	          (movedX && display.wheelDX && movedX / display.wheelDX);
+	        display.wheelStartX = display.wheelStartY = null;
+	        if (!sample) { return }
+	        wheelPixelsPerUnit = (wheelPixelsPerUnit * wheelSamples + sample) / (wheelSamples + 1);
+	        ++wheelSamples;
+	      }, 200);
+	    } else {
+	      display.wheelDX += dx; display.wheelDY += dy;
+	    }
 	  }
 	}
 	
@@ -10975,7 +11485,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (line.stateAfter) { line.stateAfter = null; }
 	    if (line.styles) { line.styles = null; }
 	  });
-	  cm.doc.frontier = cm.doc.first;
+	  cm.doc.modeFrontier = cm.doc.highlightFrontier = cm.doc.first;
 	  startWorker(cm, 100);
 	  cm.state.modeGen++;
 	  if (cm.curOp) { regChange(cm); }
@@ -11309,8 +11819,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	// include a given position (and optionally a second position).
 	// Otherwise, simply returns the range between the given positions.
 	// Used for cursor motion and such.
-	function extendRange(doc, range, head, other) {
-	  if (doc.cm && doc.cm.display.shift || doc.extend) {
+	function extendRange(range, head, other, extend) {
+	  if (extend) {
 	    var anchor = range.anchor;
 	    if (other) {
 	      var posBefore = cmp(head, anchor) < 0;
@@ -11328,16 +11838,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	// Extend the primary selection range, discard the rest.
-	function extendSelection(doc, head, other, options) {
-	  setSelection(doc, new Selection([extendRange(doc, doc.sel.primary(), head, other)], 0), options);
+	function extendSelection(doc, head, other, options, extend) {
+	  if (extend == null) { extend = doc.cm && (doc.cm.display.shift || doc.extend); }
+	  setSelection(doc, new Selection([extendRange(doc.sel.primary(), head, other, extend)], 0), options);
 	}
 	
 	// Extend all selections (pos is an array of selections with length
 	// equal the number of selections)
 	function extendSelections(doc, heads, options) {
 	  var out = [];
+	  var extend = doc.cm && (doc.cm.display.shift || doc.extend);
 	  for (var i = 0; i < doc.sel.ranges.length; i++)
-	    { out[i] = extendRange(doc, doc.sel.ranges[i], heads[i], null); }
+	    { out[i] = extendRange(doc.sel.ranges[i], heads[i], null, extend); }
 	  var newSel = normalizeSelection(out, doc.sel.primIndex);
 	  setSelection(doc, newSel, options);
 	}
@@ -11418,7 +11930,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Verify that the selection does not partially select any atomic
 	// marked ranges.
 	function reCheckSelection(doc) {
-	  setSelectionInner(doc, skipAtomicInSelection(doc, doc.sel, null, false), sel_dontScroll);
+	  setSelectionInner(doc, skipAtomicInSelection(doc, doc.sel, null, false));
 	}
 	
 	// Return a selection that does not partially select any atomic
@@ -11543,7 +12055,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var split = sawReadOnlySpans && !ignoreReadOnly && removeReadOnlyRanges(doc, change.from, change.to);
 	  if (split) {
 	    for (var i = split.length - 1; i >= 0; --i)
-	      { makeChangeInner(doc, {from: split[i].from, to: split[i].to, text: i ? [""] : change.text}); }
+	      { makeChangeInner(doc, {from: split[i].from, to: split[i].to, text: i ? [""] : change.text, origin: change.origin}); }
 	  } else {
 	    makeChangeInner(doc, change);
 	  }
@@ -11568,7 +12080,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	// Revert a change stored in a document's history.
 	function makeChangeFromHistory(doc, type, allowSelectionOnly) {
-	  if (doc.cm && doc.cm.state.suppressEdits && !allowSelectionOnly) { return }
+	  var suppress = doc.cm && doc.cm.state.suppressEdits;
+	  if (suppress && !allowSelectionOnly) { return }
 	
 	  var hist = doc.history, event, selAfter = doc.sel;
 	  var source = type == "undo" ? hist.done : hist.undone, dest = type == "undo" ? hist.undone : hist.done;
@@ -11593,8 +12106,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return
 	      }
 	      selAfter = event;
-	    }
-	    else { break }
+	    } else if (suppress) {
+	      source.push(event);
+	      return
+	    } else { break }
 	  }
 	
 	  // Build up a reverse change object to add to the opposite history
@@ -11721,8 +12236,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (recomputeMaxLength) { cm.curOp.updateMaxLine = true; }
 	  }
 	
-	  // Adjust frontier, schedule worker
-	  doc.frontier = Math.min(doc.frontier, from.line);
+	  retreatFrontier(doc, from.line);
 	  startWorker(cm, 400);
 	
 	  var lendiff = change.text.length - (to.line - from.line) - 1;
@@ -11750,7 +12264,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function replaceRange(doc, code, from, to, origin) {
 	  if (!to) { to = from; }
-	  if (cmp(to, from) < 0) { var tmp = to; to = from; from = tmp; }
+	  if (cmp(to, from) < 0) { var assign;
+	    (assign = [to, from], from = assign[0], to = assign[1], assign); }
 	  if (typeof code == "string") { code = doc.splitLines(code); }
 	  makeChange(doc, {from: from, to: to, text: code, origin: origin});
 	}
@@ -11832,7 +12347,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	//
 	// See also http://marijnhaverbeke.nl/blog/codemirror-line-tree.html
 	
-	var LeafChunk = function(lines) {
+	function LeafChunk(lines) {
 	  var this$1 = this;
 	
 	  this.lines = lines;
@@ -11843,47 +12358,49 @@ return /******/ (function(modules) { // webpackBootstrap
 	    height += lines[i].height;
 	  }
 	  this.height = height;
-	};
+	}
 	
-	LeafChunk.prototype.chunkSize = function () { return this.lines.length };
+	LeafChunk.prototype = {
+	  chunkSize: function chunkSize() { return this.lines.length },
 	
-	// Remove the n lines at offset 'at'.
-	LeafChunk.prototype.removeInner = function (at, n) {
+	  // Remove the n lines at offset 'at'.
+	  removeInner: function removeInner(at, n) {
 	    var this$1 = this;
 	
-	  for (var i = at, e = at + n; i < e; ++i) {
-	    var line = this$1.lines[i];
-	    this$1.height -= line.height;
-	    cleanUpLine(line);
-	    signalLater(line, "delete");
+	    for (var i = at, e = at + n; i < e; ++i) {
+	      var line = this$1.lines[i];
+	      this$1.height -= line.height;
+	      cleanUpLine(line);
+	      signalLater(line, "delete");
+	    }
+	    this.lines.splice(at, n);
+	  },
+	
+	  // Helper used to collapse a small branch into a single leaf.
+	  collapse: function collapse(lines) {
+	    lines.push.apply(lines, this.lines);
+	  },
+	
+	  // Insert the given array of lines at offset 'at', count them as
+	  // having the given height.
+	  insertInner: function insertInner(at, lines, height) {
+	    var this$1 = this;
+	
+	    this.height += height;
+	    this.lines = this.lines.slice(0, at).concat(lines).concat(this.lines.slice(at));
+	    for (var i = 0; i < lines.length; ++i) { lines[i].parent = this$1; }
+	  },
+	
+	  // Used to iterate over a part of the tree.
+	  iterN: function iterN(at, n, op) {
+	    var this$1 = this;
+	
+	    for (var e = at + n; at < e; ++at)
+	      { if (op(this$1.lines[at])) { return true } }
 	  }
-	  this.lines.splice(at, n);
 	};
 	
-	// Helper used to collapse a small branch into a single leaf.
-	LeafChunk.prototype.collapse = function (lines) {
-	  lines.push.apply(lines, this.lines);
-	};
-	
-	// Insert the given array of lines at offset 'at', count them as
-	// having the given height.
-	LeafChunk.prototype.insertInner = function (at, lines, height) {
-	    var this$1 = this;
-	
-	  this.height += height;
-	  this.lines = this.lines.slice(0, at).concat(lines).concat(this.lines.slice(at));
-	  for (var i = 0; i < lines.length; ++i) { lines[i].parent = this$1; }
-	};
-	
-	// Used to iterate over a part of the tree.
-	LeafChunk.prototype.iterN = function (at, n, op) {
-	    var this$1 = this;
-	
-	  for (var e = at + n; at < e; ++at)
-	    { if (op(this$1.lines[at])) { return true } }
-	};
-	
-	var BranchChunk = function(children) {
+	function BranchChunk(children) {
 	  var this$1 = this;
 	
 	  this.children = children;
@@ -11896,104 +12413,106 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this.size = size;
 	  this.height = height;
 	  this.parent = null;
-	};
+	}
 	
-	BranchChunk.prototype.chunkSize = function () { return this.size };
+	BranchChunk.prototype = {
+	  chunkSize: function chunkSize() { return this.size },
 	
-	BranchChunk.prototype.removeInner = function (at, n) {
+	  removeInner: function removeInner(at, n) {
 	    var this$1 = this;
 	
-	  this.size -= n;
-	  for (var i = 0; i < this.children.length; ++i) {
-	    var child = this$1.children[i], sz = child.chunkSize();
-	    if (at < sz) {
-	      var rm = Math.min(n, sz - at), oldHeight = child.height;
-	      child.removeInner(at, rm);
-	      this$1.height -= oldHeight - child.height;
-	      if (sz == rm) { this$1.children.splice(i--, 1); child.parent = null; }
-	      if ((n -= rm) == 0) { break }
-	      at = 0;
-	    } else { at -= sz; }
-	  }
-	  // If the result is smaller than 25 lines, ensure that it is a
-	  // single leaf node.
-	  if (this.size - n < 25 &&
-	      (this.children.length > 1 || !(this.children[0] instanceof LeafChunk))) {
-	    var lines = [];
-	    this.collapse(lines);
-	    this.children = [new LeafChunk(lines)];
-	    this.children[0].parent = this;
-	  }
-	};
+	    this.size -= n;
+	    for (var i = 0; i < this.children.length; ++i) {
+	      var child = this$1.children[i], sz = child.chunkSize();
+	      if (at < sz) {
+	        var rm = Math.min(n, sz - at), oldHeight = child.height;
+	        child.removeInner(at, rm);
+	        this$1.height -= oldHeight - child.height;
+	        if (sz == rm) { this$1.children.splice(i--, 1); child.parent = null; }
+	        if ((n -= rm) == 0) { break }
+	        at = 0;
+	      } else { at -= sz; }
+	    }
+	    // If the result is smaller than 25 lines, ensure that it is a
+	    // single leaf node.
+	    if (this.size - n < 25 &&
+	        (this.children.length > 1 || !(this.children[0] instanceof LeafChunk))) {
+	      var lines = [];
+	      this.collapse(lines);
+	      this.children = [new LeafChunk(lines)];
+	      this.children[0].parent = this;
+	    }
+	  },
 	
-	BranchChunk.prototype.collapse = function (lines) {
+	  collapse: function collapse(lines) {
 	    var this$1 = this;
 	
-	  for (var i = 0; i < this.children.length; ++i) { this$1.children[i].collapse(lines); }
-	};
+	    for (var i = 0; i < this.children.length; ++i) { this$1.children[i].collapse(lines); }
+	  },
 	
-	BranchChunk.prototype.insertInner = function (at, lines, height) {
+	  insertInner: function insertInner(at, lines, height) {
 	    var this$1 = this;
 	
-	  this.size += lines.length;
-	  this.height += height;
-	  for (var i = 0; i < this.children.length; ++i) {
-	    var child = this$1.children[i], sz = child.chunkSize();
-	    if (at <= sz) {
-	      child.insertInner(at, lines, height);
-	      if (child.lines && child.lines.length > 50) {
-	        // To avoid memory thrashing when child.lines is huge (e.g. first view of a large file), it's never spliced.
-	        // Instead, small slices are taken. They're taken in order because sequential memory accesses are fastest.
-	        var remaining = child.lines.length % 25 + 25;
-	        for (var pos = remaining; pos < child.lines.length;) {
-	          var leaf = new LeafChunk(child.lines.slice(pos, pos += 25));
-	          child.height -= leaf.height;
-	          this$1.children.splice(++i, 0, leaf);
-	          leaf.parent = this$1;
+	    this.size += lines.length;
+	    this.height += height;
+	    for (var i = 0; i < this.children.length; ++i) {
+	      var child = this$1.children[i], sz = child.chunkSize();
+	      if (at <= sz) {
+	        child.insertInner(at, lines, height);
+	        if (child.lines && child.lines.length > 50) {
+	          // To avoid memory thrashing when child.lines is huge (e.g. first view of a large file), it's never spliced.
+	          // Instead, small slices are taken. They're taken in order because sequential memory accesses are fastest.
+	          var remaining = child.lines.length % 25 + 25;
+	          for (var pos = remaining; pos < child.lines.length;) {
+	            var leaf = new LeafChunk(child.lines.slice(pos, pos += 25));
+	            child.height -= leaf.height;
+	            this$1.children.splice(++i, 0, leaf);
+	            leaf.parent = this$1;
+	          }
+	          child.lines = child.lines.slice(0, remaining);
+	          this$1.maybeSpill();
 	        }
-	        child.lines = child.lines.slice(0, remaining);
-	        this$1.maybeSpill();
+	        break
 	      }
-	      break
+	      at -= sz;
 	    }
-	    at -= sz;
-	  }
-	};
+	  },
 	
-	// When a node has grown, check whether it should be split.
-	BranchChunk.prototype.maybeSpill = function () {
-	  if (this.children.length <= 10) { return }
-	  var me = this;
-	  do {
-	    var spilled = me.children.splice(me.children.length - 5, 5);
-	    var sibling = new BranchChunk(spilled);
-	    if (!me.parent) { // Become the parent node
-	      var copy = new BranchChunk(me.children);
-	      copy.parent = me;
-	      me.children = [copy, sibling];
-	      me = copy;
-	   } else {
-	      me.size -= sibling.size;
-	      me.height -= sibling.height;
-	      var myIndex = indexOf(me.parent.children, me);
-	      me.parent.children.splice(myIndex + 1, 0, sibling);
-	    }
-	    sibling.parent = me.parent;
-	  } while (me.children.length > 10)
-	  me.parent.maybeSpill();
-	};
+	  // When a node has grown, check whether it should be split.
+	  maybeSpill: function maybeSpill() {
+	    if (this.children.length <= 10) { return }
+	    var me = this;
+	    do {
+	      var spilled = me.children.splice(me.children.length - 5, 5);
+	      var sibling = new BranchChunk(spilled);
+	      if (!me.parent) { // Become the parent node
+	        var copy = new BranchChunk(me.children);
+	        copy.parent = me;
+	        me.children = [copy, sibling];
+	        me = copy;
+	     } else {
+	        me.size -= sibling.size;
+	        me.height -= sibling.height;
+	        var myIndex = indexOf(me.parent.children, me);
+	        me.parent.children.splice(myIndex + 1, 0, sibling);
+	      }
+	      sibling.parent = me.parent;
+	    } while (me.children.length > 10)
+	    me.parent.maybeSpill();
+	  },
 	
-	BranchChunk.prototype.iterN = function (at, n, op) {
+	  iterN: function iterN(at, n, op) {
 	    var this$1 = this;
 	
-	  for (var i = 0; i < this.children.length; ++i) {
-	    var child = this$1.children[i], sz = child.chunkSize();
-	    if (at < sz) {
-	      var used = Math.min(n, sz - at);
-	      if (child.iterN(at, used, op)) { return true }
-	      if ((n -= used) == 0) { break }
-	      at = 0;
-	    } else { at -= sz; }
+	    for (var i = 0; i < this.children.length; ++i) {
+	      var child = this$1.children[i], sz = child.chunkSize();
+	      if (at < sz) {
+	        var used = Math.min(n, sz - at);
+	        if (child.iterN(at, used, op)) { return true }
+	        if ((n -= used) == 0) { break }
+	        at = 0;
+	      } else { at -= sz; }
+	    }
 	  }
 	};
 	
@@ -12046,7 +12565,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function adjustScrollWhenAboveVisible(cm, line, diff) {
 	  if (heightAtLine(line) < ((cm.curOp && cm.curOp.scrollTop) || cm.doc.scrollTop))
-	    { addToScrollPos(cm, null, diff); }
+	    { addToScrollTop(cm, diff); }
 	}
 	
 	function addLineWidget(doc, handle, node, options) {
@@ -12061,12 +12580,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (cm && !lineIsHidden(doc, line)) {
 	      var aboveVisible = heightAtLine(line) < doc.scrollTop;
 	      updateLineHeight(line, line.height + widgetHeight(widget));
-	      if (aboveVisible) { addToScrollPos(cm, null, widget.height); }
+	      if (aboveVisible) { addToScrollTop(cm, widget.height); }
 	      cm.curOp.forceUpdate = true;
 	    }
 	    return true
 	  });
-	  signalLater(cm, "lineWidgetAdded", cm, widget, typeof handle == "number" ? handle : lineNo(handle));
+	  if (cm) { signalLater(cm, "lineWidgetAdded", cm, widget, typeof handle == "number" ? handle : lineNo(handle)); }
 	  return widget
 	}
 	
@@ -12363,7 +12882,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this.scrollTop = this.scrollLeft = 0;
 	  this.cantEdit = false;
 	  this.cleanGeneration = 1;
-	  this.frontier = firstLine;
+	  this.modeFrontier = this.highlightFrontier = firstLine;
 	  var start = Pos(firstLine, 0);
 	  this.sel = simpleSelection(start);
 	  this.history = new History(null);
@@ -12409,7 +12928,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var top = Pos(this.first, 0), last = this.first + this.size - 1;
 	    makeChange(this, {from: top, to: Pos(last, getLine(this, last).text.length),
 	                      text: this.splitLines(code), origin: "setValue", full: true}, true);
-	    if (this.cm) { this.cm.scrollTo(0, 0); }
+	    if (this.cm) { scrollToCoords(this.cm, 0, 0); }
 	    setSelection(this, simpleSelection(top), sel_dontScroll);
 	  }),
 	  replaceRange: function(code, from, to, origin) {
@@ -12886,8 +13405,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	// garbage collected.
 	
 	function forEachCodeMirror(f) {
-	  if (!document.body.getElementsByClassName) { return }
-	  var byClass = document.body.getElementsByClassName("CodeMirror");
+	  if (!document.getElementsByClassName) { return }
+	  var byClass = document.getElementsByClassName("CodeMirror");
 	  for (var i = 0; i < byClass.length; i++) {
 	    var cm = byClass[i].CodeMirror;
 	    if (cm) { f(cm); }
@@ -12924,11 +13443,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	var keyNames = {
-	  3: "Enter", 8: "Backspace", 9: "Tab", 13: "Enter", 16: "Shift", 17: "Ctrl", 18: "Alt",
+	  3: "Pause", 8: "Backspace", 9: "Tab", 13: "Enter", 16: "Shift", 17: "Ctrl", 18: "Alt",
 	  19: "Pause", 20: "CapsLock", 27: "Esc", 32: "Space", 33: "PageUp", 34: "PageDown", 35: "End",
 	  36: "Home", 37: "Left", 38: "Up", 39: "Right", 40: "Down", 44: "PrintScrn", 45: "Insert",
 	  46: "Delete", 59: ";", 61: "=", 91: "Mod", 92: "Mod", 93: "Mod",
-	  106: "*", 107: "=", 109: "-", 110: ".", 111: "/", 127: "Delete",
+	  106: "*", 107: "=", 109: "-", 110: ".", 111: "/", 127: "Delete", 145: "ScrollLock",
 	  173: "-", 186: ";", 187: "=", 188: ",", 189: "-", 190: ".", 191: "/", 192: "`", 219: "[", 220: "\\",
 	  221: "]", 222: "'", 63232: "Up", 63233: "Down", 63234: "Left", 63235: "Right", 63272: "Delete",
 	  63273: "Home", 63275: "End", 63276: "PageUp", 63277: "PageDown", 63302: "Insert"
@@ -13061,16 +13580,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return name == "Ctrl" || name == "Alt" || name == "Shift" || name == "Mod"
 	}
 	
-	// Look up the name of a key as indicated by an event object.
-	function keyName(event, noShift) {
-	  if (presto && event.keyCode == 34 && event["char"]) { return false }
-	  var base = keyNames[event.keyCode], name = base;
-	  if (name == null || event.altGraphKey) { return false }
+	function addModifierNames(name, event, noShift) {
+	  var base = name;
 	  if (event.altKey && base != "Alt") { name = "Alt-" + name; }
 	  if ((flipCtrlCmd ? event.metaKey : event.ctrlKey) && base != "Ctrl") { name = "Ctrl-" + name; }
 	  if ((flipCtrlCmd ? event.ctrlKey : event.metaKey) && base != "Cmd") { name = "Cmd-" + name; }
 	  if (!noShift && event.shiftKey && base != "Shift") { name = "Shift-" + name; }
 	  return name
+	}
+	
+	// Look up the name of a key as indicated by an event object.
+	function keyName(event, noShift) {
+	  if (presto && event.keyCode == 34 && event["char"]) { return false }
+	  var name = keyNames[event.keyCode];
+	  if (name == null || event.altGraphKey) { return false }
+	  // Ctrl-ScrollLock has keyCode 3, same as Ctrl-Pause,
+	  // so we'll use event.code when available (Chrome 48+, FF 38+, Safari 10.1+)
+	  if (event.keyCode == 3 && event.code) { name = event.code; }
+	  return addModifierNames(name, event, noShift)
 	}
 	
 	function getKeyMap(val) {
@@ -13100,6 +13627,112 @@ return /******/ (function(modules) { // webpackBootstrap
 	      { replaceRange(cm.doc, "", kill[i].from, kill[i].to, "+delete"); }
 	    ensureCursorVisible(cm);
 	  });
+	}
+	
+	function moveCharLogically(line, ch, dir) {
+	  var target = skipExtendingChars(line.text, ch + dir, dir);
+	  return target < 0 || target > line.text.length ? null : target
+	}
+	
+	function moveLogically(line, start, dir) {
+	  var ch = moveCharLogically(line, start.ch, dir);
+	  return ch == null ? null : new Pos(start.line, ch, dir < 0 ? "after" : "before")
+	}
+	
+	function endOfLine(visually, cm, lineObj, lineNo, dir) {
+	  if (visually) {
+	    var order = getOrder(lineObj, cm.doc.direction);
+	    if (order) {
+	      var part = dir < 0 ? lst(order) : order[0];
+	      var moveInStorageOrder = (dir < 0) == (part.level == 1);
+	      var sticky = moveInStorageOrder ? "after" : "before";
+	      var ch;
+	      // With a wrapped rtl chunk (possibly spanning multiple bidi parts),
+	      // it could be that the last bidi part is not on the last visual line,
+	      // since visual lines contain content order-consecutive chunks.
+	      // Thus, in rtl, we are looking for the first (content-order) character
+	      // in the rtl chunk that is on the last line (that is, the same line
+	      // as the last (content-order) character).
+	      if (part.level > 0 || cm.doc.direction == "rtl") {
+	        var prep = prepareMeasureForLine(cm, lineObj);
+	        ch = dir < 0 ? lineObj.text.length - 1 : 0;
+	        var targetTop = measureCharPrepared(cm, prep, ch).top;
+	        ch = findFirst(function (ch) { return measureCharPrepared(cm, prep, ch).top == targetTop; }, (dir < 0) == (part.level == 1) ? part.from : part.to - 1, ch);
+	        if (sticky == "before") { ch = moveCharLogically(lineObj, ch, 1); }
+	      } else { ch = dir < 0 ? part.to : part.from; }
+	      return new Pos(lineNo, ch, sticky)
+	    }
+	  }
+	  return new Pos(lineNo, dir < 0 ? lineObj.text.length : 0, dir < 0 ? "before" : "after")
+	}
+	
+	function moveVisually(cm, line, start, dir) {
+	  var bidi = getOrder(line, cm.doc.direction);
+	  if (!bidi) { return moveLogically(line, start, dir) }
+	  if (start.ch >= line.text.length) {
+	    start.ch = line.text.length;
+	    start.sticky = "before";
+	  } else if (start.ch <= 0) {
+	    start.ch = 0;
+	    start.sticky = "after";
+	  }
+	  var partPos = getBidiPartAt(bidi, start.ch, start.sticky), part = bidi[partPos];
+	  if (cm.doc.direction == "ltr" && part.level % 2 == 0 && (dir > 0 ? part.to > start.ch : part.from < start.ch)) {
+	    // Case 1: We move within an ltr part in an ltr editor. Even with wrapped lines,
+	    // nothing interesting happens.
+	    return moveLogically(line, start, dir)
+	  }
+	
+	  var mv = function (pos, dir) { return moveCharLogically(line, pos instanceof Pos ? pos.ch : pos, dir); };
+	  var prep;
+	  var getWrappedLineExtent = function (ch) {
+	    if (!cm.options.lineWrapping) { return {begin: 0, end: line.text.length} }
+	    prep = prep || prepareMeasureForLine(cm, line);
+	    return wrappedLineExtentChar(cm, line, prep, ch)
+	  };
+	  var wrappedLineExtent = getWrappedLineExtent(start.sticky == "before" ? mv(start, -1) : start.ch);
+	
+	  if (cm.doc.direction == "rtl" || part.level == 1) {
+	    var moveInStorageOrder = (part.level == 1) == (dir < 0);
+	    var ch = mv(start, moveInStorageOrder ? 1 : -1);
+	    if (ch != null && (!moveInStorageOrder ? ch >= part.from && ch >= wrappedLineExtent.begin : ch <= part.to && ch <= wrappedLineExtent.end)) {
+	      // Case 2: We move within an rtl part or in an rtl editor on the same visual line
+	      var sticky = moveInStorageOrder ? "before" : "after";
+	      return new Pos(start.line, ch, sticky)
+	    }
+	  }
+	
+	  // Case 3: Could not move within this bidi part in this visual line, so leave
+	  // the current bidi part
+	
+	  var searchInVisualLine = function (partPos, dir, wrappedLineExtent) {
+	    var getRes = function (ch, moveInStorageOrder) { return moveInStorageOrder
+	      ? new Pos(start.line, mv(ch, 1), "before")
+	      : new Pos(start.line, ch, "after"); };
+	
+	    for (; partPos >= 0 && partPos < bidi.length; partPos += dir) {
+	      var part = bidi[partPos];
+	      var moveInStorageOrder = (dir > 0) == (part.level != 1);
+	      var ch = moveInStorageOrder ? wrappedLineExtent.begin : mv(wrappedLineExtent.end, -1);
+	      if (part.from <= ch && ch < part.to) { return getRes(ch, moveInStorageOrder) }
+	      ch = moveInStorageOrder ? part.from : mv(part.to, -1);
+	      if (wrappedLineExtent.begin <= ch && ch < wrappedLineExtent.end) { return getRes(ch, moveInStorageOrder) }
+	    }
+	  };
+	
+	  // Case 3a: Look for other bidi parts on the same visual line
+	  var res = searchInVisualLine(partPos + dir, dir, wrappedLineExtent);
+	  if (res) { return res }
+	
+	  // Case 3b: Look for other bidi parts on the next visual line
+	  var nextCh = dir > 0 ? wrappedLineExtent.end : mv(wrappedLineExtent.begin, -1);
+	  if (nextCh != null && !(dir > 0 && nextCh == line.text.length)) {
+	    res = searchInVisualLine(dir > 0 ? 0 : bidi.length - 1, dir, getWrappedLineExtent(nextCh));
+	    if (res) { return res }
+	  }
+	
+	  // Case 4: Nowhere to move
+	  return null
 	}
 	
 	// Commands are parameter-less actions that can be performed on an
@@ -13151,15 +13784,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    {origin: "+move", bias: -1}
 	  ); },
 	  goLineRight: function (cm) { return cm.extendSelectionsBy(function (range) {
-	    var top = cm.charCoords(range.head, "div").top + 5;
+	    var top = cm.cursorCoords(range.head, "div").top + 5;
 	    return cm.coordsChar({left: cm.display.lineDiv.offsetWidth + 100, top: top}, "div")
 	  }, sel_move); },
 	  goLineLeft: function (cm) { return cm.extendSelectionsBy(function (range) {
-	    var top = cm.charCoords(range.head, "div").top + 5;
+	    var top = cm.cursorCoords(range.head, "div").top + 5;
 	    return cm.coordsChar({left: 0, top: top}, "div")
 	  }, sel_move); },
 	  goLineLeftSmart: function (cm) { return cm.extendSelectionsBy(function (range) {
-	    var top = cm.charCoords(range.head, "div").top + 5;
+	    var top = cm.cursorCoords(range.head, "div").top + 5;
 	    var pos = cm.coordsChar({left: 0, top: top}, "div");
 	    if (pos.ch < cm.getLine(pos.line).search(/\S/)) { return lineStartSmart(cm, range.head) }
 	    return pos
@@ -13299,19 +13932,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	    || lookupKey(name, cm.options.keyMap, handle, cm)
 	}
 	
+	// Note that, despite the name, this function is also used to check
+	// for bound mouse clicks.
+	
 	var stopSeq = new Delayed;
+	
 	function dispatchKey(cm, name, e, handle) {
 	  var seq = cm.state.keySeq;
 	  if (seq) {
 	    if (isModifierKey(name)) { return "handled" }
-	    stopSeq.set(50, function () {
-	      if (cm.state.keySeq == seq) {
-	        cm.state.keySeq = null;
-	        cm.display.input.reset();
-	      }
-	    });
-	    name = seq + " " + name;
+	    if (/\'$/.test(name))
+	      { cm.state.keySeq = null; }
+	    else
+	      { stopSeq.set(50, function () {
+	        if (cm.state.keySeq == seq) {
+	          cm.state.keySeq = null;
+	          cm.display.input.reset();
+	        }
+	      }); }
+	    if (dispatchKeyInner(cm, seq + " " + name, e, handle)) { return true }
 	  }
+	  return dispatchKeyInner(cm, name, e, handle)
+	}
+	
+	function dispatchKeyInner(cm, name, e, handle) {
 	  var result = lookupKeyForEditor(cm, name, handle);
 	
 	  if (result == "multi")
@@ -13324,10 +13968,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    restartBlink(cm);
 	  }
 	
-	  if (seq && !result && /\'$/.test(name)) {
-	    e_preventDefault(e);
-	    return true
-	  }
 	  return !!result
 	}
 	
@@ -13410,6 +14050,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	  cm.display.input.onKeyPress(e);
 	}
 	
+	var DOUBLECLICK_DELAY = 400;
+	
+	var PastClick = function(time, pos, button) {
+	  this.time = time;
+	  this.pos = pos;
+	  this.button = button;
+	};
+	
+	PastClick.prototype.compare = function (time, pos, button) {
+	  return this.time + DOUBLECLICK_DELAY > time &&
+	    cmp(pos, this.pos) == 0 && button == this.button
+	};
+	
+	var lastClick;
+	var lastDoubleClick;
+	function clickRepeat(pos, button) {
+	  var now = +new Date;
+	  if (lastDoubleClick && lastDoubleClick.compare(now, pos, button)) {
+	    lastClick = lastDoubleClick = null;
+	    return "triple"
+	  } else if (lastClick && lastClick.compare(now, pos, button)) {
+	    lastDoubleClick = new PastClick(now, pos, button);
+	    lastClick = null;
+	    return "double"
+	  } else {
+	    lastClick = new PastClick(now, pos, button);
+	    lastDoubleClick = null;
+	    return "single"
+	  }
+	}
+	
 	// A mouse down can be a single click, double click, triple click,
 	// start of selection drag, start of text drag, new cursor
 	// (ctrl-click), rectangle drag (alt-drag), or xwin
@@ -13431,62 +14102,79 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return
 	  }
 	  if (clickInGutter(cm, e)) { return }
-	  var start = posFromMouse(cm, e);
+	  var pos = posFromMouse(cm, e), button = e_button(e), repeat = pos ? clickRepeat(pos, button) : "single";
 	  window.focus();
 	
-	  switch (e_button(e)) {
-	  case 1:
-	    // #3261: make sure, that we're not starting a second selection
-	    if (cm.state.selectingText)
-	      { cm.state.selectingText(e); }
-	    else if (start)
-	      { leftButtonDown(cm, e, start); }
-	    else if (e_target(e) == display.scroller)
-	      { e_preventDefault(e); }
-	    break
-	  case 2:
-	    if (webkit) { cm.state.lastMiddleDown = +new Date; }
-	    if (start) { extendSelection(cm.doc, start); }
+	  // #3261: make sure, that we're not starting a second selection
+	  if (button == 1 && cm.state.selectingText)
+	    { cm.state.selectingText(e); }
+	
+	  if (pos && handleMappedButton(cm, button, pos, repeat, e)) { return }
+	
+	  if (button == 1) {
+	    if (pos) { leftButtonDown(cm, pos, repeat, e); }
+	    else if (e_target(e) == display.scroller) { e_preventDefault(e); }
+	  } else if (button == 2) {
+	    if (pos) { extendSelection(cm.doc, pos); }
 	    setTimeout(function () { return display.input.focus(); }, 20);
-	    e_preventDefault(e);
-	    break
-	  case 3:
+	  } else if (button == 3) {
 	    if (captureRightClick) { onContextMenu(cm, e); }
 	    else { delayBlurEvent(cm); }
-	    break
 	  }
 	}
 	
-	var lastClick;
-	var lastDoubleClick;
-	function leftButtonDown(cm, e, start) {
+	function handleMappedButton(cm, button, pos, repeat, event) {
+	  var name = "Click";
+	  if (repeat == "double") { name = "Double" + name; }
+	  else if (repeat == "triple") { name = "Triple" + name; }
+	  name = (button == 1 ? "Left" : button == 2 ? "Middle" : "Right") + name;
+	
+	  return dispatchKey(cm,  addModifierNames(name, event), event, function (bound) {
+	    if (typeof bound == "string") { bound = commands[bound]; }
+	    if (!bound) { return false }
+	    var done = false;
+	    try {
+	      if (cm.isReadOnly()) { cm.state.suppressEdits = true; }
+	      done = bound(cm, pos) != Pass;
+	    } finally {
+	      cm.state.suppressEdits = false;
+	    }
+	    return done
+	  })
+	}
+	
+	function configureMouse(cm, repeat, event) {
+	  var option = cm.getOption("configureMouse");
+	  var value = option ? option(cm, repeat, event) : {};
+	  if (value.unit == null) {
+	    var rect = chromeOS ? event.shiftKey && event.metaKey : event.altKey;
+	    value.unit = rect ? "rectangle" : repeat == "single" ? "char" : repeat == "double" ? "word" : "line";
+	  }
+	  if (value.extend == null || cm.doc.extend) { value.extend = cm.doc.extend || event.shiftKey; }
+	  if (value.addNew == null) { value.addNew = mac ? event.metaKey : event.ctrlKey; }
+	  if (value.moveOnDrag == null) { value.moveOnDrag = !(mac ? event.altKey : event.ctrlKey); }
+	  return value
+	}
+	
+	function leftButtonDown(cm, pos, repeat, event) {
 	  if (ie) { setTimeout(bind(ensureFocus, cm), 0); }
 	  else { cm.curOp.focus = activeElt(); }
 	
-	  var now = +new Date, type;
-	  if (lastDoubleClick && lastDoubleClick.time > now - 400 && cmp(lastDoubleClick.pos, start) == 0) {
-	    type = "triple";
-	  } else if (lastClick && lastClick.time > now - 400 && cmp(lastClick.pos, start) == 0) {
-	    type = "double";
-	    lastDoubleClick = {time: now, pos: start};
-	  } else {
-	    type = "single";
-	    lastClick = {time: now, pos: start};
-	  }
+	  var behavior = configureMouse(cm, repeat, event);
 	
-	  var sel = cm.doc.sel, modifier = mac ? e.metaKey : e.ctrlKey, contained;
+	  var sel = cm.doc.sel, contained;
 	  if (cm.options.dragDrop && dragAndDrop && !cm.isReadOnly() &&
-	      type == "single" && (contained = sel.contains(start)) > -1 &&
-	      (cmp((contained = sel.ranges[contained]).from(), start) < 0 || start.xRel > 0) &&
-	      (cmp(contained.to(), start) > 0 || start.xRel < 0))
-	    { leftButtonStartDrag(cm, e, start, modifier); }
+	      repeat == "single" && (contained = sel.contains(pos)) > -1 &&
+	      (cmp((contained = sel.ranges[contained]).from(), pos) < 0 || pos.xRel > 0) &&
+	      (cmp(contained.to(), pos) > 0 || pos.xRel < 0))
+	    { leftButtonStartDrag(cm, event, pos, behavior); }
 	  else
-	    { leftButtonSelect(cm, e, start, type, modifier); }
+	    { leftButtonSelect(cm, event, pos, behavior); }
 	}
 	
 	// Start a text drag. When it ends, see if any dragging actually
 	// happen, and treat as a click if it didn't.
-	function leftButtonStartDrag(cm, e, start, modifier) {
+	function leftButtonStartDrag(cm, event, pos, behavior) {
 	  var display = cm.display, moved = false;
 	  var dragEnd = operation(cm, function (e) {
 	    if (webkit) { display.scroller.draggable = false; }
@@ -13497,8 +14185,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    off(display.scroller, "drop", dragEnd);
 	    if (!moved) {
 	      e_preventDefault(e);
-	      if (!modifier)
-	        { extendSelection(cm.doc, start); }
+	      if (!behavior.addNew)
+	        { extendSelection(cm.doc, pos, null, null, behavior.extend); }
 	      // Work around unexplainable focus problem in IE9 (#2127) and Chrome (#3081)
 	      if (webkit || ie && ie_version == 9)
 	        { setTimeout(function () {document.body.focus(); display.input.focus();}, 20); }
@@ -13507,13 +14195,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  });
 	  var mouseMove = function(e2) {
-	    moved = moved || Math.abs(e.clientX - e2.clientX) + Math.abs(e.clientY - e2.clientY) >= 10;
+	    moved = moved || Math.abs(event.clientX - e2.clientX) + Math.abs(event.clientY - e2.clientY) >= 10;
 	  };
 	  var dragStart = function () { return moved = true; };
 	  // Let the drag handler handle this.
 	  if (webkit) { display.scroller.draggable = true; }
 	  cm.state.draggingText = dragEnd;
-	  dragEnd.copy = mac ? e.altKey : e.ctrlKey;
+	  dragEnd.copy = !behavior.moveOnDrag;
 	  // IE's approach to draggable
 	  if (display.scroller.dragDrop) { display.scroller.dragDrop(); }
 	  on(document, "mouseup", dragEnd);
@@ -13525,13 +14213,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	  setTimeout(function () { return display.input.focus(); }, 20);
 	}
 	
+	function rangeForUnit(cm, pos, unit) {
+	  if (unit == "char") { return new Range(pos, pos) }
+	  if (unit == "word") { return cm.findWordAt(pos) }
+	  if (unit == "line") { return new Range(Pos(pos.line, 0), clipPos(cm.doc, Pos(pos.line + 1, 0))) }
+	  var result = unit(cm, pos);
+	  return new Range(result.from, result.to)
+	}
+	
 	// Normal selection, as opposed to text dragging.
-	function leftButtonSelect(cm, e, start, type, addNew) {
+	function leftButtonSelect(cm, event, start, behavior) {
 	  var display = cm.display, doc = cm.doc;
-	  e_preventDefault(e);
+	  e_preventDefault(event);
 	
 	  var ourRange, ourIndex, startSel = doc.sel, ranges = startSel.ranges;
-	  if (addNew && !e.shiftKey) {
+	  if (behavior.addNew && !behavior.extend) {
 	    ourIndex = doc.sel.contains(start);
 	    if (ourIndex > -1)
 	      { ourRange = ranges[ourIndex]; }
@@ -13542,28 +14238,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    ourIndex = doc.sel.primIndex;
 	  }
 	
-	  if (chromeOS ? e.shiftKey && e.metaKey : e.altKey) {
-	    type = "rect";
-	    if (!addNew) { ourRange = new Range(start, start); }
-	    start = posFromMouse(cm, e, true, true);
+	  if (behavior.unit == "rectangle") {
+	    if (!behavior.addNew) { ourRange = new Range(start, start); }
+	    start = posFromMouse(cm, event, true, true);
 	    ourIndex = -1;
-	  } else if (type == "double") {
-	    var word = cm.findWordAt(start);
-	    if (cm.display.shift || doc.extend)
-	      { ourRange = extendRange(doc, ourRange, word.anchor, word.head); }
-	    else
-	      { ourRange = word; }
-	  } else if (type == "triple") {
-	    var line = new Range(Pos(start.line, 0), clipPos(doc, Pos(start.line + 1, 0)));
-	    if (cm.display.shift || doc.extend)
-	      { ourRange = extendRange(doc, ourRange, line.anchor, line.head); }
-	    else
-	      { ourRange = line; }
 	  } else {
-	    ourRange = extendRange(doc, ourRange, start);
+	    var range$$1 = rangeForUnit(cm, start, behavior.unit);
+	    if (behavior.extend)
+	      { ourRange = extendRange(ourRange, range$$1.anchor, range$$1.head, behavior.extend); }
+	    else
+	      { ourRange = range$$1; }
 	  }
 	
-	  if (!addNew) {
+	  if (!behavior.addNew) {
 	    ourIndex = 0;
 	    setSelection(doc, new Selection([ourRange], 0), sel_mouse);
 	    startSel = doc.sel;
@@ -13571,7 +14258,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    ourIndex = ranges.length;
 	    setSelection(doc, normalizeSelection(ranges.concat([ourRange]), ourIndex),
 	                 {scroll: false, origin: "*mouse"});
-	  } else if (ranges.length > 1 && ranges[ourIndex].empty() && type == "single" && !e.shiftKey) {
+	  } else if (ranges.length > 1 && ranges[ourIndex].empty() && behavior.unit == "char" && !behavior.extend) {
 	    setSelection(doc, normalizeSelection(ranges.slice(0, ourIndex).concat(ranges.slice(ourIndex + 1)), 0),
 	                 {scroll: false, origin: "*mouse"});
 	    startSel = doc.sel;
@@ -13584,7 +14271,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (cmp(lastPos, pos) == 0) { return }
 	    lastPos = pos;
 	
-	    if (type == "rect") {
+	    if (behavior.unit == "rectangle") {
 	      var ranges = [], tabSize = cm.options.tabSize;
 	      var startCol = countColumn(getLine(doc, start.line).text, start.ch, tabSize);
 	      var posCol = countColumn(getLine(doc, pos.line).text, pos.ch, tabSize);
@@ -13603,23 +14290,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	      cm.scrollIntoView(pos);
 	    } else {
 	      var oldRange = ourRange;
-	      var anchor = oldRange.anchor, head = pos;
-	      if (type != "single") {
-	        var range$$1;
-	        if (type == "double")
-	          { range$$1 = cm.findWordAt(pos); }
-	        else
-	          { range$$1 = new Range(Pos(pos.line, 0), clipPos(doc, Pos(pos.line + 1, 0))); }
-	        if (cmp(range$$1.anchor, anchor) > 0) {
-	          head = range$$1.head;
-	          anchor = minPos(oldRange.from(), range$$1.anchor);
-	        } else {
-	          head = range$$1.anchor;
-	          anchor = maxPos(oldRange.to(), range$$1.head);
-	        }
+	      var range$$1 = rangeForUnit(cm, pos, behavior.unit);
+	      var anchor = oldRange.anchor, head;
+	      if (cmp(range$$1.anchor, anchor) > 0) {
+	        head = range$$1.head;
+	        anchor = minPos(oldRange.from(), range$$1.anchor);
+	      } else {
+	        head = range$$1.anchor;
+	        anchor = maxPos(oldRange.to(), range$$1.head);
 	      }
 	      var ranges$1 = startSel.ranges.slice(0);
-	      ranges$1[ourIndex] = new Range(clipPos(doc, anchor), head);
+	      ranges$1[ourIndex] = bidiSimplify(cm, new Range(clipPos(doc, anchor), head));
 	      setSelection(doc, normalizeSelection(ranges$1, ourIndex), sel_mouse);
 	    }
 	  }
@@ -13633,7 +14314,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  function extend(e) {
 	    var curCount = ++counter;
-	    var cur = posFromMouse(cm, e, true, type == "rect");
+	    var cur = posFromMouse(cm, e, true, behavior.unit == "rectangle");
 	    if (!cur) { return }
 	    if (cmp(cur, lastPos) != 0) {
 	      cm.curOp.focus = activeElt();
@@ -13671,13 +14352,52 @@ return /******/ (function(modules) { // webpackBootstrap
 	  on(document, "mouseup", up);
 	}
 	
+	// Used when mouse-selecting to adjust the anchor to the proper side
+	// of a bidi jump depending on the visual position of the head.
+	function bidiSimplify(cm, range$$1) {
+	  var anchor = range$$1.anchor;
+	  var head = range$$1.head;
+	  var anchorLine = getLine(cm.doc, anchor.line);
+	  if (cmp(anchor, head) == 0 && anchor.sticky == head.sticky) { return range$$1 }
+	  var order = getOrder(anchorLine);
+	  if (!order) { return range$$1 }
+	  var index = getBidiPartAt(order, anchor.ch, anchor.sticky), part = order[index];
+	  if (part.from != anchor.ch && part.to != anchor.ch) { return range$$1 }
+	  var boundary = index + ((part.from == anchor.ch) == (part.level != 1) ? 0 : 1);
+	  if (boundary == 0 || boundary == order.length) { return range$$1 }
+	
+	  // Compute the relative visual position of the head compared to the
+	  // anchor (<0 is to the left, >0 to the right)
+	  var leftSide;
+	  if (head.line != anchor.line) {
+	    leftSide = (head.line - anchor.line) * (cm.doc.direction == "ltr" ? 1 : -1) > 0;
+	  } else {
+	    var headIndex = getBidiPartAt(order, head.ch, head.sticky);
+	    var dir = headIndex - index || (head.ch - anchor.ch) * (part.level == 1 ? -1 : 1);
+	    if (headIndex == boundary - 1 || headIndex == boundary)
+	      { leftSide = dir < 0; }
+	    else
+	      { leftSide = dir > 0; }
+	  }
+	
+	  var usePart = order[boundary + (leftSide ? -1 : 0)];
+	  var from = leftSide == (usePart.level == 1);
+	  var ch = from ? usePart.from : usePart.to, sticky = from ? "after" : "before";
+	  return anchor.ch == ch && anchor.sticky == sticky ? range$$1 : new Range(new Pos(anchor.line, ch, sticky), head)
+	}
+	
 	
 	// Determines whether an event happened in the gutter, and fires the
 	// handlers for the corresponding event.
 	function gutterEvent(cm, e, type, prevent) {
 	  var mX, mY;
-	  try { mX = e.clientX; mY = e.clientY; }
-	  catch(e) { return false }
+	  if (e.touches) {
+	    mX = e.touches[0].clientX;
+	    mY = e.touches[0].clientY;
+	  } else {
+	    try { mX = e.clientX; mY = e.clientY; }
+	    catch(e) { return false }
+	  }
 	  if (mX >= Math.floor(cm.display.gutters.getBoundingClientRect().right)) { return false }
 	  if (prevent) { e_preventDefault(e); }
 	
@@ -13759,6 +14479,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    clearCaches(cm);
 	    regChange(cm);
 	  }, true);
+	
 	  option("lineSeparator", null, function (cm, val) {
 	    cm.doc.lineSep = val;
 	    if (!val) { return }
@@ -13799,6 +14520,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (next.attach) { next.attach(cm, prev || null); }
 	  });
 	  option("extraKeys", null);
+	  option("configureMouse", null);
 	
 	  option("lineWrapping", false, wrappingChanged, true);
 	  option("gutters", [], function (cm) {
@@ -13826,14 +14548,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  option("resetSelectionOnContextMenu", true);
 	  option("lineWiseCopyCut", true);
+	  option("pasteLinesPerSelection", true);
 	
 	  option("readOnly", false, function (cm, val) {
 	    if (val == "nocursor") {
 	      onBlur(cm);
 	      cm.display.input.blur();
-	      cm.display.disabled = true;
-	    } else {
-	      cm.display.disabled = false;
 	    }
 	    cm.display.input.readOnlyChanged(val);
 	  });
@@ -14016,7 +14736,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return dx * dx + dy * dy > 20 * 20
 	  }
 	  on(d.scroller, "touchstart", function (e) {
-	    if (!signalDOMEvent(cm, e) && !isMouseLikeTouchEvent(e)) {
+	    if (!signalDOMEvent(cm, e) && !isMouseLikeTouchEvent(e) && !clickInGutter(cm, e)) {
 	      d.input.ensurePolled();
 	      clearTimeout(touchFinished);
 	      var now = +new Date;
@@ -14054,7 +14774,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // area, ensure viewport is updated when scrolling.
 	  on(d.scroller, "scroll", function () {
 	    if (d.scroller.clientHeight) {
-	      setScrollTop(cm, d.scroller.scrollTop);
+	      updateScrollTop(cm, d.scroller.scrollTop);
 	      setScrollLeft(cm, d.scroller.scrollLeft, true);
 	      signal(cm, "scroll", cm);
 	    }
@@ -14098,7 +14818,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // Fall back to "prev" when the mode doesn't have an indentation
 	    // method.
 	    if (!doc.mode.indent) { how = "prev"; }
-	    else { state = getStateBefore(cm, n); }
+	    else { state = getContextBefore(cm, n).state; }
 	  }
 	
 	  var tabSize = cm.options.tabSize;
@@ -14166,7 +14886,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  var paste = cm.state.pasteIncoming || origin == "paste";
 	  var textLines = splitLinesAuto(inserted), multiPaste = null;
-	  // When pasing N lines into N selections, insert one line per selection
+	  // When pasting N lines into N selections, insert one line per selection
 	  if (paste && sel.ranges.length > 1) {
 	    if (lastCopied && lastCopied.text.join("\n") == inserted) {
 	      if (sel.ranges.length % lastCopied.text.length == 0) {
@@ -14174,7 +14894,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        for (var i = 0; i < lastCopied.text.length; i++)
 	          { multiPaste.push(doc.splitLines(lastCopied.text[i])); }
 	      }
-	    } else if (textLines.length == sel.ranges.length) {
+	    } else if (textLines.length == sel.ranges.length && cm.options.pasteLinesPerSelection) {
 	      multiPaste = map(textLines, function (l) { return [l]; });
 	    }
 	  }
@@ -14434,7 +15154,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    getStateAfter: function(line, precise) {
 	      var doc = this.doc;
 	      line = clipLine(doc, line == null ? doc.first + doc.size - 1: line);
-	      return getStateBefore(this, line + 1, precise)
+	      return getContextBefore(this, line + 1, precise).state
 	    },
 	
 	    cursorCoords: function(start, mode) {
@@ -14515,6 +15235,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    triggerOnKeyDown: methodOp(onKeyDown),
 	    triggerOnKeyPress: methodOp(onKeyPress),
 	    triggerOnKeyUp: onKeyUp,
+	    triggerOnMouseDown: methodOp(onMouseDown),
 	
 	    execCommand: function(cmd) {
 	      if (commands.hasOwnProperty(cmd))
@@ -14587,7 +15308,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        goals.push(headPos.left);
 	        var pos = findPosV(this$1, headPos, dir, unit);
 	        if (unit == "page" && range$$1 == doc.sel.primary())
-	          { addToScrollPos(this$1, null, charCoords(this$1, pos, "div").top - headPos.top); }
+	          { addToScrollTop(this$1, charCoords(this$1, pos, "div").top - headPos.top); }
 	        return pos
 	      }, sel_move);
 	      if (goals.length) { for (var i = 0; i < doc.sel.ranges.length; i++)
@@ -14624,11 +15345,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    hasFocus: function() { return this.display.input.getField() == activeElt() },
 	    isReadOnly: function() { return !!(this.options.readOnly || this.doc.cantEdit) },
 	
-	    scrollTo: methodOp(function(x, y) {
-	      if (x != null || y != null) { resolveScrollToPos(this); }
-	      if (x != null) { this.curOp.scrollLeft = x; }
-	      if (y != null) { this.curOp.scrollTop = y; }
-	    }),
+	    scrollTo: methodOp(function (x, y) { scrollToCoords(this, x, y); }),
 	    getScrollInfo: function() {
 	      var scroller = this.display.scroller;
 	      return {left: scroller.scrollLeft, top: scroller.scrollTop,
@@ -14650,16 +15367,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      range$$1.margin = margin || 0;
 	
 	      if (range$$1.from.line != null) {
-	        resolveScrollToPos(this);
-	        this.curOp.scrollToPos = range$$1;
+	        scrollToRange(this, range$$1);
 	      } else {
-	        var sPos = calculateScrollPos(this, {
-	          left: Math.min(range$$1.from.left, range$$1.to.left),
-	          top: Math.min(range$$1.from.top, range$$1.to.top) - range$$1.margin,
-	          right: Math.max(range$$1.from.right, range$$1.to.right),
-	          bottom: Math.max(range$$1.from.bottom, range$$1.to.bottom) + range$$1.margin
-	        });
-	        this.scrollTo(sPos.scrollLeft, sPos.scrollTop);
+	        scrollToCoordsRange(this, range$$1.from, range$$1.to, range$$1.margin);
 	      }
 	    }),
 	
@@ -14681,13 +15391,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }),
 	
 	    operation: function(f){return runInOp(this, f)},
+	    startOperation: function(){return startOperation(this)},
+	    endOperation: function(){return endOperation(this)},
 	
 	    refresh: methodOp(function() {
 	      var oldHeight = this.display.cachedTextHeight;
 	      regChange(this);
 	      this.curOp.forceUpdate = true;
 	      clearCaches(this);
-	      this.scrollTo(this.doc.scrollLeft, this.doc.scrollTop);
+	      scrollToCoords(this, this.doc.scrollLeft, this.doc.scrollTop);
 	      updateGutterSpace(this);
 	      if (oldHeight == null || Math.abs(oldHeight - textHeight(this.display)) > .5)
 	        { estimateLineHeights(this); }
@@ -14700,7 +15412,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      attachDoc(this, doc);
 	      clearCaches(this);
 	      this.display.input.reset();
-	      this.scrollTo(doc.scrollLeft, doc.scrollTop);
+	      scrollToCoords(this, doc.scrollLeft, doc.scrollTop);
 	      this.curOp.forceScroll = true;
 	      signalLater(this, "swapDoc", this, old);
 	      return old
@@ -15224,7 +15936,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var markerID = node.getAttribute("cm-marker"), range$$1;
 	      if (markerID) {
 	        var found = cm.findMarks(Pos(fromLine, 0), Pos(toLine + 1, 0), recognizeMarker(+markerID));
-	        if (found.length && (range$$1 = found[0].find()))
+	        if (found.length && (range$$1 = found[0].find(0)))
 	          { addText(getBetween(cm.doc, range$$1.from, range$$1.to).join(lineSep)); }
 	        return
 	      }
@@ -15333,9 +16045,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this.pollingFast = false;
 	  // Self-resetting timeout for the poller
 	  this.polling = new Delayed();
-	  // Tracks when input.reset has punted to just putting a short
-	  // string into the textarea instead of the full selection.
-	  this.inaccurateSelection = false;
 	  // Used to work around IE issue with selection being forgotten when focus moves away from textarea
 	  this.hasSelection = false;
 	  this.composing = null;
@@ -15372,12 +16081,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (signalDOMEvent(cm, e)) { return }
 	    if (cm.somethingSelected()) {
 	      setLastCopied({lineWise: false, text: cm.getSelections()});
-	      if (input.inaccurateSelection) {
-	        input.prevInput = "";
-	        input.inaccurateSelection = false;
-	        te.value = lastCopied.text.join("\n");
-	        selectInput(te);
-	      }
 	    } else if (!cm.options.lineWiseCopyCut) {
 	      return
 	    } else {
@@ -15455,14 +16158,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Reset the input to correspond to the selection (or to be empty,
 	// when not typing and nothing is selected)
 	TextareaInput.prototype.reset = function (typing) {
-	  if (this.contextMenuPending) { return }
-	  var minimal, selected, cm = this.cm, doc = cm.doc;
+	  if (this.contextMenuPending || this.composing) { return }
+	  var cm = this.cm;
 	  if (cm.somethingSelected()) {
 	    this.prevInput = "";
-	    var range$$1 = doc.sel.primary();
-	    minimal = hasCopyEvent &&
-	      (range$$1.to().line - range$$1.from().line > 100 || (selected = cm.getSelection()).length > 1000);
-	    var content = minimal ? "-" : selected || cm.getSelection();
+	    var content = cm.getSelection();
 	    this.textarea.value = content;
 	    if (cm.state.focused) { selectInput(this.textarea); }
 	    if (ie && ie_version >= 9) { this.hasSelection = content; }
@@ -15470,7 +16170,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.prevInput = this.textarea.value = "";
 	    if (ie && ie_version >= 9) { this.hasSelection = null; }
 	  }
-	  this.inaccurateSelection = minimal;
 	};
 	
 	TextareaInput.prototype.getField = function () { return this.textarea };
@@ -15665,6 +16364,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	TextareaInput.prototype.readOnlyChanged = function (val) {
 	  if (!val) { this.reset(); }
+	  this.textarea.disabled = val == "nocursor";
 	};
 	
 	TextareaInput.prototype.setUneditable = function () {};
@@ -15820,7 +16520,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	addLegacyProps(CodeMirror$1);
 	
-	CodeMirror$1.version = "5.25.2";
+	CodeMirror$1.version = "5.35.0";
 	
 	return CodeMirror$1;
 	
@@ -15828,7 +16528,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -15836,7 +16536,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	(function(mod) {
 	  if (true) // CommonJS
-	    mod(__webpack_require__(39));
+	    mod(__webpack_require__(40));
 	  else if (typeof define == "function" && define.amd) // AMD
 	    define(["../../lib/codemirror"], mod);
 	  else // Plain browser env
@@ -15858,7 +16558,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var inQuote = eolState.quote !== 0;
 	
 	      var line = cm.getLine(pos.line), match = listRE.exec(line);
-	      if (!ranges[i].empty() || (!inList && !inQuote) || !match) {
+	      var cursorBeforeBullet = /^\s*$/.test(line.slice(0, pos.ch));
+	      if (!ranges[i].empty() || (!inList && !inQuote) || !match || cursorBeforeBullet) {
 	        cm.execCommand("newlineAndIndent");
 	        return;
 	      }
@@ -15871,27 +16572,64 @@ return /******/ (function(modules) { // webpackBootstrap
 	        replacements[i] = "\n";
 	      } else {
 	        var indent = match[1], after = match[5];
-	        var bullet = unorderedListRE.test(match[2]) || match[2].indexOf(">") >= 0
-	          ? match[2].replace("x", " ")
-	          : (parseInt(match[3], 10) + 1) + match[4];
-	
+	        var numbered = !(unorderedListRE.test(match[2]) || match[2].indexOf(">") >= 0);
+	        var bullet = numbered ? (parseInt(match[3], 10) + 1) + match[4] : match[2].replace("x", " ");
 	        replacements[i] = "\n" + indent + bullet + after;
+	
+	        if (numbered) incrementRemainingMarkdownListNumbers(cm, pos);
 	      }
 	    }
 	
 	    cm.replaceSelections(replacements);
 	  };
+	
+	  // Auto-updating Markdown list numbers when a new item is added to the
+	  // middle of a list
+	  function incrementRemainingMarkdownListNumbers(cm, pos) {
+	    var startLine = pos.line, lookAhead = 0, skipCount = 0;
+	    var startItem = listRE.exec(cm.getLine(startLine)), startIndent = startItem[1];
+	
+	    do {
+	      lookAhead += 1;
+	      var nextLineNumber = startLine + lookAhead;
+	      var nextLine = cm.getLine(nextLineNumber), nextItem = listRE.exec(nextLine);
+	
+	      if (nextItem) {
+	        var nextIndent = nextItem[1];
+	        var newNumber = (parseInt(startItem[3], 10) + lookAhead - skipCount);
+	        var nextNumber = (parseInt(nextItem[3], 10)), itemNumber = nextNumber;
+	
+	        if (startIndent === nextIndent) {
+	          if (newNumber === nextNumber) itemNumber = nextNumber + 1;
+	          if (newNumber > nextNumber) itemNumber = newNumber + 1;
+	          cm.replaceRange(
+	            nextLine.replace(listRE, nextIndent + itemNumber + nextItem[4] + nextItem[5]),
+	          {
+	            line: nextLineNumber, ch: 0
+	          }, {
+	            line: nextLineNumber, ch: nextLine.length
+	          });
+	        } else {
+	          if (startIndent.length > nextIndent.length) return;
+	          // This doesn't run if the next line immediatley indents, as it is
+	          // not clear of the users intention (new indented item or same level)
+	          if ((startIndent.length < nextIndent.length) && (lookAhead === 1)) return;
+	          skipCount += 1;
+	        }
+	      }
+	    } while (nextItem);
+	  }
 	});
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
 	// Distributed under an MIT license: http://codemirror.net/LICENSE
 	
-	var CodeMirror = __webpack_require__(39);
+	var CodeMirror = __webpack_require__(40);
 	
 	CodeMirror.commands.tabAndIndentMarkdownList = function (cm) {
 		var ranges = cm.listSelections();
@@ -15935,7 +16673,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -15943,7 +16681,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	(function(mod) {
 	  if (true) // CommonJS
-	    mod(__webpack_require__(39));
+	    mod(__webpack_require__(40));
 	  else if (typeof define == "function" && define.amd) // AMD
 	    define(["../../lib/codemirror"], mod);
 	  else // Plain browser env
@@ -15982,7 +16720,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -15990,7 +16728,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	(function(mod) {
 	  if (true) // CommonJS
-	    mod(__webpack_require__(39), __webpack_require__(44), __webpack_require__(45));
+	    mod(__webpack_require__(40), __webpack_require__(45), __webpack_require__(46));
 	  else if (typeof define == "function" && define.amd) // AMD
 	    define(["../../lib/codemirror", "../xml/xml", "../meta"], mod);
 	  else // Plain browser env
@@ -16022,17 +16760,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (modeCfg.maxBlockquoteDepth === undefined)
 	    modeCfg.maxBlockquoteDepth = 0;
 	
-	  // Use `fencedCodeBlocks` to configure fenced code blocks. false to
-	  // disable, string to specify a precise regexp that the fence should
-	  // match, and true to allow three or more backticks or tildes (as
-	  // per CommonMark).
-	
 	  // Turn on task lists? ("- [ ] " and "- [x] ")
 	  if (modeCfg.taskLists === undefined) modeCfg.taskLists = false;
 	
 	  // Turn on strikethrough syntax
 	  if (modeCfg.strikethrough === undefined)
 	    modeCfg.strikethrough = false;
+	
+	  if (modeCfg.emoji === undefined)
+	    modeCfg.emoji = false;
+	
+	  if (modeCfg.fencedCodeBlockHighlighting === undefined)
+	    modeCfg.fencedCodeBlockHighlighting = true;
+	
+	  if (modeCfg.xml === undefined)
+	    modeCfg.xml = true;
 	
 	  // Allow token types to be overridden by user-provided token types.
 	  if (modeCfg.tokenTypeOverrides === undefined)
@@ -16056,7 +16798,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    linkHref: "string",
 	    em: "em",
 	    strong: "strong",
-	    strikethrough: "strikethrough"
+	    strikethrough: "strikethrough",
+	    emoji: "builtin"
 	  };
 	
 	  for (var tokenType in tokenTypes) {
@@ -16067,13 +16810,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  var hrRE = /^([*\-_])(?:\s*\1){2,}\s*$/
 	  ,   listRE = /^(?:[*\-+]|^[0-9]+([.)]))\s+/
-	  ,   taskListRE = /^\[(x| )\](?=\s)/ // Must follow listRE
+	  ,   taskListRE = /^\[(x| )\](?=\s)/i // Must follow listRE
 	  ,   atxHeaderRE = modeCfg.allowAtxHeaderWithoutSpace ? /^(#+)/ : /^(#+)(?: |$)/
 	  ,   setextHeaderRE = /^ *(?:\={1,}|-{1,})\s*$/
-	  ,   textRE = /^[^#!\[\]*_\\<>` "'(~]+/
-	  ,   fencedCodeRE = new RegExp("^(" + (modeCfg.fencedCodeBlocks === true ? "~~~+|```+" : modeCfg.fencedCodeBlocks) +
-	                                ")[ \\t]*([\\w+#\-]*)")
+	  ,   textRE = /^[^#!\[\]*_\\<>` "'(~:]+/
+	  ,   fencedCodeRE = /^(~~~+|```+)[ \t]*([\w+#-]*)[^\n`]*$/
+	  ,   linkDefRE = /^\s*\[[^\]]+?\]:\s*\S+(\s*\S*\s*)?$/ // naive link-definition
 	  ,   punctuation = /[!\"#$%&\'()*+,\-\.\/:;<=>?@\[\\\]^_`{|}~—]/
+	  ,   expandedTab = "    " // CommonMark specifies tab as 4 spaces
 	
 	  function switchInline(stream, state, f) {
 	    state.f = state.inline = f;
@@ -16094,6 +16838,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function blankLine(state) {
 	    // Reset linkTitle state
 	    state.linkTitle = false;
+	    state.linkHref = false;
+	    state.linkText = false;
 	    // Reset EM state
 	    state.em = false;
 	    // Reset STRONG state
@@ -16113,76 +16859,86 @@ return /******/ (function(modules) { // webpackBootstrap
 	    state.trailingSpaceNewLine = false;
 	    // Mark this line as blank
 	    state.prevLine = state.thisLine
-	    state.thisLine = null
+	    state.thisLine = {stream: null}
 	    return null;
 	  }
 	
 	  function blockNormal(stream, state) {
-	
-	    var sol = stream.sol();
-	
-	    var prevLineIsList = state.list !== false,
-	        prevLineIsIndentedCode = state.indentedCode;
+	    var firstTokenOnLine = stream.column() === state.indentation;
+	    var prevLineLineIsEmpty = lineIsEmpty(state.prevLine.stream);
+	    var prevLineIsIndentedCode = state.indentedCode;
+	    var prevLineIsHr = state.prevLine.hr;
+	    var prevLineIsList = state.list !== false;
+	    var maxNonCodeIndentation = (state.listStack[state.listStack.length - 1] || 0) + 3;
 	
 	    state.indentedCode = false;
 	
-	    if (prevLineIsList) {
-	      if (state.indentationDiff >= 0) { // Continued list
-	        if (state.indentationDiff < 4) { // Only adjust indentation if *not* a code block
-	          state.indentation -= state.indentationDiff;
+	    var lineIndentation = state.indentation;
+	    // compute once per line (on first token)
+	    if (state.indentationDiff === null) {
+	      state.indentationDiff = state.indentation;
+	      if (prevLineIsList) {
+	        // Reset inline styles which shouldn't propagate aross list items
+	        state.em = false;
+	        state.strong = false;
+	        state.code = false;
+	        state.strikethrough = false;
+	
+	        state.list = null;
+	        // While this list item's marker's indentation is less than the deepest
+	        //  list item's content's indentation,pop the deepest list item
+	        //  indentation off the stack, and update block indentation state
+	        while (lineIndentation < state.listStack[state.listStack.length - 1]) {
+	          state.listStack.pop();
+	          if (state.listStack.length) {
+	            state.indentation = state.listStack[state.listStack.length - 1];
+	          // less than the first list's indent -> the line is no longer a list
+	          } else {
+	            state.list = false;
+	          }
 	        }
-	        state.list = null;
-	      } else if (state.indentation > 0) {
-	        state.list = null;
-	      } else { // No longer a list
-	        state.list = false;
+	        if (state.list !== false) {
+	          state.indentationDiff = lineIndentation - state.listStack[state.listStack.length - 1]
+	        }
 	      }
 	    }
 	
+	    // not comprehensive (currently only for setext detection purposes)
+	    var allowsInlineContinuation = (
+	        !prevLineLineIsEmpty && !prevLineIsHr && !state.prevLine.header &&
+	        (!prevLineIsList || !prevLineIsIndentedCode) &&
+	        !state.prevLine.fencedCodeEnd
+	    );
+	
+	    var isHr = (state.list === false || prevLineIsHr || prevLineLineIsEmpty) &&
+	      state.indentation <= maxNonCodeIndentation && stream.match(hrRE);
+	
 	    var match = null;
-	    if (state.indentationDiff >= 4) {
+	    if (state.indentationDiff >= 4 && (prevLineIsIndentedCode || state.prevLine.fencedCodeEnd ||
+	         state.prevLine.header || prevLineLineIsEmpty)) {
 	      stream.skipToEnd();
-	      if (prevLineIsIndentedCode || lineIsEmpty(state.prevLine)) {
-	        state.indentation -= 4;
-	        state.indentedCode = true;
-	        return tokenTypes.code;
-	      } else {
-	        return null;
-	      }
+	      state.indentedCode = true;
+	      return tokenTypes.code;
 	    } else if (stream.eatSpace()) {
 	      return null;
-	    } else if ((match = stream.match(atxHeaderRE)) && match[1].length <= 6) {
+	    } else if (firstTokenOnLine && state.indentation <= maxNonCodeIndentation && (match = stream.match(atxHeaderRE)) && match[1].length <= 6) {
+	      state.quote = 0;
 	      state.header = match[1].length;
+	      state.thisLine.header = true;
 	      if (modeCfg.highlightFormatting) state.formatting = "header";
 	      state.f = state.inline;
 	      return getType(state);
-	    } else if (!lineIsEmpty(state.prevLine) && !state.quote && !prevLineIsList &&
-	               !prevLineIsIndentedCode && (match = stream.match(setextHeaderRE))) {
-	      state.header = match[0].charAt(0) == '=' ? 1 : 2;
-	      if (modeCfg.highlightFormatting) state.formatting = "header";
-	      state.f = state.inline;
-	      return getType(state);
-	    } else if (stream.eat('>')) {
-	      state.quote = sol ? 1 : state.quote + 1;
+	    } else if (state.indentation <= maxNonCodeIndentation && stream.eat('>')) {
+	      state.quote = firstTokenOnLine ? 1 : state.quote + 1;
 	      if (modeCfg.highlightFormatting) state.formatting = "quote";
 	      stream.eatSpace();
 	      return getType(state);
-	    } else if (stream.peek() === '[') {
-	      return switchInline(stream, state, footnoteLink);
-	    } else if (stream.match(hrRE, true)) {
-	      state.hr = true;
-	      return tokenTypes.hr;
-	    } else if (match = stream.match(listRE)) {
+	    } else if (!isHr && !state.setext && firstTokenOnLine && state.indentation <= maxNonCodeIndentation && (match = stream.match(listRE))) {
 	      var listType = match[1] ? "ol" : "ul";
-	      state.indentation = stream.column() + stream.current().length;
-	      state.list = true;
 	
-	      // While this list item's marker's indentation
-	      // is less than the deepest list item's content's indentation,
-	      // pop the deepest list item indentation off the stack.
-	      while (state.listStack && stream.column() < state.listStack[state.listStack.length - 1]) {
-	        state.listStack.pop();
-	      }
+	      state.indentation = lineIndentation + stream.current().length;
+	      state.list = true;
+	      state.quote = 0;
 	
 	      // Add this list item's content's indentation to the stack
 	      state.listStack.push(state.indentation);
@@ -16193,15 +16949,47 @@ return /******/ (function(modules) { // webpackBootstrap
 	      state.f = state.inline;
 	      if (modeCfg.highlightFormatting) state.formatting = ["list", "list-" + listType];
 	      return getType(state);
-	    } else if (modeCfg.fencedCodeBlocks && (match = stream.match(fencedCodeRE, true))) {
-	      state.fencedChars = match[1]
+	    } else if (firstTokenOnLine && state.indentation <= maxNonCodeIndentation && (match = stream.match(fencedCodeRE, true))) {
+	      state.quote = 0;
+	      state.fencedEndRE = new RegExp(match[1] + "+ *$");
 	      // try switching mode
-	      state.localMode = getMode(match[2]);
+	      state.localMode = modeCfg.fencedCodeBlockHighlighting && getMode(match[2]);
 	      if (state.localMode) state.localState = CodeMirror.startState(state.localMode);
 	      state.f = state.block = local;
 	      if (modeCfg.highlightFormatting) state.formatting = "code-block";
 	      state.code = -1
 	      return getType(state);
+	    // SETEXT has lowest block-scope precedence after HR, so check it after
+	    //  the others (code, blockquote, list...)
+	    } else if (
+	      // if setext set, indicates line after ---/===
+	      state.setext || (
+	        // line before ---/===
+	        (!allowsInlineContinuation || !prevLineIsList) && !state.quote && state.list === false &&
+	        !state.code && !isHr && !linkDefRE.test(stream.string) &&
+	        (match = stream.lookAhead(1)) && (match = match.match(setextHeaderRE))
+	      )
+	    ) {
+	      if ( !state.setext ) {
+	        state.header = match[0].charAt(0) == '=' ? 1 : 2;
+	        state.setext = state.header;
+	      } else {
+	        state.header = state.setext;
+	        // has no effect on type so we can reset it now
+	        state.setext = 0;
+	        stream.skipToEnd();
+	        if (modeCfg.highlightFormatting) state.formatting = "header";
+	      }
+	      state.thisLine.header = true;
+	      state.f = state.inline;
+	      return getType(state);
+	    } else if (isHr) {
+	      stream.skipToEnd();
+	      state.hr = true;
+	      state.thisLine.hr = true;
+	      return tokenTypes.hr;
+	    } else if (stream.peek() === '[') {
+	      return switchInline(stream, state, footnoteLink);
 	    }
 	
 	    return switchInline(stream, state, state.inline);
@@ -16223,17 +17011,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  function local(stream, state) {
-	    if (state.fencedChars && stream.match(state.fencedChars)) {
+	    var currListInd = state.listStack[state.listStack.length - 1] || 0;
+	    var hasExitedList = state.indentation < currListInd;
+	    var maxFencedEndInd = currListInd + 3;
+	    if (state.fencedEndRE && state.indentation <= maxFencedEndInd && (hasExitedList || stream.match(state.fencedEndRE))) {
 	      if (modeCfg.highlightFormatting) state.formatting = "code-block";
-	      var returnType = getType(state)
+	      var returnType;
+	      if (!hasExitedList) returnType = getType(state)
 	      state.localMode = state.localState = null;
 	      state.block = blockNormal;
 	      state.f = inlineNormal;
-	      state.fencedChars = null;
+	      state.fencedEndRE = null;
 	      state.code = 0
+	      state.thisLine.fencedCodeEnd = true;
+	      if (hasExitedList) return switchBlock(stream, state, state.block);
 	      return returnType;
-	    } else if (state.fencedChars && stream.skipTo(state.fencedChars)) {
-	      return "comment"
 	    } else if (state.localMode) {
 	      return state.localMode.token(stream, state.localState);
 	    } else {
@@ -16285,6 +17077,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (state.strong) { styles.push(tokenTypes.strong); }
 	      if (state.em) { styles.push(tokenTypes.em); }
 	      if (state.strikethrough) { styles.push(tokenTypes.strikethrough); }
+	      if (state.emoji) { styles.push(tokenTypes.emoji); }
 	      if (state.linkText) { styles.push(tokenTypes.linkText); }
 	      if (state.code) { styles.push(tokenTypes.code); }
 	      if (state.image) { styles.push(tokenTypes.image); }
@@ -16343,7 +17136,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    if (state.taskList) {
-	      var taskOpen = stream.match(taskListRE, true)[1] !== "x";
+	      var taskOpen = stream.match(taskListRE, true)[1] === " ";
 	      if (taskOpen) state.taskOpen = true;
 	      else state.taskClosed = true;
 	      if (modeCfg.highlightFormatting) state.formatting = "task";
@@ -16381,7 +17174,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (modeCfg.highlightFormatting) state.formatting = "code";
 	      stream.eatWhile('`');
 	      var count = stream.current().length
-	      if (state.code == 0) {
+	      if (state.code == 0 && (!state.quote || count == 1)) {
 	        state.code = count
 	        return getType(state)
 	      } else if (count == state.code) { // Must be exact
@@ -16428,17 +17221,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return type;
 	    }
 	
-	    if (ch === '[' && stream.match(/[^\]]*\](\(.*\)| ?\[.*?\])/, false) && !state.image) {
+	    if (ch === '[' && !state.image) {
 	      state.linkText = true;
 	      if (modeCfg.highlightFormatting) state.formatting = "link";
 	      return getType(state);
 	    }
 	
-	    if (ch === ']' && state.linkText && stream.match(/\(.*?\)| ?\[.*?\]/, false)) {
+	    if (ch === ']' && state.linkText) {
 	      if (modeCfg.highlightFormatting) state.formatting = "link";
 	      var type = getType(state);
 	      state.linkText = false;
-	      state.inline = state.f = linkHref;
+	      state.inline = state.f = stream.match(/\(.*?\)| ?\[.*?\]/, false) ? linkHref : inlineNormal
 	      return type;
 	    }
 	
@@ -16466,7 +17259,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return type + tokenTypes.linkEmail;
 	    }
 	
-	    if (ch === '<' && stream.match(/^(!--|[a-z]+(?:\s+[a-z_:.\-]+(?:\s*=\s*[^ >]+)?)*\s*>)/i, false)) {
+	    if (modeCfg.xml && ch === '<' && stream.match(/^(!--|[a-z]+(?:\s+[a-z_:.\-]+(?:\s*=\s*[^ >]+)?)*\s*>)/i, false)) {
 	      var end = stream.string.indexOf(">", stream.pos);
 	      if (end != -1) {
 	        var atts = stream.string.substring(stream.start, end);
@@ -16477,7 +17270,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return switchBlock(stream, state, htmlBlock);
 	    }
 	
-	    if (ch === '<' && stream.match(/^\/\w*?>/)) {
+	    if (modeCfg.xml && ch === '<' && stream.match(/^\/\w*?>/)) {
 	      state.md_inside = false;
 	      return "tag";
 	    } else if (ch === "*" || ch === "_") {
@@ -16542,6 +17335,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    }
 	
+	    if (modeCfg.emoji && ch === ":" && stream.match(/^[a-z_\d+-]+:/)) {
+	      state.emoji = true;
+	      if (modeCfg.highlightFormatting) state.formatting = "emoji";
+	      var retType = getType(state);
+	      state.emoji = false;
+	      return retType;
+	    }
+	
 	    if (ch === ' ') {
 	      if (stream.match(/ +$/, false)) {
 	        state.trailingSpace++;
@@ -16580,7 +17381,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    var ch = stream.next();
 	    if (ch === '(' || ch === '[') {
-	      state.f = state.inline = getLinkHrefInside(ch === "(" ? ")" : "]", 0);
+	      state.f = state.inline = getLinkHrefInside(ch === "(" ? ")" : "]");
 	      if (modeCfg.highlightFormatting) state.formatting = "link-string";
 	      state.linkHref = true;
 	      return getType(state);
@@ -16590,7 +17391,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  var linkRE = {
 	    ")": /^(?:[^\\\(\)]|\\.|\((?:[^\\\(\)]|\\.)*\))*?(?=\))/,
-	    "]": /^(?:[^\\\[\]]|\\.|\[(?:[^\\\[\\]]|\\.)*\])*?(?=\])/
+	    "]": /^(?:[^\\\[\]]|\\.|\[(?:[^\\\[\]]|\\.)*\])*?(?=\])/
 	  }
 	
 	  function getLinkHrefInside(endChar) {
@@ -16658,8 +17459,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return {
 	        f: blockNormal,
 	
-	        prevLine: null,
-	        thisLine: null,
+	        prevLine: {stream: null},
+	        thisLine: {stream: null},
 	
 	        block: blockNormal,
 	        htmlState: null,
@@ -16676,6 +17477,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        em: false,
 	        strong: false,
 	        header: 0,
+	        setext: 0,
 	        hr: false,
 	        taskList: false,
 	        list: false,
@@ -16684,7 +17486,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        trailingSpace: 0,
 	        trailingSpaceNewLine: false,
 	        strikethrough: false,
-	        fencedChars: null
+	        emoji: false,
+	        fencedEndRE: null
 	      };
 	    },
 	
@@ -16705,12 +17508,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        inline: s.inline,
 	        text: s.text,
 	        formatting: false,
+	        linkText: s.linkText,
 	        linkTitle: s.linkTitle,
+	        linkHref: s.linkHref,
 	        code: s.code,
 	        em: s.em,
 	        strong: s.strong,
 	        strikethrough: s.strikethrough,
+	        emoji: s.emoji,
 	        header: s.header,
+	        setext: s.setext,
 	        hr: s.hr,
 	        taskList: s.taskList,
 	        list: s.list,
@@ -16720,7 +17527,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        trailingSpace: s.trailingSpace,
 	        trailingSpaceNewLine: s.trailingSpaceNewLine,
 	        md_inside: s.md_inside,
-	        fencedChars: s.fencedChars
+	        fencedEndRE: s.fencedEndRE
 	      };
 	    },
 	
@@ -16729,21 +17536,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Reset state.formatting
 	      state.formatting = false;
 	
-	      if (stream != state.thisLine) {
-	        var forceBlankLine = state.header || state.hr;
-	
-	        // Reset state.header and state.hr
+	      if (stream != state.thisLine.stream) {
 	        state.header = 0;
 	        state.hr = false;
 	
-	        if (stream.match(/^\s*$/, true) || forceBlankLine) {
+	        if (stream.match(/^\s*$/, true)) {
 	          blankLine(state);
-	          if (!forceBlankLine) return null
-	          state.prevLine = null
+	          return null;
 	        }
 	
 	        state.prevLine = state.thisLine
-	        state.thisLine = stream
+	        state.thisLine = {stream: stream}
 	
 	        // Reset state.taskList
 	        state.taskList = false;
@@ -16752,11 +17555,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        state.trailingSpace = 0;
 	        state.trailingSpaceNewLine = false;
 	
-	        state.f = state.block;
-	        var indentation = stream.match(/^\s*/, true)[0].replace(/\t/g, '    ').length;
-	        state.indentationDiff = Math.min(indentation - state.indentation, 4);
-	        state.indentation = state.indentation + state.indentationDiff;
-	        if (indentation > 0) return null;
+	        if (!state.localState) {
+	          state.f = state.block;
+	          if (state.f != htmlBlock) {
+	            var indentation = stream.match(/^\s*/, true)[0].replace(/\t/g, expandedTab).length;
+	            state.indentation = indentation;
+	            state.indentationDiff = null;
+	            if (indentation > 0) return null;
+	          }
+	        }
 	      }
 	      return state.f(stream, state);
 	    },
@@ -16765,6 +17572,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (state.block == htmlBlock) return {state: state.htmlState, mode: htmlMode};
 	      if (state.localState) return {state: state.localState, mode: state.localMode};
 	      return {state: state, mode: mode};
+	    },
+	
+	    indent: function(state, textAfter, line) {
+	      if (state.block == htmlBlock && htmlMode.indent) return htmlMode.indent(state.htmlState, textAfter, line)
+	      if (state.localState && state.localMode.indent) return state.localMode.indent(state.localState, textAfter, line)
+	      return CodeMirror.Pass
 	    },
 	
 	    blankLine: blankLine,
@@ -16777,13 +17590,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return mode;
 	}, "xml");
 	
+	CodeMirror.defineMIME("text/markdown", "markdown");
+	
 	CodeMirror.defineMIME("text/x-markdown", "markdown");
 	
 	});
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -16791,7 +17606,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	(function(mod) {
 	  if (true) // CommonJS
-	    mod(__webpack_require__(39));
+	    mod(__webpack_require__(40));
 	  else if (typeof define == "function" && define.amd) // AMD
 	    define(["../../lib/codemirror"], mod);
 	  else // Plain browser env
@@ -16840,6 +17655,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  doNotIndent: {},
 	  allowUnquoted: false,
 	  allowMissing: false,
+	  allowMissingTagName: false,
 	  caseFold: false
 	}
 	
@@ -17014,6 +17830,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      state.tagName = stream.current();
 	      setStyle = "tag";
 	      return attrState;
+	    } else if (config.allowMissingTagName && type == "endTag") {
+	      setStyle = "tag bracket";
+	      return attrState(type, stream, state);
 	    } else {
 	      setStyle = "error";
 	      return tagNameState;
@@ -17032,6 +17851,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        setStyle = "tag error";
 	        return closeStateErr;
 	      }
+	    } else if (config.allowMissingTagName && type == "endTag") {
+	      setStyle = "tag bracket";
+	      return closeState(type, stream, state);
 	    } else {
 	      setStyle = "error";
 	      return closeStateErr;
@@ -17183,7 +18005,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -17191,7 +18013,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	(function(mod) {
 	  if (true) // CommonJS
-	    mod(__webpack_require__(39));
+	    mod(__webpack_require__(40));
 	  else if (typeof define == "function" && define.amd) // AMD
 	    define(["../lib/codemirror"], mod);
 	  else // Plain browser env
@@ -17201,11 +18023,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  CodeMirror.modeInfo = [
 	    {name: "APL", mime: "text/apl", mode: "apl", ext: ["dyalog", "apl"]},
-	    {name: "PGP", mimes: ["application/pgp", "application/pgp-keys", "application/pgp-signature"], mode: "asciiarmor", ext: ["pgp"]},
+	    {name: "PGP", mimes: ["application/pgp", "application/pgp-encrypted", "application/pgp-keys", "application/pgp-signature"], mode: "asciiarmor", ext: ["asc", "pgp", "sig"]},
 	    {name: "ASN.1", mime: "text/x-ttcn-asn", mode: "asn.1", ext: ["asn", "asn1"]},
 	    {name: "Asterisk", mime: "text/x-asterisk", mode: "asterisk", file: /^extensions\.conf$/i},
 	    {name: "Brainfuck", mime: "text/x-brainfuck", mode: "brainfuck", ext: ["b", "bf"]},
-	    {name: "C", mime: "text/x-csrc", mode: "clike", ext: ["c", "h"]},
+	    {name: "C", mime: "text/x-csrc", mode: "clike", ext: ["c", "h", "ino"]},
 	    {name: "C++", mime: "text/x-c++src", mode: "clike", ext: ["cpp", "c++", "cc", "cxx", "hpp", "h++", "hh", "hxx"], alias: ["cpp"]},
 	    {name: "Cobol", mime: "text/x-cobol", mode: "cobol", ext: ["cob", "cpy"]},
 	    {name: "C#", mime: "text/x-csharp", mode: "clike", ext: ["cs"], alias: ["csharp"]},
@@ -17213,7 +18035,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    {name: "ClojureScript", mime: "text/x-clojurescript", mode: "clojure", ext: ["cljs"]},
 	    {name: "Closure Stylesheets (GSS)", mime: "text/x-gss", mode: "css", ext: ["gss"]},
 	    {name: "CMake", mime: "text/x-cmake", mode: "cmake", ext: ["cmake", "cmake.in"], file: /^CMakeLists.txt$/},
-	    {name: "CoffeeScript", mime: "text/x-coffeescript", mode: "coffeescript", ext: ["coffee"], alias: ["coffee", "coffee-script"]},
+	    {name: "CoffeeScript", mimes: ["application/vnd.coffeescript", "text/coffeescript", "text/x-coffeescript"], mode: "coffeescript", ext: ["coffee"], alias: ["coffee", "coffee-script"]},
 	    {name: "Common Lisp", mime: "text/x-common-lisp", mode: "commonlisp", ext: ["cl", "lisp", "el"], alias: ["lisp"]},
 	    {name: "Cypher", mime: "application/x-cypher-query", mode: "cypher", ext: ["cyp", "cypher"]},
 	    {name: "Cython", mime: "text/x-cython", mode: "python", ext: ["pyx", "pxd", "pxi"]},
@@ -17235,6 +18057,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    {name: "Embedded Javascript", mime: "application/x-ejs", mode: "htmlembedded", ext: ["ejs"]},
 	    {name: "Embedded Ruby", mime: "application/x-erb", mode: "htmlembedded", ext: ["erb"]},
 	    {name: "Erlang", mime: "text/x-erlang", mode: "erlang", ext: ["erl"]},
+	    {name: "Esper", mime: "text/x-esper", mode: "sql"},
 	    {name: "Factor", mime: "text/x-factor", mode: "factor", ext: ["factor"]},
 	    {name: "FCL", mime: "text/x-fcl", mode: "fcl"},
 	    {name: "Forth", mime: "text/x-forth", mode: "forth", ext: ["forth", "fth", "4th"]},
@@ -17251,7 +18074,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    {name: "Haxe", mime: "text/x-haxe", mode: "haxe", ext: ["hx"]},
 	    {name: "HXML", mime: "text/x-hxml", mode: "haxe", ext: ["hxml"]},
 	    {name: "ASP.NET", mime: "application/x-aspx", mode: "htmlembedded", ext: ["aspx"], alias: ["asp", "aspx"]},
-	    {name: "HTML", mime: "text/html", mode: "htmlmixed", ext: ["html", "htm"], alias: ["xhtml"]},
+	    {name: "HTML", mime: "text/html", mode: "htmlmixed", ext: ["html", "htm", "handlebars", "hbs"], alias: ["xhtml"]},
 	    {name: "HTTP", mime: "message/http", mode: "http"},
 	    {name: "IDL", mime: "text/x-idl", mode: "idl", ext: ["pro"]},
 	    {name: "Pug", mime: "text/x-pug", mode: "pug", ext: ["jade", "pug"], alias: ["jade"]},
@@ -17279,15 +18102,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    {name: "MySQL", mime: "text/x-mysql", mode: "sql"},
 	    {name: "Nginx", mime: "text/x-nginx-conf", mode: "nginx", file: /nginx.*\.conf$/i},
 	    {name: "NSIS", mime: "text/x-nsis", mode: "nsis", ext: ["nsh", "nsi"]},
-	    {name: "NTriples", mime: "text/n-triples", mode: "ntriples", ext: ["nt"]},
-	    {name: "Objective C", mime: "text/x-objectivec", mode: "clike", ext: ["m", "mm"], alias: ["objective-c", "objc"]},
+	    {name: "NTriples", mimes: ["application/n-triples", "application/n-quads", "text/n-triples"],
+	     mode: "ntriples", ext: ["nt", "nq"]},
+	    {name: "Objective-C", mime: "text/x-objectivec", mode: "clike", ext: ["m", "mm"], alias: ["objective-c", "objc"]},
 	    {name: "OCaml", mime: "text/x-ocaml", mode: "mllike", ext: ["ml", "mli", "mll", "mly"]},
 	    {name: "Octave", mime: "text/x-octave", mode: "octave", ext: ["m"]},
 	    {name: "Oz", mime: "text/x-oz", mode: "oz", ext: ["oz"]},
 	    {name: "Pascal", mime: "text/x-pascal", mode: "pascal", ext: ["p", "pas"]},
 	    {name: "PEG.js", mime: "null", mode: "pegjs", ext: ["jsonld"]},
 	    {name: "Perl", mime: "text/x-perl", mode: "perl", ext: ["pl", "pm"]},
-	    {name: "PHP", mime: "application/x-httpd-php", mode: "php", ext: ["php", "php3", "php4", "php5", "phtml"]},
+	    {name: "PHP", mimes: ["text/x-php", "application/x-httpd-php", "application/x-httpd-php-open"], mode: "php", ext: ["php", "php3", "php4", "php5", "php7", "phtml"]},
 	    {name: "Pig", mime: "text/x-pig", mode: "pig", ext: ["pig"]},
 	    {name: "Plain Text", mime: "text/plain", mode: "null", ext: ["txt", "text", "conf", "def", "list", "log"]},
 	    {name: "PLSQL", mime: "text/x-plsql", mode: "sql", ext: ["pls"]},
@@ -17308,12 +18132,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    {name: "Scala", mime: "text/x-scala", mode: "clike", ext: ["scala"]},
 	    {name: "Scheme", mime: "text/x-scheme", mode: "scheme", ext: ["scm", "ss"]},
 	    {name: "SCSS", mime: "text/x-scss", mode: "css", ext: ["scss"]},
-	    {name: "Shell", mime: "text/x-sh", mode: "shell", ext: ["sh", "ksh", "bash"], alias: ["bash", "sh", "zsh"], file: /^PKGBUILD$/},
+	    {name: "Shell", mimes: ["text/x-sh", "application/x-sh"], mode: "shell", ext: ["sh", "ksh", "bash"], alias: ["bash", "sh", "zsh"], file: /^PKGBUILD$/},
 	    {name: "Sieve", mime: "application/sieve", mode: "sieve", ext: ["siv", "sieve"]},
 	    {name: "Slim", mimes: ["text/x-slim", "application/x-slim"], mode: "slim", ext: ["slim"]},
 	    {name: "Smalltalk", mime: "text/x-stsrc", mode: "smalltalk", ext: ["st"]},
 	    {name: "Smarty", mime: "text/x-smarty", mode: "smarty", ext: ["tpl"]},
 	    {name: "Solr", mime: "text/x-solr", mode: "solr"},
+	    {name: "SML", mime: "text/x-sml", mode: "mllike", ext: ["sml", "sig", "fun", "smackspec"]},
 	    {name: "Soy", mime: "text/x-soy", mode: "soy", ext: ["soy"], alias: ["closure template"]},
 	    {name: "SPARQL", mime: "application/sparql-query", mode: "sparql", ext: ["rq", "sparql"], alias: ["sparul"]},
 	    {name: "Spreadsheet", mime: "text/x-spreadsheet", mode: "spreadsheet", alias: ["excel", "formula"]},
@@ -17323,8 +18148,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    {name: "Stylus", mime: "text/x-styl", mode: "stylus", ext: ["styl"]},
 	    {name: "Swift", mime: "text/x-swift", mode: "swift", ext: ["swift"]},
 	    {name: "sTeX", mime: "text/x-stex", mode: "stex"},
-	    {name: "LaTeX", mime: "text/x-latex", mode: "stex", ext: ["text", "ltx"], alias: ["tex"]},
-	    {name: "SystemVerilog", mime: "text/x-systemverilog", mode: "verilog", ext: ["v"]},
+	    {name: "LaTeX", mime: "text/x-latex", mode: "stex", ext: ["text", "ltx", "tex"], alias: ["tex"]},
+	    {name: "SystemVerilog", mime: "text/x-systemverilog", mode: "verilog", ext: ["v", "sv", "svh"]},
 	    {name: "Tcl", mime: "text/x-tcl", mode: "tcl", ext: ["tcl"]},
 	    {name: "Textile", mime: "text/x-textile", mode: "textile", ext: ["textile"]},
 	    {name: "TiddlyWiki ", mime: "text/x-tiddlywiki", mode: "tiddlywiki"},
@@ -17403,7 +18228,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -17420,7 +18245,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	(function(mod) {
 	  if (true) // CommonJS
-	    mod(__webpack_require__(39));
+	    mod(__webpack_require__(40));
 	  else if (typeof define == "function" && define.amd) // AMD
 	    define(["../../lib/codemirror"], mod);
 	  else // Plain browser env
@@ -17499,7 +18324,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -17507,7 +18332,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	(function(mod) {
 	  if (true) // CommonJS
-	    mod(__webpack_require__(39));
+	    mod(__webpack_require__(40));
 	  else if (typeof define == "function" && define.amd) // AMD
 	    define(["../../lib/codemirror"], mod);
 	  else // Plain browser env
@@ -17542,6 +18367,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    clearPlaceholder(cm);
 	    var elt = cm.state.placeholder = document.createElement("pre");
 	    elt.style.cssText = "height: 0; overflow: visible";
+	    elt.style.direction = cm.getOption("direction");
 	    elt.className = "CodeMirror-placeholder";
 	    var placeHolder = cm.getOption("placeholder")
 	    if (typeof placeHolder == "string") placeHolder = document.createTextNode(placeHolder)
@@ -17567,7 +18393,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -17581,7 +18407,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	(function(mod) {
 	  if (true) // CommonJS
-	    mod(__webpack_require__(39));
+	    mod(__webpack_require__(40));
 	  else if (typeof define == "function" && define.amd) // AMD
 	    define(["../../lib/codemirror"], mod);
 	  else // Plain browser env
@@ -17658,7 +18484,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!array.length) return coverRange(cm, from, to);
 	
 	    var coverStart = array[0].find(), coverEnd = array[array.length - 1].find();
-	    if (!coverStart || !coverEnd || to.line - from.line < CHUNK_SIZE ||
+	    if (!coverStart || !coverEnd || to.line - from.line <= CHUNK_SIZE ||
 	        cmp(from, coverEnd.to) >= 0 || cmp(to, coverStart.from) <= 0)
 	      return reset(cm);
 	
@@ -17692,7 +18518,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -17700,7 +18526,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	(function(mod) {
 	  if (true) // CommonJS
-	    mod(__webpack_require__(39), __webpack_require__(43), __webpack_require__(46));
+	    mod(__webpack_require__(40), __webpack_require__(44), __webpack_require__(47));
 	  else if (typeof define == "function" && define.amd) // AMD
 	    define(["../../lib/codemirror", "../markdown/markdown", "../../addon/mode/overlay"], mod);
 	  else // Plain browser env
@@ -17778,7 +18604,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (stream.sol() || state.ateSpace) {
 	        state.ateSpace = false;
 	        if (modeConfig.gitHubSpice !== false) {
-	          if(stream.match(/^(?:[a-zA-Z0-9\-_]+\/)?(?:[a-zA-Z0-9\-_]+@)?(?:[a-f0-9]{7,40}\b)/)) {
+	          if(stream.match(/^(?:[a-zA-Z0-9\-_]+\/)?(?:[a-zA-Z0-9\-_]+@)?(?=.{0,6}\d)(?:[a-f0-9]{7,40}\b)/)) {
 	            // User/Project@SHA
 	            // User@SHA
 	            // SHA
@@ -17811,8 +18637,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  var markdownConfig = {
 	    taskLists: true,
-	    fencedCodeBlocks: '```',
-	    strikethrough: true
+	    strikethrough: true,
+	    emoji: true
 	  };
 	  for (var attr in modeConfig) {
 	    markdownConfig[attr] = modeConfig[attr];
@@ -17827,7 +18653,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// Use strict mode (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode)
@@ -17835,7 +18661,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	// Requires
-	var Typo = __webpack_require__(51);
+	var Typo = __webpack_require__(52);
 	
 	
 	// Create function
@@ -17951,7 +18777,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = CodeMirrorSpellChecker;
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__dirname, Buffer) {/* globals chrome: false */
@@ -18214,7 +19040,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			}
 			else if (true) {
 				// Node.js
-				var fs = __webpack_require__(56);
+				var fs = __webpack_require__(57);
 				
 				try {
 					if (fs.existsSync(path)) {
@@ -18885,10 +19711,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	if (true) {
 		module.exports = Typo;
 	}
-	/* WEBPACK VAR INJECTION */}.call(exports, "/", __webpack_require__(52).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, "/", __webpack_require__(53).Buffer))
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/*!
@@ -18901,9 +19727,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	'use strict'
 	
-	var base64 = __webpack_require__(53)
-	var ieee754 = __webpack_require__(54)
-	var isArray = __webpack_require__(55)
+	var base64 = __webpack_require__(54)
+	var ieee754 = __webpack_require__(55)
+	var isArray = __webpack_require__(56)
 	
 	exports.Buffer = Buffer
 	exports.SlowBuffer = SlowBuffer
@@ -20684,7 +21510,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports) {
 
 	'use strict'
@@ -20703,6 +21529,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  revLookup[code.charCodeAt(i)] = i
 	}
 	
+	// Support decoding URL-safe base64 strings, as Node.js does.
+	// See: https://en.wikipedia.org/wiki/Base64#URL_applications
 	revLookup['-'.charCodeAt(0)] = 62
 	revLookup['_'.charCodeAt(0)] = 63
 	
@@ -20722,22 +21550,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function byteLength (b64) {
 	  // base64 is 4/3 + up to two characters of the original data
-	  return b64.length * 3 / 4 - placeHoldersCount(b64)
+	  return (b64.length * 3 / 4) - placeHoldersCount(b64)
 	}
 	
 	function toByteArray (b64) {
-	  var i, j, l, tmp, placeHolders, arr
+	  var i, l, tmp, placeHolders, arr
 	  var len = b64.length
 	  placeHolders = placeHoldersCount(b64)
 	
-	  arr = new Arr(len * 3 / 4 - placeHolders)
+	  arr = new Arr((len * 3 / 4) - placeHolders)
 	
 	  // if there are placeholders, only get up to the last complete 4 chars
 	  l = placeHolders > 0 ? len - 4 : len
 	
 	  var L = 0
 	
-	  for (i = 0, j = 0; i < l; i += 4, j += 3) {
+	  for (i = 0; i < l; i += 4) {
 	    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
 	    arr[L++] = (tmp >> 16) & 0xFF
 	    arr[L++] = (tmp >> 8) & 0xFF
@@ -20764,7 +21592,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var tmp
 	  var output = []
 	  for (var i = start; i < end; i += 3) {
-	    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+	    tmp = ((uint8[i] << 16) & 0xFF0000) + ((uint8[i + 1] << 8) & 0xFF00) + (uint8[i + 2] & 0xFF)
 	    output.push(tripletToBase64(tmp))
 	  }
 	  return output.join('')
@@ -20804,7 +21632,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports) {
 
 	exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -20894,7 +21722,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports) {
 
 	var toString = {}.toString;
@@ -20905,13 +21733,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports) {
 
 	/* (ignored) */
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -20921,6 +21749,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	
 	;(function() {
+	'use strict';
 	
 	/**
 	 * Block-Level Grammar
@@ -20930,18 +21759,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	  newline: /^\n+/,
 	  code: /^( {4}[^\n]+\n*)+/,
 	  fences: noop,
-	  hr: /^( *[-*_]){3,} *(?:\n+|$)/,
+	  hr: /^ {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\* *){3,})(?:\n+|$)/,
 	  heading: /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,
 	  nptable: noop,
-	  lheading: /^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,
-	  blockquote: /^( *>[^\n]+(\n(?!def)[^\n]+)*\n*)+/,
+	  blockquote: /^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,
 	  list: /^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
 	  html: /^ *(?:comment *(?:\n|\s*$)|closed *(?:\n{2,}|\s*$)|closing *(?:\n{2,}|\s*$))/,
-	  def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,
+	  def: /^ {0,3}\[(label)\]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)(title))? *(?:\n+|$)/,
 	  table: noop,
-	  paragraph: /^((?:[^\n]+\n?(?!hr|heading|lheading|blockquote|tag|def))+)\n*/,
+	  lheading: /^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,
+	  paragraph: /^([^\n]+(?:\n?(?!hr|heading|lheading| {0,3}>|tag)[^\n]+)+)/,
 	  text: /^[^\n]+/
 	};
+	
+	block._label = /(?:\\[\[\]]|[^\[\]])+/;
+	block._title = /(?:"(?:\\"|[^"]|"[^"\n]*")*"|'\n?(?:[^'\n]+\n?)*'|\([^()]*\))/;
+	block.def = replace(block.def)
+	  ('label', block._label)
+	  ('title', block._title)
+	  ();
 	
 	block.bullet = /(?:[*+-]|\d+\.)/;
 	block.item = /^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/;
@@ -20951,23 +21787,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	block.list = replace(block.list)
 	  (/bull/g, block.bullet)
-	  ('hr', '\\n+(?=\\1?(?:[-*_] *){3,}(?:\\n+|$))')
+	  ('hr', '\\n+(?=\\1?(?:(?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$))')
 	  ('def', '\\n+(?=' + block.def.source + ')')
-	  ();
-	
-	block.blockquote = replace(block.blockquote)
-	  ('def', block.def)
 	  ();
 	
 	block._tag = '(?!(?:'
 	  + 'a|em|strong|small|s|cite|q|dfn|abbr|data|time|code'
 	  + '|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo'
-	  + '|span|br|wbr|ins|del|img)\\b)\\w+(?!:/|[^\\w\\s@]*@)\\b';
+	  + '|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b';
 	
 	block.html = replace(block.html)
 	  ('comment', /<!--[\s\S]*?-->/)
 	  ('closed', /<(tag)[\s\S]+?<\/\1>/)
-	  ('closing', /<tag(?:"[^"]*"|'[^']*'|[^'">])*?>/)
+	  ('closing', /<tag(?:"[^"]*"|'[^']*'|\s[^'"\/>]*)*?\/?>/)
 	  (/tag/g, block._tag)
 	  ();
 	
@@ -20975,9 +21807,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  ('hr', block.hr)
 	  ('heading', block.heading)
 	  ('lheading', block.lheading)
-	  ('blockquote', block.blockquote)
 	  ('tag', '<' + block._tag)
-	  ('def', block.def)
+	  ();
+	
+	block.blockquote = replace(block.blockquote)
+	  ('paragraph', block.paragraph)
 	  ();
 	
 	/**
@@ -20991,7 +21825,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	
 	block.gfm = merge({}, block.normal, {
-	  fences: /^ *(`{3,}|~{3,})[ \.]*(\S+)? *\n([\s\S]*?)\s*\1 *(?:\n+|$)/,
+	  fences: /^ *(`{3,}|~{3,})[ \.]*(\S+)? *\n([\s\S]*?)\n? *\1 *(?:\n+|$)/,
 	  paragraph: /^/,
 	  heading: /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/
 	});
@@ -21063,7 +21897,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Lexing
 	 */
 	
-	Lexer.prototype.token = function(src, top, bq) {
+	Lexer.prototype.token = function(src, top) {
 	  var src = src.replace(/^ +$/gm, '')
 	    , next
 	    , loose
@@ -21073,6 +21907,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    , item
 	    , space
 	    , i
+	    , tag
 	    , l;
 	
 	  while (src) {
@@ -21153,17 +21988,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      continue;
 	    }
 	
-	    // lheading
-	    if (cap = this.rules.lheading.exec(src)) {
-	      src = src.substring(cap[0].length);
-	      this.tokens.push({
-	        type: 'heading',
-	        depth: cap[2] === '=' ? 1 : 2,
-	        text: cap[1]
-	      });
-	      continue;
-	    }
-	
 	    // hr
 	    if (cap = this.rules.hr.exec(src)) {
 	      src = src.substring(cap[0].length);
@@ -21186,7 +22010,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Pass `top` to keep the current
 	      // "toplevel" state. This is exactly
 	      // how markdown.pl works.
-	      this.token(cap, top, true);
+	      this.token(cap, top);
 	
 	      this.tokens.push({
 	        type: 'blockquote_end'
@@ -21255,7 +22079,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	
 	        // Recurse.
-	        this.token(item, false, bq);
+	        this.token(item, false);
 	
 	        this.tokens.push({
 	          type: 'list_item_end'
@@ -21284,12 +22108,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    // def
-	    if ((!bq && top) && (cap = this.rules.def.exec(src))) {
+	    if (top && (cap = this.rules.def.exec(src))) {
 	      src = src.substring(cap[0].length);
-	      this.tokens.links[cap[1].toLowerCase()] = {
-	        href: cap[2],
-	        title: cap[3]
-	      };
+	      if (cap[3]) cap[3] = cap[3].substring(1,cap[3].length-1);
+	      tag = cap[1].toLowerCase();
+	      if (!this.tokens.links[tag]) {
+	        this.tokens.links[tag] = {
+	          href: cap[2],
+	          title: cap[3]
+	        };
+	      }
 	      continue;
 	    }
 	
@@ -21324,6 +22152,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      this.tokens.push(item);
 	
+	      continue;
+	    }
+	
+	    // lheading
+	    if (cap = this.rules.lheading.exec(src)) {
+	      src = src.substring(cap[0].length);
+	      this.tokens.push({
+	        type: 'heading',
+	        depth: cap[2] === '=' ? 1 : 2,
+	        text: cap[1]
+	      });
 	      continue;
 	    }
 	
@@ -21365,21 +22204,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var inline = {
 	  escape: /^\\([\\`*{}\[\]()#+\-.!_>])/,
-	  autolink: /^<([^ >]+(@|:\/)[^ >]+)>/,
+	  autolink: /^<(scheme:[^\s\x00-\x1f<>]*|email)>/,
 	  url: noop,
-	  tag: /^<!--[\s\S]*?-->|^<\/?\w+(?:"[^"]*"|'[^']*'|[^'">])*?>/,
+	  tag: /^<!--[\s\S]*?-->|^<\/?[a-zA-Z0-9\-]+(?:"[^"]*"|'[^']*'|\s[^<'">\/]*)*?\/?>/,
 	  link: /^!?\[(inside)\]\(href\)/,
 	  reflink: /^!?\[(inside)\]\s*\[([^\]]*)\]/,
-	  nolink: /^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,
+	  nolink: /^!?\[((?:\[[^\]]*\]|\\[\[\]]|[^\[\]])*)\]/,
 	  strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
-	  em: /^\b_((?:[^_]|__)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
-	  code: /^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
+	  em: /^_([^\s_](?:[^_]|__)+?[^\s_])_\b|^\*((?:\*\*|[^*])+?)\*(?!\*)/,
+	  code: /^(`+)\s*([\s\S]*?[^`]?)\s*\1(?!`)/,
 	  br: /^ {2,}\n(?!\s*$)/,
 	  del: noop,
-	  text: /^[\s\S]+?(?=[\\<!\[_*`]| {2,}\n|$)/
+	  text: /^[\s\S]+?(?=[\\<!\[`*]|\b_| {2,}\n|$)/
 	};
 	
-	inline._inside = /(?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*/;
+	inline._scheme = /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/;
+	inline._email = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/;
+	
+	inline.autolink = replace(inline.autolink)
+	  ('scheme', inline._scheme)
+	  ('email', inline._email)
+	  ()
+	
+	inline._inside = /(?:\[[^\]]*\]|\\[\[\]]|[^\[\]]|\](?=[^\[]*\]))*/;
 	inline._href = /\s*<?([\s\S]*?)>?(?:\s+['"]([\s\S]*?)['"])?\s*/;
 	
 	inline.link = replace(inline.link)
@@ -21412,11 +22259,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	inline.gfm = merge({}, inline.normal, {
 	  escape: replace(inline.escape)('])', '~|])')(),
-	  url: /^(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/,
+	  url: replace(/^((?:ftp|https?):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/)
+	    ('email', inline._email)
+	    (),
+	  _backpedal: /(?:[^?!.,:;*_~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_~)]+(?!$))+/,
 	  del: /^~~(?=\S)([\s\S]*?\S)~~/,
 	  text: replace(inline.text)
 	    (']|', '~]|')
-	    ('|', '|https?://|')
+	    ('|', '|https?://|ftp://|www\\.|[a-zA-Z0-9.!#$%&\'*+/=?^_`{\\|}~-]+@|')
 	    ()
 	});
 	
@@ -21494,10 +22344,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (cap = this.rules.autolink.exec(src)) {
 	      src = src.substring(cap[0].length);
 	      if (cap[2] === '@') {
-	        text = cap[1].charAt(6) === ':'
-	          ? this.mangle(cap[1].substring(7))
-	          : this.mangle(cap[1]);
-	        href = this.mangle('mailto:') + text;
+	        text = escape(this.mangle(cap[1]));
+	        href = 'mailto:' + text;
 	      } else {
 	        text = escape(cap[1]);
 	        href = text;
@@ -21508,9 +22356,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    // url (gfm)
 	    if (!this.inLink && (cap = this.rules.url.exec(src))) {
+	      cap[0] = this.rules._backpedal.exec(cap[0])[0];
 	      src = src.substring(cap[0].length);
-	      text = escape(cap[1]);
-	      href = text;
+	      if (cap[2] === '@') {
+	        text = escape(cap[0]);
+	        href = 'mailto:' + text;
+	      } else {
+	        text = escape(cap[0]);
+	        if (cap[1] === 'www.') {
+	          href = 'http://' + text;
+	        } else {
+	          href = text;
+	        }
+	      }
 	      out += this.renderer.link(href, null, text);
 	      continue;
 	    }
@@ -21577,7 +22435,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // code
 	    if (cap = this.rules.code.exec(src)) {
 	      src = src.substring(cap[0].length);
-	      out += this.renderer.codespan(escape(cap[2], true));
+	      out += this.renderer.codespan(escape(cap[2].trim(), true));
 	      continue;
 	    }
 	
@@ -21789,11 +22647,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        .replace(/[^\w:]/g, '')
 	        .toLowerCase();
 	    } catch (e) {
-	      return '';
+	      return text;
 	    }
-	    if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0) {
-	      return '';
+	    if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0 || prot.indexOf('data:') === 0) {
+	      return text;
 	    }
+	  }
+	  if (this.options.baseUrl && !originIndependentUrl.test(href)) {
+	    href = resolveUrl(this.options.baseUrl, href);
 	  }
 	  var out = '<a href="' + href + '"';
 	  if (title) {
@@ -21804,6 +22665,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	Renderer.prototype.image = function(href, title, text) {
+	  if (this.options.baseUrl && !originIndependentUrl.test(href)) {
+	    href = resolveUrl(this.options.baseUrl, href);
+	  }
 	  var out = '<img src="' + href + '" alt="' + text + '"';
 	  if (title) {
 	    out += ' title="' + title + '"';
@@ -21815,6 +22679,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	Renderer.prototype.text = function(text) {
 	  return text;
 	};
+	
+	/**
+	 * TextRenderer
+	 * returns only the textual part of the token
+	 */
+	
+	function TextRenderer() {}
+	
+	// no need for block level renderers
+	
+	TextRenderer.prototype.strong =
+	TextRenderer.prototype.em =
+	TextRenderer.prototype.codespan =
+	TextRenderer.prototype.del =
+	TextRenderer.prototype.text = function (text) {
+	  return text;
+	}
+	
+	TextRenderer.prototype.link =
+	TextRenderer.prototype.image = function(href, title, text) {
+	  return '' + text;
+	}
+	
+	TextRenderer.prototype.br = function() {
+	  return '';
+	}
 	
 	/**
 	 * Parsing & Compiling
@@ -21833,8 +22723,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Static Parse Method
 	 */
 	
-	Parser.parse = function(src, options, renderer) {
-	  var parser = new Parser(options, renderer);
+	Parser.parse = function(src, options) {
+	  var parser = new Parser(options);
 	  return parser.parse(src);
 	};
 	
@@ -21843,7 +22733,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	
 	Parser.prototype.parse = function(src) {
-	  this.inline = new InlineLexer(src.links, this.options, this.renderer);
+	  this.inline = new InlineLexer(src.links, this.options);
+	  // use an InlineLexer with a TextRenderer to extract pure text
+	  this.inlineText = new InlineLexer(src.links, merge({}, this.options, {renderer: new TextRenderer}));
 	  this.tokens = src.reverse();
 	
 	  var out = '';
@@ -21900,7 +22792,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return this.renderer.heading(
 	        this.inline.output(this.token.text),
 	        this.token.depth,
-	        this.token.text);
+	        unescape(this.inlineText.output(this.token.text)));
 	    }
 	    case 'code': {
 	      return this.renderer.code(this.token.text,
@@ -21913,13 +22805,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        , i
 	        , row
 	        , cell
-	        , flags
 	        , j;
 	
 	      // header
 	      cell = '';
 	      for (i = 0; i < this.token.header.length; i++) {
-	        flags = { header: true, align: this.token.align[i] };
 	        cell += this.renderer.tablecell(
 	          this.inline.output(this.token.header[i]),
 	          { header: true, align: this.token.align[i] }
@@ -22010,8 +22900,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	function unescape(html) {
-		// explicitly match decimal, hex, and named HTML entities 
-	  return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/g, function(_, n) {
+		// explicitly match decimal, hex, and named HTML entities
+	  return html.replace(/&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/ig, function(_, n) {
 	    n = n.toLowerCase();
 	    if (n === 'colon') return ':';
 	    if (n.charAt(0) === '#') {
@@ -22034,6 +22924,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return self;
 	  };
 	}
+	
+	function resolveUrl(base, href) {
+	  if (!baseUrls[' ' + base]) {
+	    // we can ignore everything in base after the last slash of its path component,
+	    // but we might need to add _that_
+	    // https://tools.ietf.org/html/rfc3986#section-3
+	    if (/^[^:]+:\/*[^/]*$/.test(base)) {
+	      baseUrls[' ' + base] = base + '/';
+	    } else {
+	      baseUrls[' ' + base] = base.replace(/[^/]*$/, '');
+	    }
+	  }
+	  base = baseUrls[' ' + base];
+	
+	  if (href.slice(0, 2) === '//') {
+	    return base.replace(/:[\s\S]*/, ':') + href;
+	  } else if (href.charAt(0) === '/') {
+	    return base.replace(/(:\/*[^/]*)[\s\S]*/, '$1') + href;
+	  } else {
+	    return base + href;
+	  }
+	}
+	var baseUrls = {};
+	var originIndependentUrl = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i;
 	
 	function noop() {}
 	noop.exec = noop;
@@ -22061,6 +22975,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	
 	function marked(src, opt, callback) {
+	  // throw error in case of non string input
+	  if (typeof src == 'undefined' || src === null)
+	    throw new Error('marked(): input parameter is undefined or null');
+	  if (typeof src != 'string')
+	    throw new Error('marked(): input parameter is of type ' +
+	      Object.prototype.toString.call(src) + ', string expected');
+	
+	
 	  if (callback || typeof opt === 'function') {
 	    if (!callback) {
 	      callback = opt;
@@ -22136,7 +23058,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  } catch (e) {
 	    e.message += '\nPlease report this to https://github.com/chjj/marked.';
 	    if ((opt || marked.defaults).silent) {
-	      return '<p>An error occured:</p><pre>'
+	      return '<p>An error occurred:</p><pre>'
 	        + escape(e.message + '', true)
 	        + '</pre>';
 	    }
@@ -22169,7 +23091,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  smartypants: false,
 	  headerPrefix: '',
 	  renderer: new Renderer,
-	  xhtml: false
+	  xhtml: false,
+	  baseUrl: null
 	};
 	
 	/**
@@ -22180,6 +23103,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	marked.parser = Parser.parse;
 	
 	marked.Renderer = Renderer;
+	marked.TextRenderer = TextRenderer;
 	
 	marked.Lexer = Lexer;
 	marked.lexer = Lexer.lex;
