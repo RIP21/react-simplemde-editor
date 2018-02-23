@@ -91,6 +91,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.addEvents();
 	    this.addExtraKeys();
 	    this.getCursor();
+	    this.getMdeInstance();
 	  },
 	
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
@@ -153,6 +154,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  getCursor: function getCursor() {
 	    // https://codemirror.net/doc/manual.html#api_selection
 	    this.props.getLineAndCursor(this.simplemde.codemirror.getCursor());
+	  },
+	
+	  getMdeInstance: function getMdeInstance() {
+	    this.props.getMdeInstance(this.simplemde);
 	  },
 	
 	  render: function render() {

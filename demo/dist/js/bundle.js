@@ -22055,6 +22055,7 @@
 	    this.addEvents();
 	    this.addExtraKeys();
 	    this.getCursor();
+	    this.getMdeInstance();
 	  },
 
 	  componentWillReceiveProps: function (nextProps) {
@@ -22117,6 +22118,10 @@
 	  getCursor: function () {
 	    // https://codemirror.net/doc/manual.html#api_selection
 	    this.props.getLineAndCursor(this.simplemde.codemirror.getCursor());
+	  },
+
+	  getMdeInstance: function () {
+	    this.props.getMdeInstance(this.simplemde);
 	  },
 
 	  render: function () {
@@ -40477,6 +40482,10 @@
 	    console.log(cursor);
 	  },
 
+	  getMdeInstance(mde) {
+	    console.log(mde);
+	  },
+
 	  render() {
 	    return React.createElement(SimpleMDEReact, {
 	      onChange: this.props.handleEditorChange,
@@ -40484,7 +40493,8 @@
 	      label: this.props.label,
 	      value: this.props.value,
 	      extraKeys: this.props.extraKeys,
-	      getLineAndCursor: this.getCursor
+	      getLineAndCursor: this.getCursor,
+	      getMdeInstance: this.getMdeInstance
 	    });
 	  }
 	});

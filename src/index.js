@@ -31,6 +31,7 @@ module.exports = React.createClass({
     this.addEvents();
     this.addExtraKeys();
     this.getCursor();
+    this.getMdeInstance();
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -96,6 +97,10 @@ module.exports = React.createClass({
   getCursor: function() {
     // https://codemirror.net/doc/manual.html#api_selection
     this.props.getLineAndCursor(this.simplemde.codemirror.getCursor());
+  },
+
+  getMdeInstance: function() {
+    this.props.getMdeInstance(this.simplemde)
   },
 
   render: function() {
