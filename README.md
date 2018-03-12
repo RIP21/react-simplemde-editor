@@ -2,7 +2,7 @@
 [![NPM version][npm-badge]][npm]
 
 React component wrapper for
-[SimpleMDE](https://github.com/NextStepWebs/simplemde-markdown-editor).
+[SimpleMDE](https://github.com/sparksuite/simplemde-markdown-editor).
 
 Only two dependencies, React and SimpleMDE.
 
@@ -47,7 +47,7 @@ var SimpleMDE = require('react-simplemde-editor');
 ```
 
 ## Options
-Set additional [SimpleMDE options](https://github.com/NextStepWebs/simplemde-markdown-editor#configuration) with an options prop.
+Set additional [SimpleMDE options](https://github.com/sparksuite/simplemde-markdown-editor#configuration) with an options prop.
 
 Note - while SimpleMDE options has an `initialValue` option, this component only takes a `value` prop which is set as the `initialValue` on first render.
 
