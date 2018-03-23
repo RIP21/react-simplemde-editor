@@ -12,6 +12,14 @@ module.exports = React.createClass({
     }
   },
 
+  getCursor(cursor) {
+    console.log(cursor);
+  },
+
+  getMdeInstance(mde) {
+    console.log(mde);
+  },
+
   render() {
     return (
       <SimpleMDEReact
@@ -20,6 +28,8 @@ module.exports = React.createClass({
         label={this.props.label}
         value={this.props.value}
         extraKeys={this.props.extraKeys}
+        getLineAndCursor={this.getCursor}
+        getMdeInstance={this.getMdeInstance}
       />
     );
   }
