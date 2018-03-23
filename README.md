@@ -59,6 +59,7 @@ var SimpleMDE = require('react-simplemde-editor');
 
 <SimpleMDE
   id="your-custom-id"
+  label="Your label"
   onChange={this.handleChange}
   value={this.state.textValue}
   options={{

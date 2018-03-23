@@ -1,0 +1,28 @@
+{
+  "presets": [
+    "es2015-loose",
+    "stage-0",
+    "react"
+  ],
+  "plugins": [
+    "transform-class-properties",
+    "transform-react-jsx",
+    "transform-runtime",
+    "transform-regenerator",
+    "add-module-exports"
+  ],
+  "env": {
+    "build": {
+      "presets": [],
+      "plugins": []
+    },
+    "test": {
+      "presets": [],
+      "plugins": [
+        "syntax-async-functions",
+        "syntax-jsx",
+        "transform-react-constant-elements"
+      ]
+    }
+  }
+}
