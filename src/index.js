@@ -22,15 +22,23 @@ export default class SimpleMDEEditor extends Component {
   }
 
   componentDidMount() {
-    if (!process.env.IS_BROWSER) return;
-    this.createEditor();
-    this.addEvents();
-    this.addExtraKeys();
+    if (typeof window !== undefined) {
+      this.createEditor();
+      this.addEvents();
+      this.addExtraKeys();
+      this.getCursor();
+      this.getMdeInstance();
+    }
+    return;
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!this.state.keyChange && nextProps.value !== this.simplemde.value()) {
-      this.simplemde.value(nextProps.value);
+    if (
+      !this.state.keyChange &&
+      nextProps &&
+      nextProps.value !== this.simplemde.value()
+    ) {
+      this.simplemde.value((nextProps && nextProps.value) || "");
     }
 
     this.setState({
@@ -83,6 +91,7 @@ export default class SimpleMDEEditor extends Component {
   };
 
   getCursor = () => {
+    // https://codemirror.net/doc/manual.html#api_selection
     if (this.props.getLineAndCursor) {
       this.props.getLineAndCursor(this.simplemde.codemirror.getCursor());
     }

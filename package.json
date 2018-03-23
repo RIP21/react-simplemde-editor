@@ -2,7 +2,7 @@
   "name": "react-simplemde-editor",
   "homepage": "http://www.benrlodge.com",
   "repository": "https://github.com/RIP21/react-simplemde-editor",
-  "version": "3.6.13",
+  "version": "3.6.14",
   "author": "Ben Lodge",
   "contributors": [{
     "name": "Andrii Los",
@@ -35,6 +35,7 @@
     "react-dom": "16.2.0"
   },
   "scripts": {
-    "build": "./scripts/babel.js"
+    "build": "./scripts/babel.js",
+    "prepublish": "npm run build"
   }
 }
