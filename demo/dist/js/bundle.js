@@ -22117,11 +22117,15 @@
 
 	  getCursor: function () {
 	    // https://codemirror.net/doc/manual.html#api_selection
-	    this.props.getLineAndCursor(this.simplemde.codemirror.getCursor());
+	    if (this.props.getLineAndCursor) {
+	      this.props.getLineAndCursor(this.simplemde.codemirror.getCursor());
+	    }
 	  },
 
 	  getMdeInstance: function () {
-	    this.props.getMdeInstance(this.simplemde);
+	    if (this.props.getMdeInstance) {
+	      this.props.getMdeInstance(this.simplemde);
+	    }
 	  },
 
 	  render: function () {
@@ -40492,9 +40496,7 @@
 	      options: this.getMarkdownOptions(),
 	      label: this.props.label,
 	      value: this.props.value,
-	      extraKeys: this.props.extraKeys,
-	      getLineAndCursor: this.getCursor,
-	      getMdeInstance: this.getMdeInstance
+	      extraKeys: this.props.extraKeys
 	    });
 	  }
 	});

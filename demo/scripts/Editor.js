@@ -28,8 +28,6 @@ module.exports = React.createClass({
         label={this.props.label}
         value={this.props.value}
         extraKeys={this.props.extraKeys}
-        getLineAndCursor={this.getCursor}
-        getMdeInstance={this.getMdeInstance}
       />
     );
   }
