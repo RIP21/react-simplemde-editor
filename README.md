@@ -24,22 +24,22 @@ http://www.benrlodge.com/projects/react-simplemde
 
 or view it locally:
 ```
-git clone https://github.com/benrlodge/react-simplemde-editor.git
+git clone https://github.com/RIP21/react-simplemde-editor.git
 cd react-simplemde-editor
-npm install
-cd demo
-gulp
-open browser to localhost:5555
+yarn install
+yarn demo
+open browser to localhost:3000
 ```
 
 ## Usage
-View the [demo code](https://github.com/benrlodge/react-simplemde-editor/tree/master/demo/scripts) for a full example.
+View the [demo code](https://github.com/benrlodge/react-simplemde-editor/tree/master/demo/src) for a full example.
 
 Not required, but useless without it, the `onChange` callback is the only option you need to set.
 
 ```javascript
-var React = require('react');
-var SimpleMDE = require('react-simplemde-editor');
+import React  from 'react';
+import SimpleMDE from 'react-simplemde-editor';
+import "simplemde/dist/simplemde.min.css";
 
 <SimpleMDE
   onChange={this.handleChange}
@@ -54,8 +54,9 @@ Note - while SimpleMDE options has an `initialValue` option, this component only
 Note - if you don't specify a custom id it will automatically generate an id for you.
 
 ```javascript
-var React = require('react');
-var SimpleMDE = require('react-simplemde-editor');
+import React  from 'react';
+import SimpleMDE from 'react-simplemde-editor';
+import "simplemde/dist/simplemde.min.css";
 
 <SimpleMDE
   id="your-custom-id"
