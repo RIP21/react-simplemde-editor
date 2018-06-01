@@ -46,6 +46,14 @@ import "simplemde/dist/simplemde.min.css";
 />
 ```
 
+The data from SimpleMDE is passed to the handleChange function and you do not need to reference the event.
+
+```javascript
+handleChange = value => {
+  this.setState({ mdeValue: value });
+};
+```
+
 ## Options
 Set additional [SimpleMDE options](https://github.com/sparksuite/simplemde-markdown-editor#configuration) with an options prop.
 
