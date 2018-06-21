@@ -88,6 +88,16 @@ export default class SimpleMDEEditor extends Component {
       this.editorToolbarEl.addEventListener("click", this.eventWrapper);
 
     this.simplemde.codemirror.on("cursorActivity", this.getCursor);
+    
+ 
+    const { events } = this.props;
+    
+    // Handle custom events
+    Object.entries(events).forEach(([eventName, callback]) => {
+      if(eventName && callback) {
+        this.simplemde.codemirror.on(eventName, callback);
+      }
+    });
   };
 
   getCursor = () => {
