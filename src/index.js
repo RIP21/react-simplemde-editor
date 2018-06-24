@@ -8,6 +8,7 @@ export default class SimpleMDEEditor extends Component {
   };
 
   static defaultProps = {
+    events: {},
     onChange: NOOP,
     options: {}
   };
@@ -92,7 +93,7 @@ export default class SimpleMDEEditor extends Component {
     const { events } = this.props;
     
     // Handle custom events
-    events && Object.entries(events).forEach(([eventName, callback]) => {
+    Object.entries(events).forEach(([eventName, callback]) => {
       if(eventName && callback) {
         this.simplemde.codemirror.on(eventName, callback);
       }
