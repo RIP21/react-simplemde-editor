@@ -93,8 +93,45 @@ extraKeys = {
 };
 
 <SimpleMDE
+  value={this.state.textValue}
   onChange={this.handleChange}
   extraKeys={extraKeys}
+/>
+```
+
+### Custom preview rendering example
+
+```javascript
+import ReactDOMServer from "react-dom/server";
+
+<SimpleMDE
+    value={this.state.text}
+    onChange={this.setText}
+      options={{
+        previewRender (text) {
+          return ReactDOMServer.renderToString(<ReactMarkdown
+            source={text}
+            renderers={{
+              CodeBlock: CodeRenderer,
+              Code: CodeRenderer
+            }}
+          />)
+        }
+      }}
+    />
+```
+
+### Additional listeners for events of CodeMirror
+
+```javascript
+<SimpleMDE
+  value={this.state.text}
+  onChange={this.handleChange}
+  events={
+    'blur': (e) => {},
+    'focus': (e) => {},
+    //... Add any codeMirror events
+  }
 />
 ```
 

@@ -3,15 +3,17 @@ import NOOP from "./utils/noop";
 import React, { Component } from "react";
 
 export default class SimpleMDEEditor extends Component {
-  state = {
-    keyChange: false
-  };
-
   static defaultProps = {
     events: {},
     onChange: NOOP,
     options: {}
   };
+
+  state = {
+    keyChange: false
+  };
+
+  value = this.props.value;
 
   componentWillMount() {
     const id = this.props.id;
@@ -30,18 +32,13 @@ export default class SimpleMDEEditor extends Component {
       this.getCursor();
       this.getMdeInstance();
     }
-    return;
   }
 
   componentWillReceiveProps(nextProps) {
-    if (
-      !this.state.keyChange &&
-      nextProps &&
-      nextProps.value !== this.simplemde.value()
-    ) {
+    if (!this.state.keyChange && nextProps && nextProps.value !== this.value) {
+      this.value = nextProps && nextProps.value;
       this.simplemde.value((nextProps && nextProps.value) || "");
     }
-
     this.setState({
       keyChange: false
     });
@@ -89,12 +86,12 @@ export default class SimpleMDEEditor extends Component {
       this.editorToolbarEl.addEventListener("click", this.eventWrapper);
 
     this.simplemde.codemirror.on("cursorActivity", this.getCursor);
-    
+
     const { events } = this.props;
-    
+
     // Handle custom events
     Object.entries(events).forEach(([eventName, callback]) => {
-      if(eventName && callback) {
+      if (eventName && callback) {
         this.simplemde.codemirror.on(eventName, callback);
       }
     });
