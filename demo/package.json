@@ -6,7 +6,7 @@
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "react-scripts": "1.1.4",
-    "react-simplemde-editor": "^3.6.15"
+    "react-simplemde-editor": "^3.6.16"
   },
   "scripts": {
     "start": "react-scripts start",

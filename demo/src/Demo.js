@@ -1,3 +1,4 @@
+import Autosaving from "./Autosaving";
 import React from "react";
 import SimpleMDEReact from "react-simplemde-editor";
 import "simplemde/dist/simplemde.min.css";
@@ -73,6 +74,9 @@ class Demo extends React.Component {
           onChange={this.handleChange2}
           extraKeys={this.extraKeys()}
         />
+        <hr />
+        <h4>Autosaves after refresh or sets default</h4>
+        <Autosaving id="demo" value="Initial value" />
       </div>
     );
   }
