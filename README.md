@@ -123,6 +123,8 @@ import ReactDOMServer from "react-dom/server";
 
 ### Additional listeners for events of CodeMirror
 
+See full list of events: https://codemirror.net/doc/manual.html#events
+
 ```javascript
 <SimpleMDE
   value={this.state.text}
