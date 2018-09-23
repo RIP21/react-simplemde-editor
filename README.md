@@ -174,5 +174,27 @@ class Autosaving extends Component {
 }
 ```
 
+
+### Retrieve `simplemde` instance to be able to manipulate it.
+
+```javascript
+<SimpleMDE
+  getMdeInstance= { this.getInsance } // <-- set callback prop
+  value={this.state.text}
+  onChange={this.handleChange}
+  }
+/>
+```
+
+```javascript
+getIntance = (instance) => {
+  // You can now store and manipulate the simplemde instance. 
+  instance.togglePreview();
+}
+```
+
+
+
+
 [npm-badge]: http://badge.fury.io/js/react-simplemde-editor.svg
 [npm]: http://badge.fury.io/js/react-simplemde-editor
