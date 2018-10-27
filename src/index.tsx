@@ -40,6 +40,7 @@ type SimpleMDEEditorProps = {
 
 type SimpleMDEEditorState = {
   keyChange: boolean;
+  value: string;
 };
 
 export default class SimpleMDEEditor extends React.PureComponent<
@@ -53,10 +54,10 @@ export default class SimpleMDEEditor extends React.PureComponent<
   };
 
   state = {
-    keyChange: false
+    keyChange: false,
+    value: this.props.value || ''
   };
 
-  value = this.props.value;
   id = this.props.id ? this.props.id : generateId();
   simpleMde: SimpleMDE | null = null;
   editorEl: Element | null = null;
@@ -76,10 +77,9 @@ export default class SimpleMDEEditor extends React.PureComponent<
     }
   }
 
-  componentWillReceiveProps(nextProps: SimpleMDEEditorProps) {
-    if (!this.state.keyChange && nextProps && nextProps.value !== this.value) {
-      this.value = nextProps && nextProps.value;
-      this.simpleMde!.value((nextProps && nextProps.value) || "");
+  componentDidUpdate() {
+    if (!this.state.keyChange && this.props.value !== this.state.value) {
+      this.simpleMde!.value(this.props.value || "");
     }
     this.setState({
       keyChange: false
@@ -103,9 +103,11 @@ export default class SimpleMDEEditor extends React.PureComponent<
 
   eventWrapper = () => {
     this.setState({
-      keyChange: true
+      keyChange: true,
+      value: this.simpleMde!.value()
+    }, () => {
+      this.props.onChange(this.simpleMde!.value());
     });
-    this.props.onChange(this.simpleMde!.value());
   };
 
   removeEvents = () => {
@@ -176,9 +178,7 @@ export default class SimpleMDEEditor extends React.PureComponent<
     } = this.props;
     return (
       <div id={`${this.id}-wrapper`} {...rest}>
-        {label && (
-          <label htmlFor={this.id}> {label} </label>
-        )}
+        {label && <label htmlFor={this.id}> {label} </label>}
         <textarea id={this.id} />
       </div>
     );

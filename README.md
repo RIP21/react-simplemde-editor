@@ -8,9 +8,10 @@ Only two dependencies, React and SimpleMDE.
 
 ## New in v3
  - The `initialValue` prop has been removed and replaced with a `value` prop, allowing direct changes to the value to be made after the component mounts.
- - Updated in v3.6.8, if rendering server-side, you can set static ids to avoid errors in rendering synchronization.
- - v3.6.17, TypeScript typings added.
- - v3.6.19, All props will be passed to the wrapper now (except a id, onChange and few others that are ignored)
+ - v3.6.8 if rendering server-side, you can set static ids to avoid errors in rendering synchronization.
+ - v3.6.17 TypeScript typings added.
+ - v3.6.19 All props will be passed to the wrapper now (except a id, onChange and few others that are ignored)
+ - v3.6.20 React 17 support (UNSAFE methods are no longer used)
 
 ## New in v2
 Version 1.0 did not have SimpleMDE options configured well, this readme reflects the changes made to better include options.
