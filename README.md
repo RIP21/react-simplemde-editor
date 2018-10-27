@@ -9,6 +9,7 @@ Only two dependencies, React and SimpleMDE.
 ## New in v3
  - The `initialValue` prop has been removed and replaced with a `value` prop, allowing direct changes to the value to be made after the component mounts.
  - Updated in v3.6.8, if rendering server-side, you can set static ids to avoid errors in rendering synchronization.
+ - v3.6.17, TypeScript typings added.
 
 ## New in v2
 Version 1.0 did not have SimpleMDE options configured well, this readme reflects the changes made to better include options.
@@ -20,7 +21,8 @@ npm install --save react-simplemde-editor
 ```
 
 ## Demo
-http://www.benrlodge.com/projects/react-simplemde
+http://www.benrlodge.com/projects/react-simplemde (old but working demo)
+https://rip21.github.io/react-simplemde-editor/ (this one may be broken :( )
 
 or view it locally:
 ```
@@ -28,7 +30,7 @@ git clone https://github.com/RIP21/react-simplemde-editor.git
 cd react-simplemde-editor
 yarn install
 yarn demo
-open browser to localhost:3000
+open browser with localhost:3000
 ```
 
 ## Usage

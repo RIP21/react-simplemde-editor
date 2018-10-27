@@ -2,45 +2,78 @@
   "name": "react-simplemde-editor",
   "homepage": "http://www.benrlodge.com",
   "repository": "https://github.com/RIP21/react-simplemde-editor",
-  "version": "3.6.16",
+  "version": "3.6.17",
   "author": "Ben Lodge",
-  "contributors": [{
-    "name": "Andrii Los",
-    "url": "https://github.com/RIP21",
-    "email": "puha212@gmail.com"
-  }],
+  "contributors": [
+    {
+      "name": "Andrii Los",
+      "url": "https://github.com/RIP21",
+      "email": "puha212@gmail.com"
+    }
+  ],
   "license": "MIT",
+  "main": "lib/index.js",
+  "typings": "typings/index.d.ts",
+  "files": [
+    "lib",
+    "typings"
+  ],
   "dependencies": {
-    "simplemde": "^1.11.2"
+    "simplemde": "^1.11.2",
+    "@types/simplemde": "^1.11.7",
+    "@types/codemirror": "^0.0.65"
   },
   "peerDependencies": {
     "react": ">=15",
     "react-dom": ">=15"
   },
-  "main": "lib/index.js",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^6.1.2",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-plugin-lodash": "^3.3.2",
-    "babel-plugin-syntax-async-functions": "^6.13.0",
-    "babel-plugin-syntax-jsx": "^6.18.0",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-react-constant-elements": "^6.23.0",
-    "babel-plugin-transform-react-jsx": "^6.24.1",
-    "babel-plugin-transform-regenerator": "^6.26.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-es2015-loose": "^7.0.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "react": "16.4.0",
-    "react-dom": "16.4.0"
+    "@types/node": "^10.12.0",
+    "@types/react": "^16.4.18",
+    "@types/simplemde": "^1.11.7",
+    "@types/codemirror": "^0.0.65",
+    "@babel/cli": "^7.1.2",
+    "@babel/preset-typescript": "^7.1.0",
+    "@babel/runtime": "^7.1.2",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-plugin-annotate-pure-calls": "^0.4.0",
+    "react-scripts": "^2.0.5",
+    "react": "16.6.0",
+    "react-dom": "16.6.0",
+    "typescript": "^3.1.3",
+    "gh-pages": "^2.0.1"
   },
   "scripts": {
-    "build": "./scripts/babel.js",
+    "prebuild": "tsc",
+    "build": "NODE_ENV=production babel src --out-dir lib  --source-maps --extensions \".js\",\".jsx\",\".ts\",\".tsx\" ",
     "prepublish": "npm run build",
+    "postpublish": "cd demo && yarn build && gh-pages -d build",
     "demo": "cd demo && yarn install && yarn start"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "6.12"
+          }
+        }
+      ],
+      [
+        "babel-preset-react-app",
+        {
+          "helpers": false,
+          "absoluteRuntime": false
+        }
+      ],
+      [
+        "@babel/preset-typescript",
+        {
+          "isTSX": true,
+          "allExtensions": true
+        }
+      ]
+    ]
   }
 }

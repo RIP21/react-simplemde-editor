@@ -46,13 +46,13 @@ class Demo extends React.Component {
       <div className="container container-narrow">
         <div className="page-header">
           <h1>
-            <a href="https://github.com/benrlodge/react-simplemde-editor">
+            <a href="https://github.com/RIP21/react-simplemde-editor">
               react-simplemde-editor
             </a>
           </h1>
           <p className="lead">
             A React.js wrapper for{" "}
-            <a href="https://github.com/NextStepWebs/simplemde-markdown-editor">
+            <a href="https://github.com/sparksuite/simplemde-markdown-editor">
               simplemde-markdown-editor
             </a>.
           </p>
@@ -64,6 +64,7 @@ class Demo extends React.Component {
           Click me to update the textValue outside of the editor
         </button>
         <SimpleMDEReact
+          className={""}
           label="Markdown Editor"
           value={this.state.textValue1}
           onChange={this.handleChange1}

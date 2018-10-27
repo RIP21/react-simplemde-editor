@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/services/idGenerator.js"],"names":["_id","module","exports","generateId"],"mappings":";;AAAA,IAAIA,GAAG,GAAG,CAAV;;AAEAC,MAAM,CAACC,OAAP,GAAiB,SAASC,UAAT,GAAsB;AACrC,uCAA8B,EAAEH,GAAhC;AACD,CAFD","sourcesContent":["let _id = 0;\n\nmodule.exports = function generateId() {\n  return `simplepostmd-editor-${++_id}`;\n};\n"],"file":"idGenerator.js"}
