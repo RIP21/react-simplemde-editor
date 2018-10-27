@@ -56,6 +56,7 @@ export default class SimpleMDEEditor extends React.PureComponent<
     keyChange: false
   };
 
+  value = this.props.value;
   id = this.props.id ? this.props.id : generateId();
   simpleMde: SimpleMDE | null = null;
   editorEl: Element | null = null;
@@ -75,9 +76,10 @@ export default class SimpleMDEEditor extends React.PureComponent<
     }
   }
 
-  componentDidUpdate(prevProps: SimpleMDEEditorProps) {
-    if (!this.state.keyChange && prevProps && prevProps.value !== this.props.value) {
-      this.simpleMde!.value((this.props.value) || "");
+  componentWillReceiveProps(nextProps: SimpleMDEEditorProps) {
+    if (!this.state.keyChange && nextProps && nextProps.value !== this.value) {
+      this.value = nextProps && nextProps.value;
+      this.simpleMde!.value((nextProps && nextProps.value) || "");
     }
     this.setState({
       keyChange: false
