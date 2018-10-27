@@ -2,7 +2,7 @@
   "name": "react-simplemde-editor",
   "homepage": "http://www.benrlodge.com",
   "repository": "https://github.com/RIP21/react-simplemde-editor",
-  "version": "3.6.20",
+  "version": "3.6.21",
   "author": "Ben Lodge",
   "contributors": [
     {
@@ -16,7 +16,8 @@
   "typings": "typings/index.d.ts",
   "files": [
     "lib",
-    "typings"
+    "typings",
+    "src"
   ],
   "dependencies": {
     "simplemde": "^1.11.2",
