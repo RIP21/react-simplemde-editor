@@ -10,6 +10,7 @@ Only two dependencies, React and SimpleMDE.
  - The `initialValue` prop has been removed and replaced with a `value` prop, allowing direct changes to the value to be made after the component mounts.
  - Updated in v3.6.8, if rendering server-side, you can set static ids to avoid errors in rendering synchronization.
  - v3.6.17, TypeScript typings added.
+ - v3.6.18, All props will be passed to the wrapper now (except a id, onChange and few others that are ignored)
 
 ## New in v2
 Version 1.0 did not have SimpleMDE options configured well, this readme reflects the changes made to better include options.
@@ -21,8 +22,7 @@ npm install --save react-simplemde-editor
 ```
 
 ## Demo
-http://www.benrlodge.com/projects/react-simplemde (old but working demo)
-https://rip21.github.io/react-simplemde-editor/ (this one may be broken :( )
+https://react-simplemde-edtior.netlify.com/
 
 or view it locally:
 ```

@@ -39,8 +39,8 @@ type SimpleMDEEditorProps = {
 };
 
 type SimpleMDEEditorState = {
-  keyChange: boolean
-}
+  keyChange: boolean;
+};
 
 export default class SimpleMDEEditor extends React.PureComponent<
   SimpleMDEEditorProps,
@@ -56,11 +56,10 @@ export default class SimpleMDEEditor extends React.PureComponent<
     keyChange: false
   };
 
-  value = this.props.value;
   id = this.props.id ? this.props.id : generateId();
   simpleMde: SimpleMDE | null = null;
-  editorEl: Element | null = null
-  editorToolbarEl: Element | null = null
+  editorEl: Element | null = null;
+  editorToolbarEl: Element | null = null;
 
   constructor(props: SimpleMDEEditorProps) {
     super(props);
@@ -76,10 +75,9 @@ export default class SimpleMDEEditor extends React.PureComponent<
     }
   }
 
-  componentWillReceiveProps(nextProps: SimpleMDEEditorProps) {
-    if (!this.state.keyChange && nextProps && nextProps.value !== this.value) {
-      this.value = nextProps && nextProps.value;
-      this.simpleMde!.value((nextProps && nextProps.value) || "");
+  componentDidUpdate(prevProps: SimpleMDEEditorProps) {
+    if (!this.state.keyChange && prevProps && prevProps.value !== this.props.value) {
+      this.simpleMde!.value((this.props.value) || "");
     }
     this.setState({
       keyChange: false
@@ -132,11 +130,12 @@ export default class SimpleMDEEditor extends React.PureComponent<
     const { events } = this.props;
 
     // Handle custom events
-    events && Object.entries(events).forEach(([eventName, callback]) => {
-      if (eventName && callback) {
-        this.simpleMde!.codemirror.on(eventName, callback);
-      }
-    });
+    events &&
+      Object.entries(events).forEach(([eventName, callback]) => {
+        if (eventName && callback) {
+          this.simpleMde!.codemirror.on(eventName, callback);
+        }
+      });
   };
 
   getCursor = () => {
@@ -160,10 +159,23 @@ export default class SimpleMDEEditor extends React.PureComponent<
   };
 
   render() {
+    const {
+      events,
+      value,
+      options,
+      children,
+      extraKeys,
+      getLineAndCursor,
+      getMdeInstance,
+      label,
+      onChange,
+      id,
+      ...rest
+    } = this.props;
     return (
-      <div id={`${this.id}-wrapper`} className={this.props.className}>
-        {this.props.label && (
-          <label htmlFor={this.id}> {this.props.label} </label>
+      <div id={`${this.id}-wrapper`} {...rest}>
+        {label && (
+          <label htmlFor={this.id}> {label} </label>
         )}
         <textarea id={this.id} />
       </div>

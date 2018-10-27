@@ -2,7 +2,7 @@
   "name": "react-simplemde-editor",
   "homepage": "http://www.benrlodge.com",
   "repository": "https://github.com/RIP21/react-simplemde-editor",
-  "version": "3.6.17",
+  "version": "3.6.18",
   "author": "Ben Lodge",
   "contributors": [
     {
@@ -40,14 +40,12 @@
     "react-scripts": "^2.0.5",
     "react": "16.6.0",
     "react-dom": "16.6.0",
-    "typescript": "^3.1.3",
-    "gh-pages": "^2.0.1"
+    "typescript": "^3.1.3"
   },
   "scripts": {
-    "prebuild": "tsc",
-    "build": "NODE_ENV=production babel src --out-dir lib  --source-maps --extensions \".js\",\".jsx\",\".ts\",\".tsx\" ",
-    "prepublish": "npm run build",
-    "postpublish": "cd demo && yarn build && gh-pages -d build",
+    "prebuild:lib": "tsc",
+    "build:lib": "NODE_ENV=production babel src --out-dir lib  --source-maps --extensions \".js\",\".jsx\",\".ts\",\".tsx\" ",
+    "prepublish": "npm run build:lib",
     "demo": "cd demo && yarn install && yarn start"
   },
   "babel": {
