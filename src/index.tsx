@@ -115,6 +115,7 @@ export default class SimpleMDEEditor extends React.PureComponent<
 
   removeEvents = () => {
     this.editorEl!.removeEventListener("keyup", this.eventWrapper);
+    this.editorEl!.removeEventListener("paste", this.eventWrapper);
     this.editorToolbarEl &&
       this.editorToolbarEl.removeEventListener("click", this.eventWrapper);
   };
@@ -129,6 +130,7 @@ export default class SimpleMDEEditor extends React.PureComponent<
     )[0];
 
     this.editorEl.addEventListener("keyup", this.eventWrapper);
+    this.editorEl.addEventListener("paste", this.eventWrapper);
     this.editorToolbarEl &&
       this.editorToolbarEl.addEventListener("click", this.eventWrapper);
 
