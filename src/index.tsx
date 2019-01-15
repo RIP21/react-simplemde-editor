@@ -47,6 +47,9 @@ export default class SimpleMDEEditor extends React.PureComponent<
   SimpleMDEEditorProps,
   SimpleMDEEditorState
 > {
+  private elementWrapperRef: any;
+  private textAreaRef: any;
+  
   static defaultProps = {
     events: {},
     onChange: noop,
@@ -91,7 +94,9 @@ export default class SimpleMDEEditor extends React.PureComponent<
   }
 
   componentWillUnmount() {
-    this.removeEvents();
+    if (this.editorEl !== null && this.editorEl !== undefined) {
+      this.removeEvents();
+    }
   }
 
   createEditor = () => {
@@ -121,13 +126,8 @@ export default class SimpleMDEEditor extends React.PureComponent<
   };
 
   addEvents = () => {
-    const wrapperId = `${this.id}-wrapper`;
-    const wrapperEl = document.getElementById(`${wrapperId}`);
-
-    this.editorEl = wrapperEl!.getElementsByClassName("CodeMirror")[0];
-    this.editorToolbarEl = wrapperEl!.getElementsByClassName(
-      "editor-toolbar"
-    )[0];
+    this.editorEl = this.elementWrapperRef;
+    this.editorToolbarEl = this.elementWrapperRef.getElementsByClassName("editor-toolbar")[0];
 
     this.editorEl.addEventListener("keyup", this.eventWrapper);
     this.editorEl.addEventListener("paste", this.eventWrapper);
@@ -166,6 +166,14 @@ export default class SimpleMDEEditor extends React.PureComponent<
       this.simpleMde!.codemirror.setOption("extraKeys", this.props.extraKeys);
     }
   };
+  
+  private buildWrapperRef = (e: any) => {
+    this.elementWrapperRef = e;
+  };
+
+  private buildTextAreaRef = (e: any) => {
+    this.textAreaRef = e;
+  };
 
   render() {
     const {
@@ -182,9 +190,9 @@ export default class SimpleMDEEditor extends React.PureComponent<
       ...rest
     } = this.props;
     return (
-      <div id={`${this.id}-wrapper`} {...rest}>
+      <div id={`${this.id}-wrapper`} {...rest} ref={this.buildWrapperRef}>
         {label && <label htmlFor={this.id}> {label} </label>}
-        <textarea id={this.id} />
+        <textarea id={this.id} ref={this.buildTextAreaRef} />
       </div>
     );
   }
