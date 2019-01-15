@@ -128,8 +128,8 @@ export default class SimpleMDEEditor extends React.PureComponent<
     this.editorEl = this.elementWrapperRef;
     this.editorToolbarEl = this.elementWrapperRef.getElementsByClassName("editor-toolbar")[0];
 
-    this.editorEl.addEventListener("keyup", this.eventWrapper);
-    this.editorEl.addEventListener("paste", this.eventWrapper);
+    this.editorEl!.addEventListener("keyup", this.eventWrapper);
+    this.editorEl!.addEventListener("paste", this.eventWrapper);
     this.editorToolbarEl &&
       this.editorToolbarEl.addEventListener("click", this.eventWrapper);
 
