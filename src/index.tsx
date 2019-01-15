@@ -48,7 +48,6 @@ export default class SimpleMDEEditor extends React.PureComponent<
   SimpleMDEEditorState
 > {
   private elementWrapperRef: any;
-  private textAreaRef: any;
   
   static defaultProps = {
     events: {},
@@ -171,10 +170,6 @@ export default class SimpleMDEEditor extends React.PureComponent<
     this.elementWrapperRef = e;
   };
 
-  private buildTextAreaRef = (e: any) => {
-    this.textAreaRef = e;
-  };
-
   render() {
     const {
       events,
@@ -192,7 +187,7 @@ export default class SimpleMDEEditor extends React.PureComponent<
     return (
       <div id={`${this.id}-wrapper`} {...rest} ref={this.buildWrapperRef}>
         {label && <label htmlFor={this.id}> {label} </label>}
-        <textarea id={this.id} ref={this.buildTextAreaRef} />
+        <textarea id={this.id} />
       </div>
     );
   }
