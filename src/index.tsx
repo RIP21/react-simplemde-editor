@@ -25,7 +25,7 @@ type SimpleMdeToCodemirror = {
   [E in CodemirrorEvents | DOMEvent]: Editor["on"]
 };
 
-type SimpleMDEEditorProps = {
+export interface SimpleMDEEditorProps {
   id?: string;
   label?: string;
   onChange: (value: string) => void | any;
