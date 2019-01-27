@@ -2,7 +2,7 @@
   "name": "react-simplemde-editor",
   "homepage": "http://www.benrlodge.com",
   "repository": "https://github.com/RIP21/react-simplemde-editor",
-  "version": "3.6.22",
+  "version": "4.0.0",
   "author": "Ben Lodge",
   "contributors": [
     {
@@ -20,8 +20,7 @@
     "src"
   ],
   "dependencies": {
-    "simplemde": "^1.11.2",
-    "@types/simplemde": "^1.11.7",
+    "easymde": "^2.5.1",
     "@types/codemirror": "^0.0.65"
   },
   "peerDependencies": {
@@ -29,19 +28,17 @@
     "react-dom": ">=15"
   },
   "devDependencies": {
-    "@types/node": "^10.12.0",
-    "@types/react": "^16.4.18",
-    "@types/simplemde": "^1.11.7",
+    "@types/node": "^10.12.18",
+    "@types/react": "^16.7.21",
     "@types/codemirror": "^0.0.65",
-    "@babel/cli": "^7.1.2",
+    "@babel/cli": "^7.2.3",
     "@babel/preset-typescript": "^7.1.0",
-    "@babel/runtime": "^7.1.2",
+    "@babel/runtime": "^7.3.1",
     "babel-core": "^7.0.0-bridge.0",
-    "babel-plugin-annotate-pure-calls": "^0.4.0",
-    "react-scripts": "^2.0.5",
-    "react": "16.6.0",
-    "react-dom": "16.6.0",
-    "typescript": "^3.1.3"
+    "react-scripts": "^2.1.3",
+    "react": "16.7.0",
+    "react-dom": "16.7.0",
+    "typescript": "^3.2.4"
   },
   "scripts": {
     "prebuild:lib": "tsc",

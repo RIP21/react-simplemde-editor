@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as SimpleMDE from "simplemde";
+import * as SimpleMDE from "easymde";
 import { KeyMap, DOMEvent, Editor } from "codemirror";
 
 const noop = () => {};
@@ -35,8 +35,8 @@ export interface SimpleMDEEditorProps {
   options?: SimpleMDE.Options;
   events?: SimpleMdeToCodemirror;
   getMdeInstance?: (instance: SimpleMDE) => void | any;
-  getLineAndCursor?: (instance: SimpleMDE) => void | any;
-};
+  getLineAndCursor?: (position: CodeMirror.Position) => void | any;
+}
 
 type SimpleMDEEditorState = {
   keyChange: boolean;
@@ -47,8 +47,9 @@ export default class SimpleMDEEditor extends React.PureComponent<
   SimpleMDEEditorProps,
   SimpleMDEEditorState
 > {
-  private elementWrapperRef: any;
-  
+  private elementWrapperRef: HTMLDivElement | null;
+  private setElementWrapperRef: (element: HTMLDivElement) => void;
+
   static defaultProps = {
     events: {},
     onChange: noop,
@@ -62,11 +63,15 @@ export default class SimpleMDEEditor extends React.PureComponent<
 
   id = this.props.id ? this.props.id : generateId();
   simpleMde: SimpleMDE | null = null;
-  editorEl: Element | null = null;
+  editorEl: HTMLDivElement | null = null;
   editorToolbarEl: Element | null = null;
 
   constructor(props: SimpleMDEEditorProps) {
     super(props);
+    this.elementWrapperRef = null;
+    this.setElementWrapperRef = (element: HTMLDivElement) => {
+      this.elementWrapperRef = element;
+    };
   }
 
   componentDidMount() {
@@ -99,7 +104,7 @@ export default class SimpleMDEEditor extends React.PureComponent<
   }
 
   createEditor = () => {
-    const SimpleMDE = require("simplemde");
+    const SimpleMDE = require("easymde");
     const initialOptions = {
       element: document.getElementById(this.id),
       initialValue: this.props.value
@@ -118,38 +123,49 @@ export default class SimpleMDEEditor extends React.PureComponent<
   };
 
   removeEvents = () => {
-    this.editorEl!.removeEventListener("keyup", this.eventWrapper);
-    this.editorEl!.removeEventListener("paste", this.eventWrapper);
-    this.editorToolbarEl &&
+    if (this.editorEl && this.editorToolbarEl) {
+      this.editorEl.removeEventListener("keyup", this.eventWrapper);
+      this.editorEl.removeEventListener("paste", this.eventWrapper);
       this.editorToolbarEl.removeEventListener("click", this.eventWrapper);
+    }
   };
 
   addEvents = () => {
-    this.editorEl = this.elementWrapperRef;
-    this.editorToolbarEl = this.elementWrapperRef.getElementsByClassName("editor-toolbar")[0];
+    if (this.elementWrapperRef && this.simpleMde) {
+      this.editorEl = this.elementWrapperRef;
+      this.editorToolbarEl = this.elementWrapperRef.getElementsByClassName(
+        "editor-toolbar"
+      )[0];
 
-    this.editorEl!.addEventListener("keyup", this.eventWrapper);
-    this.editorEl!.addEventListener("paste", this.eventWrapper);
-    this.editorToolbarEl &&
-      this.editorToolbarEl.addEventListener("click", this.eventWrapper);
+      this.editorEl.addEventListener("keyup", this.eventWrapper);
+      this.editorEl.addEventListener("paste", this.eventWrapper);
+      this.editorToolbarEl &&
+        this.editorToolbarEl.addEventListener("click", this.eventWrapper);
 
-    this.simpleMde!.codemirror.on("cursorActivity", this.getCursor);
+      this.simpleMde.codemirror.on("cursorActivity", this.getCursor);
 
-    const { events } = this.props;
+      const { events } = this.props;
 
-    // Handle custom events
-    events &&
-      Object.entries(events).forEach(([eventName, callback]) => {
-        if (eventName && callback) {
-          this.simpleMde!.codemirror.on(eventName, callback);
-        }
-      });
+      // Handle custom events
+      events &&
+        Object.entries(events).forEach(([eventName, callback]) => {
+          if (eventName && callback) {
+            this.simpleMde &&
+              this.simpleMde.codemirror.on(
+                eventName as DOMEvent,
+                callback as any
+              );
+          }
+        });
+    }
   };
 
   getCursor = () => {
     // https://codemirror.net/doc/manual.html#api_selection
     if (this.props.getLineAndCursor) {
-      this.props.getLineAndCursor(this.simpleMde!.codemirror.getCursor());
+      this.props.getLineAndCursor(
+        this.simpleMde!.codemirror.getDoc().getCursor()
+      );
     }
   };
 
@@ -164,10 +180,6 @@ export default class SimpleMDEEditor extends React.PureComponent<
     if (this.props.extraKeys) {
       this.simpleMde!.codemirror.setOption("extraKeys", this.props.extraKeys);
     }
-  };
-  
-  private buildWrapperRef = (e: any) => {
-    this.elementWrapperRef = e;
   };
 
   render() {
@@ -185,7 +197,7 @@ export default class SimpleMDEEditor extends React.PureComponent<
       ...rest
     } = this.props;
     return (
-      <div id={`${this.id}-wrapper`} {...rest} ref={this.buildWrapperRef}>
+      <div id={`${this.id}-wrapper`} {...rest} ref={this.setElementWrapperRef}>
         {label && <label htmlFor={this.id}> {label} </label>}
         <textarea id={this.id} />
       </div>

@@ -1,10 +1,13 @@
-# React SimpleMDE Markdown Editor
+# React SimpleMDE (EasyMDE) Markdown Editor
 [![NPM version][npm-badge]][npm]
 
 React component wrapper for
-[SimpleMDE](https://github.com/sparksuite/simplemde-markdown-editor).
+[EasyMDE (the most fresh SimpleMDE fork)](https://github.com/Ionaru/easy-markdown-editor).
 
 Only two dependencies, React and SimpleMDE.
+## New in v4
+ - Now uses [EasyMDE (the most fresh SimpleMDE fork)](https://github.com/Ionaru/easy-markdown-editor) 
+ instead of `simplemde` itself. Possible breaking changes, so I bumped version to v4.
 
 ## New in v3
  - The `initialValue` prop has been removed and replaced with a `value` prop, allowing direct changes to the value to be made after the component mounts.
@@ -58,7 +61,7 @@ handleChange = value => {
 ```
 
 ## Options
-Set additional [SimpleMDE options](https://github.com/sparksuite/simplemde-markdown-editor#configuration) with an options prop.
+Set additional [SimpleMDE options](https://github.com/Ionaru/easy-markdown-editor#configuration) with an options prop.
 
 Note - while SimpleMDE options has an `initialValue` option, this component only takes a `value` prop which is set as the `initialValue` on first render.
 
