@@ -1,34 +1,43 @@
 # React SimpleMDE (EasyMDE) Markdown Editor
+
 [![NPM version][npm-badge]][npm]
 
 React component wrapper for
 [EasyMDE (the most fresh SimpleMDE fork)](https://github.com/Ionaru/easy-markdown-editor).
 
 Only two dependencies, React and SimpleMDE.
+
 ## New in v4
- - Now uses [EasyMDE (the most fresh SimpleMDE fork)](https://github.com/Ionaru/easy-markdown-editor) 
- instead of `simplemde` itself. Possible breaking changes, so I bumped version to v4.
+
+- Now uses [EasyMDE (the most fresh SimpleMDE fork)](https://github.com/Ionaru/easy-markdown-editor)
+  instead of `simplemde` itself. Possible breaking changes, so I bumped version to v4.
+- One obvious breaking change. Is how CSS is have to be imported. It used to be `simplemde/dist/simplemde.min.css` now it will be `easymde/dist/easymde.min.css`
 
 ## New in v3
- - The `initialValue` prop has been removed and replaced with a `value` prop, allowing direct changes to the value to be made after the component mounts.
- - v3.6.8 if rendering server-side, you can set static ids to avoid errors in rendering synchronization.
- - v3.6.17 TypeScript typings added.
- - v3.6.19 All props will be passed to the wrapper now (except a id, onChange and few others that are ignored)
- - v3.6.21 React 17 support (UNSAFE methods are no longer used)
+
+- The `initialValue` prop has been removed and replaced with a `value` prop, allowing direct changes to the value to be made after the component mounts.
+- v3.6.8 if rendering server-side, you can set static ids to avoid errors in rendering synchronization.
+- v3.6.17 TypeScript typings added.
+- v3.6.19 All props will be passed to the wrapper now (except a id, onChange and few others that are ignored)
+- v3.6.21 React 17 support (UNSAFE methods are no longer used)
 
 ## New in v2
+
 Version 1.0 did not have SimpleMDE options configured well, this readme reflects the changes made to better include options.
 This is still a very new project. Testing, feedback and PRs are welcome and appreciated.
 
 ## Install
+
 ```
 npm install --save react-simplemde-editor
 ```
 
 ## Demo
+
 https://react-simplemde-edtior.netlify.com/
 
 or view it locally:
+
 ```
 git clone https://github.com/RIP21/react-simplemde-editor.git
 cd react-simplemde-editor
@@ -38,18 +47,17 @@ open browser with localhost:3000
 ```
 
 ## Usage
+
 View the [demo code](https://github.com/benrlodge/react-simplemde-editor/tree/master/demo/src) for a full example.
 
 Not required, but useless without it, the `onChange` callback is the only option you need to set.
 
 ```javascript
-import React  from 'react';
-import SimpleMDE from 'react-simplemde-editor';
-import "simplemde/dist/simplemde.min.css";
+import React from "react";
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
 
-<SimpleMDE
-  onChange={this.handleChange}
-/>
+<SimpleMDE onChange={this.handleChange} />;
 ```
 
 The data from SimpleMDE is passed to the handleChange function and you do not need to reference the event.
@@ -61,6 +69,7 @@ handleChange = value => {
 ```
 
 ## Options
+
 Set additional [SimpleMDE options](https://github.com/Ionaru/easy-markdown-editor#configuration) with an options prop.
 
 Note - while SimpleMDE options has an `initialValue` option, this component only takes a `value` prop which is set as the `initialValue` on first render.
@@ -68,9 +77,9 @@ Note - while SimpleMDE options has an `initialValue` option, this component only
 Note - if you don't specify a custom id it will automatically generate an id for you.
 
 ```javascript
-import React  from 'react';
-import SimpleMDE from 'react-simplemde-editor';
-import "simplemde/dist/simplemde.min.css";
+import React from "react";
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
 
 <SimpleMDE
   id="your-custom-id"
@@ -79,10 +88,10 @@ import "simplemde/dist/simplemde.min.css";
   value={this.state.textValue}
   options={{
     autofocus: true,
-    spellChecker: false,
+    spellChecker: false
     // etc.
   }}
-/>
+/>;
 ```
 
 You can include key maps using the `extraKeys` prop.
@@ -102,7 +111,7 @@ extraKeys = {
   value={this.state.textValue}
   onChange={this.handleChange}
   extraKeys={extraKeys}
-/>
+/>;
 ```
 
 ### Custom preview rendering example
@@ -111,20 +120,22 @@ extraKeys = {
 import ReactDOMServer from "react-dom/server";
 
 <SimpleMDE
-    value={this.state.text}
-    onChange={this.setText}
-      options={{
-        previewRender (text) {
-          return ReactDOMServer.renderToString(<ReactMarkdown
-            source={text}
-            renderers={{
-              CodeBlock: CodeRenderer,
-              Code: CodeRenderer
-            }}
-          />)
-        }
-      }}
-    />
+  value={this.state.text}
+  onChange={this.setText}
+  options={{
+    previewRender(text) {
+      return ReactDOMServer.renderToString(
+        <ReactMarkdown
+          source={text}
+          renderers={{
+            CodeBlock: CodeRenderer,
+            Code: CodeRenderer
+          }}
+        />
+      );
+    }
+  }}
+/>;
 ```
 
 ### Additional listeners for events of CodeMirror
@@ -152,8 +163,8 @@ import SimpleMDEReact from "react-simplemde-editor";
 class Autosaving extends Component {
   defaultProps = {
     delay: 1000,
-    value: ''
-  }
+    value: ""
+  };
 
   state = {
     value: localStorage.getItem(`smde_${this.props.id}`) || this.props.value
@@ -180,7 +191,6 @@ class Autosaving extends Component {
 }
 ```
 
-
 ### Retrieve `simplemde` instance to be able to manipulate it.
 
 ```javascript
@@ -193,14 +203,11 @@ class Autosaving extends Component {
 ```
 
 ```javascript
-getIntance = (instance) => {
-  // You can now store and manipulate the simplemde instance. 
+getIntance = instance => {
+  // You can now store and manipulate the simplemde instance.
   instance.togglePreview();
-}
+};
 ```
-
-
-
 
 [npm-badge]: http://badge.fury.io/js/react-simplemde-editor.svg
 [npm]: http://badge.fury.io/js/react-simplemde-editor

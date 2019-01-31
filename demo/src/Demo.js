@@ -1,7 +1,7 @@
 import Autosaving from "./Autosaving";
 import React from "react";
 import SimpleMDEReact from "react-simplemde-editor";
-import "simplemde/dist/simplemde.min.css";
+import "easymde/dist/easymde.min.css";
 
 let counter = 1;
 
