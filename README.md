@@ -5,7 +5,7 @@
 React component wrapper for
 [EasyMDE (the most fresh SimpleMDE fork)](https://github.com/Ionaru/easy-markdown-editor).
 
-Only two dependencies, React and SimpleMDE.
+Only two dependencies, React (peer) and EasyMDE (explicit).
 
 ## New in v4
 
