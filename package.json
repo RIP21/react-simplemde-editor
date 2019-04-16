@@ -20,7 +20,7 @@
     "src"
   ],
   "dependencies": {
-    "easymde": "^2.5.1",
+    "easymde": "^2.6.0",
     "@types/codemirror": "^0.0.65"
   },
   "peerDependencies": {
