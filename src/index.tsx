@@ -39,7 +39,6 @@ export interface SimpleMDEEditorProps {
 }
 
 type SimpleMDEEditorState = {
-  keyChange: boolean;
   value: string;
 };
 
@@ -49,6 +48,7 @@ export default class SimpleMDEEditor extends React.PureComponent<
 > {
   private elementWrapperRef: HTMLDivElement | null;
   private setElementWrapperRef: (element: HTMLDivElement) => void;
+  private keyChange = false;
 
   static defaultProps = {
     events: {},
@@ -57,7 +57,6 @@ export default class SimpleMDEEditor extends React.PureComponent<
   };
 
   state = {
-    keyChange: false,
     value: this.props.value || ""
   };
 
@@ -86,15 +85,13 @@ export default class SimpleMDEEditor extends React.PureComponent<
 
   componentDidUpdate(prevProps: SimpleMDEEditorProps) {
     if (
-      !this.state.keyChange &&
+      !this.keyChange &&
       this.props.value !== this.state.value && // This is somehow fixes moving cursor for controlled case
       this.props.value !== prevProps.value // This one fixes no value change for uncontrolled input. If it's uncontrolled prevProps will be the same
     ) {
       this.simpleMde!.value(this.props.value || "");
     }
-    this.setState({
-      keyChange: false
-    });
+    this.keyChange = false;
   }
 
   componentWillUnmount() {
@@ -115,8 +112,8 @@ export default class SimpleMDEEditor extends React.PureComponent<
   };
 
   eventWrapper = () => {
+    this.keyChange = true;
     this.setState({
-      keyChange: true,
       value: this.simpleMde!.value()
     });
     this.props.onChange(this.simpleMde!.value());
