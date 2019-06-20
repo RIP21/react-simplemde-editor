@@ -146,11 +146,11 @@ See full list of events: https://codemirror.net/doc/manual.html#events
 <SimpleMDE
   value={this.state.text}
   onChange={this.handleChange}
-  events={
+  events={{
     'blur': (e) => {},
     'focus': (e) => {},
     //... Add any codeMirror events
-  }
+  }}
 />
 ```
 
