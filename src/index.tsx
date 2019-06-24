@@ -21,8 +21,8 @@ type CodemirrorEvents =
   | "update"
   | "renderLine";
 
-type SimpleMdeToCodemirror = {
-  [E in CodemirrorEvents | DOMEvent]: Editor["on"]
+type SimpleMdeToCodemirror = { 
+  [E in CodemirrorEvents | DOMEvent]?: Editor["on"]
 };
 
 export interface SimpleMDEEditorProps {
