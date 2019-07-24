@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "@types/codemirror": "^0.0.65",
-    "easymde": "^2.6.0"
+    "easymde": "^2.7.1-202.0"
   },
   "peerDependencies": {
     "react": ">=15",
