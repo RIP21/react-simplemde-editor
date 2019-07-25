@@ -2,7 +2,7 @@
   "name": "react-simplemde-editor",
   "homepage": "http://www.benrlodge.com",
   "repository": "https://github.com/RIP21/react-simplemde-editor",
-  "version": "4.0.3",
+  "version": "4.1.0",
   "author": "Ben Lodge",
   "contributors": [
     {
@@ -20,7 +20,7 @@
     "src"
   ],
   "dependencies": {
-    "@types/codemirror": "^0.0.65",
+    "@types/codemirror": "^0.0.76",
     "easymde": "^2.7.1-202.0"
   },
   "peerDependencies": {
@@ -31,7 +31,7 @@
     "@babel/cli": "^7.2.3",
     "@babel/preset-typescript": "^7.1.0",
     "@babel/runtime": "^7.3.1",
-    "@types/codemirror": "^0.0.65",
+    "@types/codemirror": "^0.0.76",
     "@types/node": "^10.12.18",
     "@types/react": "^16.7.21",
     "babel-core": "^7.0.0-bridge.0",
