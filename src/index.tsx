@@ -21,7 +21,7 @@ type CodemirrorEvents =
   | "update"
   | "renderLine";
 
-type SimpleMdeToCodemirror = { 
+type SimpleMdeToCodemirror = {
   [E in CodemirrorEvents | DOMEvent]?: Editor["on"]
 };
 
@@ -100,6 +100,19 @@ export default class SimpleMDEEditor extends React.PureComponent<
     }
   }
 
+  // image upload function
+  imageUploadFunction = (file: File, onSuccess: (url: string) => void, onError: (error: string) => void) => {
+    const imageUpload = this.props.options?.imageUploadFunction
+    if (imageUpload) {
+        const _onSuccess = (url: string) => {
+            onSuccess(url)
+            // update value when success
+            this.eventWrapper()
+        }
+        imageUpload(file, _onSuccess, onError)
+    }
+}
+
   createEditor = () => {
     const SimpleMDE = require("easymde");
     const initialOptions = {
@@ -107,7 +120,8 @@ export default class SimpleMDEEditor extends React.PureComponent<
       initialValue: this.props.value
     };
 
-    const allOptions = Object.assign({}, initialOptions, this.props.options);
+    const imageUploadFunction = this.props.options?.imageUploadFunction ? this.imageUploadFunction : undefined
+    const allOptions = Object.assign({}, initialOptions, this.props.options, { imageUploadFunction });
     this.simpleMde = new SimpleMDE(allOptions);
   };
 
