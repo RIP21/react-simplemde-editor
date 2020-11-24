@@ -195,7 +195,7 @@ class Autosaving extends Component {
 
 ```javascript
 <SimpleMDE
-  getMdeInstance= { this.getInsance } // <-- set callback prop
+  getMdeInstance= { this.getInstance } // <-- set callback prop
   value={this.state.text}
   onChange={this.handleChange}
   }
@@ -203,7 +203,7 @@ class Autosaving extends Component {
 ```
 
 ```javascript
-getIntance = instance => {
+getInstance = instance => {
   // You can now store and manipulate the simplemde instance.
   instance.togglePreview();
 };
