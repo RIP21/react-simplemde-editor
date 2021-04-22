@@ -190,7 +190,11 @@ export default class SimpleMDEEditor extends React.PureComponent<
   addExtraKeys = () => {
     // https://codemirror.net/doc/manual.html#option_extraKeys
     if (this.props.extraKeys) {
-      this.simpleMde!.codemirror.setOption("extraKeys", this.props.extraKeys);
+      this.simpleMde!.codemirror.setOption("extraKeys", Object.assign(
+        {},
+        this.props.extraKeys,
+        this.simpleMde!.codemirror.getOption("extraKeys")
+      ));
     }
   };
 
