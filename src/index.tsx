@@ -92,6 +92,8 @@ export default class SimpleMDEEditor extends React.PureComponent<
       this.simpleMde!.value(this.props.value || "");
     }
     this.keyChange = false;
+
+    this.updateCustomEvents(this.props.events, prevProps.events);
   }
 
   componentWillUnmount() {
@@ -156,20 +158,31 @@ export default class SimpleMDEEditor extends React.PureComponent<
       this.simpleMde.codemirror.on("change", this.eventWrapper);
       this.simpleMde.codemirror.on("cursorActivity", this.getCursor);
 
-      const { events } = this.props;
-
-      // Handle custom events
-      events &&
-        Object.entries(events).forEach(([eventName, callback]) => {
-          if (eventName && callback) {
-            this.simpleMde &&
-              this.simpleMde.codemirror.on(
-                eventName as DOMEvent,
-                callback as any
-              );
-          }
-        });
+      this.updateCustomEvents(this.props.events)
     }
+  };
+
+  updateCustomEvents = (events: SimpleMdeToCodemirror | undefined, prevEvents?: SimpleMdeToCodemirror | undefined) => {
+    prevEvents &&
+      Object.entries(prevEvents).forEach(([eventName, callback]) => {
+        if (eventName && callback && (events?.[eventName as CodemirrorEvents | DOMEvent]) !== callback) {
+          this.simpleMde &&
+            this.simpleMde.codemirror.off(
+              eventName as DOMEvent,
+              callback as any
+            );
+        }
+      });
+    events &&
+      Object.entries(events).forEach(([eventName, callback]) => {
+        if (eventName && callback && prevEvents?.[eventName as CodemirrorEvents | DOMEvent] !== callback) {
+          this.simpleMde &&
+            this.simpleMde.codemirror.on(
+              eventName as DOMEvent,
+              callback as any
+            );
+        }
+      });
   };
 
   getCursor = () => {

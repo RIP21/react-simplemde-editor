@@ -147,12 +147,16 @@ See full list of events: https://codemirror.net/doc/manual.html#events
   value={this.state.text}
   onChange={this.handleChange}
   events={{
-    'blur': (e) => {},
-    'focus': (e) => {},
+    'blur': {this.onBlur},
+    'focus': {this.onFocus},
     //... Add any codeMirror events
   }}
 />
 ```
+
+If changed, the event handlers are reinstalled on component update. Make sure to use instance
+methods or `useCallback`. Anonymous functions à la `'focus': (e) => { ... }` are considered
+inequal by definition and will cause unecessary event handler updates.
 
 ### Autosaving example
 
