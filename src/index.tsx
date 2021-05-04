@@ -49,6 +49,7 @@ export default class SimpleMDEEditor extends React.PureComponent<
   private elementWrapperRef: HTMLDivElement | null;
   private setElementWrapperRef: (element: HTMLDivElement) => void;
   private keyChange = false;
+  private customEventCallbacks: SimpleMdeToCodemirror = {}
 
   static defaultProps = {
     events: {},
@@ -165,22 +166,26 @@ export default class SimpleMDEEditor extends React.PureComponent<
   updateCustomEvents = (events: SimpleMdeToCodemirror | undefined, prevEvents?: SimpleMdeToCodemirror | undefined) => {
     prevEvents &&
       Object.entries(prevEvents).forEach(([eventName, callback]) => {
-        if (eventName && callback && (events?.[eventName as CodemirrorEvents | DOMEvent]) !== callback) {
+        if (eventName && callback && !events?.[eventName as CodemirrorEvents | DOMEvent]) {
           this.simpleMde &&
             this.simpleMde.codemirror.off(
               eventName as DOMEvent,
-              callback as any
+              this.customEventCallbacks[eventName as CodemirrorEvents | DOMEvent] as any
             );
         }
       });
     events &&
       Object.entries(events).forEach(([eventName, callback]) => {
-        if (eventName && callback && prevEvents?.[eventName as CodemirrorEvents | DOMEvent] !== callback) {
-          this.simpleMde &&
+        if (eventName && callback && !prevEvents?.[eventName as CodemirrorEvents | DOMEvent]) {
+          if (this.simpleMde) {
+            this.customEventCallbacks[eventName as CodemirrorEvents | DOMEvent] = (instance: any) => {
+              (this.props.events?.[eventName as CodemirrorEvents | DOMEvent] as any)?.(instance);
+            }
             this.simpleMde.codemirror.on(
               eventName as DOMEvent,
-              callback as any
+              this.customEventCallbacks[eventName as CodemirrorEvents | DOMEvent] as any
             );
+          }
         }
       });
   };

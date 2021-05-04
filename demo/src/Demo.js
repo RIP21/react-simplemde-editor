@@ -42,6 +42,12 @@ class Demo extends React.Component {
   };
 
   render() {
+    let events = {
+      'focus': () => console.log('focus')
+    };
+    if (counter % 2 === 0) {
+      events['blur'] = () => console.log('blur')
+    }
     return (
       <div className="container container-narrow">
         <div className="page-header">
@@ -68,6 +74,7 @@ class Demo extends React.Component {
           label="Markdown Editor"
           value={this.state.textValue1}
           onChange={this.handleChange1}
+          events={events}
         />
         <hr />
         <SimpleMDEReact
