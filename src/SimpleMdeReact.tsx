@@ -221,7 +221,7 @@ export const SimpleMdeReact = React.forwardRef<
   useEffect(() => {
     if (editorRef.current) {
       editorRef.current?.toTextArea();
-      // @ts-ignore
+      // @ts-expect-error
       editorRef.current?.cleanup();
     }
 
