@@ -18,6 +18,7 @@ Only two dependencies, React (peer) and EasyMDE (peer).
   - [Events / Additional event listeners for events of CodeMirror](#events---additional-event-listeners-for-events-of-codemirror)
   - [Autosaving](#autosaving)
   - [Retrieve `easymde`, `codemirror` or `cursor` info to be able to manipulate it.](#retrieve--easymde----codemirror--or--cursor--info-to-be-able-to-manipulate-it)
+  - [Basic testing](#basic-testing)
 - [API](#api)
   - [Props](#props)
   - [All exports list](#all-exports-list)
@@ -284,6 +285,51 @@ export const GetDifferentInstances = () => {
     </div>
   );
 };
+```
+
+### Basic testing
+
+Here is how you do it. It requires mock of certain browser pieces to work, but this is whole example.
+
+```tsx
+import { act, render, screen } from "@testing-library/react";
+import { useState } from "react";
+import { SimpleMdeReact } from "SimpleMdeReact";
+import userEvent from "@testing-library/user-event";
+
+// @ts-ignore
+Document.prototype.createRange = function () {
+  return {
+    setEnd: function () {},
+    setStart: function () {},
+    getBoundingClientRect: function () {
+      return { right: 0 };
+    },
+    getClientRects: function () {
+      return {
+        length: 0,
+        left: 0,
+        right: 0,
+      };
+    },
+  };
+};
+
+const Editor = () => {
+  const [value, setValue] = useState("");
+  return <SimpleMdeReact value={value} onChange={setValue} />;
+};
+
+describe("Renders", () => {
+  it("succesfully", async () => {
+    act(() => {
+      render(<Editor />);
+    });
+    const editor = await screen.findByRole("textbox");
+    userEvent.type(editor, "hello");
+    expect(screen.getByText("hello")).toBeDefined();
+  });
+});
 ```
 
 ## API
