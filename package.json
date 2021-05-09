@@ -3,12 +3,12 @@
   "homepage": "https://react-simplemde-edtior.netlify.app/",
   "repository": "https://github.com/RIP21/react-simplemde-editor",
   "version": "4.1.5",
-  "author": "Ben Lodge",
+  "author": "Andrii Los",
   "contributors": [
     {
-      "name": "Andrii Los",
-      "url": "https://github.com/RIP21",
-      "email": "puha212@gmail.com"
+      "name": "Ben Lodge",
+      "url": "https://github.com/benrlodge",
+      "email": "benrlodge@gmail.com"
     }
   ],
   "license": "MIT",
@@ -20,57 +20,63 @@
     "src"
   ],
   "dependencies": {
-    "@types/codemirror": "^0.0.88",
-    "@types/marked": "^0.7.4",
-    "easymde": "^2.10.1"
+    "@types/codemirror": "0.0.109",
+    "@types/marked": "^2.0.2"
   },
   "peerDependencies": {
-    "react": ">=15",
-    "react-dom": ">=15"
+    "react": ">=16.8.2",
+    "react-dom": ">=16.8.2",
+    "easymde": ">= 2.0.0 < 3.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/preset-typescript": "^7.1.0",
-    "@babel/runtime": "^7.9.6",
-    "@types/codemirror": "^0.0.88",
-    "@types/node": "^12.12.31",
-    "@types/react": "^16.7.21",
-    "babel-core": "^7.0.0-bridge.0",
-    "react": "16.13.1",
-    "react-dom": "16.13.1",
-    "react-scripts": "^3.4.1",
-    "typescript": "^3.2.4"
+    "easymde": "^2.0.0",
+    "@babel/cli": "^7.13.16",
+    "@babel/preset-typescript": "^7.13.0",
+    "@babel/runtime": "^7.14.0",
+    "@types/codemirror": "0.0.109",
+    "@types/node": "^12.20.11",
+    "@types/react": "^17.0.4",
+    "@types/react-dom": "^17.0.3",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-scripts": "^4.0.3",
+    "typescript": "^4.2.4",
+    "prettier": "^2.2.1"
   },
   "scripts": {
-    "prebuild:lib": "tsc",
-    "build:lib": "NODE_ENV=production babel src --out-dir lib  --source-maps --extensions \".js\",\".jsx\",\".ts\",\".tsx\"",
+    "prebuild:lib": "tsc -p tsconfig.lib.json",
+    "build:lib": "NODE_ENV=production babel src/SimpleMdeReact.tsx --out-file lib/index.js  --source-maps --extensions \".js\",\".jsx\",\".ts\",\".tsx\"",
     "prepare": "yarn build:lib",
-    "demo": "cd demo && yarn install && yarn start"
+    "demo": "react-scripts start",
+    "build:demo": "react-scripts build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
   },
   "babel": {
     "presets": [
       [
-        "@babel/preset-env",
-        {
-          "targets": {
-            "node": "6.12"
-          }
-        }
-      ],
-      [
         "babel-preset-react-app",
         {
-          "helpers": false,
-          "absoluteRuntime": false
-        }
-      ],
-      [
-        "@babel/preset-typescript",
-        {
-          "isTSX": true,
-          "allExtensions": true
+          "useESModules": false,
+          "absoluteRuntime": false,
+          "typescript": true
         }
       ]
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
     ]
   }
 }
