@@ -27,7 +27,7 @@ const Editor = () => {
 };
 
 describe("Renders", () => {
-  it("succesfully", async () => {
+  it("successfully", async () => {
     act(() => {
       render(<Editor />);
     });
