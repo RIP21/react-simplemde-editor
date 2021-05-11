@@ -24,28 +24,28 @@
     "@types/marked": "^2.0.2"
   },
   "peerDependencies": {
+    "easymde": ">= 2.0.0 < 3.0.0",
     "react": ">=16.8.2",
-    "react-dom": ">=16.8.2",
-    "easymde": ">= 2.0.0 < 3.0.0"
+    "react-dom": ">=16.8.2"
   },
   "devDependencies": {
-    "easymde": "^2.0.0",
     "@babel/cli": "^7.13.16",
     "@babel/preset-typescript": "^7.13.0",
     "@babel/runtime": "^7.14.0",
+    "@testing-library/jest-dom": "^5.12.0",
+    "@testing-library/react": "^11.2.6",
+    "@testing-library/user-event": "^13.1.8",
     "@types/codemirror": "0.0.109",
+    "@types/jest": "^26.0.23",
     "@types/node": "^12.20.11",
     "@types/react": "^17.0.4",
     "@types/react-dom": "^17.0.3",
+    "easymde": "^2.0.0",
+    "prettier": "^2.2.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-scripts": "^4.0.3",
-    "typescript": "^4.2.4",
-    "prettier": "^2.2.1",
-    "@testing-library/react": "^11.2.6",
-    "@testing-library/user-event": "^13.1.8",
-    "@testing-library/jest-dom": "^5.12.0",
-    "@types/jest": "^26.0.23"
+    "typescript": "^4.2.4"
   },
   "scripts": {
     "prebuild:lib": "tsc -p tsconfig.lib.json",
