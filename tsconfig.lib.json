@@ -17,11 +17,12 @@
     "skipLibCheck": true,
     "target": "es5",
     "declaration": true,
-    "outFile": "./typings/index.d.ts",
+    "outDir": "./typings",
+    "isolatedModules": true,
     "emitDeclarationOnly": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/SimpleMdeReact.tsx", "images.d.ts"],
+  "include": ["src/SimpleMdeReact.tsx"],
   "exclude": [
     ".storybook",
     "storybook-static",

@@ -13,7 +13,7 @@
   ],
   "license": "MIT",
   "main": "lib/index.js",
-  "typings": "typings/index.d.ts",
+  "typings": "typings/SimpleMdeReact.d.ts",
   "files": [
     "lib",
     "typings",
