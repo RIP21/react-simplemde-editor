@@ -7,6 +7,8 @@ React component wrapper for
 
 Only two dependencies, React (peer) and EasyMDE (peer).
 
+Built by [@RIP21](https://twitter.com/rip212) 👨‍💻
+
 - [New in v5](#new-in-v5)
 - [Install](#install)
 - [Demo](#demo)
