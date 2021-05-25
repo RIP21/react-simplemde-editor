@@ -37,6 +37,7 @@ Built by [@RIP21](https://twitter.com/rip212) 👨‍💻
 - [breaking] `easymde` now a peer dependency, please install it manually
 - [breaking] `label` prop has been removed
 - [breaking] SSR safe nets removed, please make sure to import it dynamically
+- [breaking] `options` shall be memoized to prevent new instances from being created on each render and other related to that bugs (more on that below)
 - [potentially-breaking] Forwards `ref`, so you can easily get access to `div` wrapper by using `ref` prop.
 - [potentially-breaking] Lots of bugs fixed, examples updated
 - [potentially-breaking] `@babel/runtime` helpers are no longer inlined but imported.
@@ -100,8 +101,12 @@ If you're using TypeScript it will be inferred by compiler.
 
 Note: if you don't specify a custom id it will automatically generate an id for you.
 
-Note that you need to `useMemo` to memoize `options` so they do not change on each rerender! It shouldn't affect behavior, but it may affect performance
+Note that you need to `useMemo` to memoize `options` so they do not change on each rerender! It will affect behavior and performance
 because then on each render of the parent that renders `SimpleMdeReact` you'll get a new instance of the editor, which you definitely want to avoid!
+Also, if you change `options` on each `value` change you will lose focus.
+So, put `options` as a `const` outside of the component, or if `options` shall be partially or fully set by `props` make sure to `useMemo` in
+case of functional/hooks components, or class field for `class` based components.
+Slightly more on that here: [#164](https://github.com/RIP21/react-simplemde-editor/issues/164)
 
 ```tsx
 export const UsingOptions = () => {
