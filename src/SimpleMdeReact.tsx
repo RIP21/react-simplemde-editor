@@ -125,27 +125,16 @@ export interface SimpleMDEReactProps
   getLineAndCursor?: GetLineAndCursor;
 }
 
-const getElementByIdAsync = (id: string) =>
-  new Promise((resolve) => {
-    const getElement = () => {
-      const element = document.getElementById(id);
-      if (element) {
-        resolve(element);
-      } else {
-        requestAnimationFrame(getElement);
-      }
-    };
-    getElement();
-  });
-
 const useHandleEditorInstanceLifecycle = ({
   options,
   id,
   currentValueRef,
+  textRef,
 }: {
   options?: Options;
   id: string;
   currentValueRef: React.MutableRefObject<string | undefined>;
+  textRef: HTMLTextAreaElement | null;
 }) => {
   const [editor, setEditor] = useState<SimpleMDE | null>(null);
 
@@ -170,31 +159,28 @@ const useHandleEditorInstanceLifecycle = ({
   editorRef.current = editor;
 
   useEffect(() => {
-    // if this effect is getting called again means options has changed hence old instance shall be removed
-    // ref used to avoid endless loop
-    if (editorRef.current) {
-      editorRef.current?.toTextArea();
-      // @ts-expect-error
-      editorRef.current?.cleanup();
-    }
-
-    (async () => {
+    let editor: SimpleMDE
+    if (textRef) {
       const initialOptions = {
-        element: await getElementByIdAsync(id),
+        element: textRef,
         initialValue: currentValueRef.current,
-      };
+      }
       const imageUploadFunction = options?.imageUploadFunction
         ? imageUploadCallback
-        : undefined;
-      setEditor(
-        new SimpleMDE(
-          Object.assign({}, initialOptions, options, {
-            imageUploadFunction,
-          })
-        )
-      );
-    })();
-  }, [currentValueRef, id, imageUploadCallback, options]);
+        : undefined
+      editor = new SimpleMDE(
+        Object.assign({}, initialOptions, options, {
+          imageUploadFunction,
+        })
+      )
+      setEditor(editor)
+    }
+    return () => {
+      editor?.toTextArea()
+      // @ts-expect-error
+      editor?.cleanup()
+    }
+  }, [textRef, currentValueRef, id, imageUploadCallback, options]);
 
   const codemirror = useMemo(() => {
     return editor?.codemirror;
@@ -232,10 +218,12 @@ export const SimpleMdeReact = React.forwardRef<
   const currentValueRef = useRef(value);
   currentValueRef.current = value;
 
+  const [textRef, setTextRef] = useState<HTMLTextAreaElement | null>(null)
   const { editor, codemirror } = useHandleEditorInstanceLifecycle({
     options,
     id,
     currentValueRef,
+    textRef,
   });
 
   useEffect(() => {
@@ -346,7 +334,7 @@ export const SimpleMdeReact = React.forwardRef<
         elementWrapperRef.current = aRef;
       }}
     >
-      <textarea id={id} style={{ display: "none" }} />
+      <textarea id={id} ref={setTextRef} style={{ display: "none" }} />
     </div>
   );
 });
