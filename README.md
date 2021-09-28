@@ -66,7 +66,7 @@ open browser at localhost:3000
 
 ## Usage
 
-View the [demo code](https://github.com/rip21/react-simplemde-editor/tree/master/src/demo/Demo) for more examples.
+View the [demo code](https://github.com/rip21/react-simplemde-editor/tree/master/src/demo) for more examples.
 
 All examples below are in TypeScript
 
