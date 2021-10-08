@@ -86,9 +86,9 @@ import "easymde/dist/easymde.min.css";
 export const ControlledUsage = () => {
   const [value, setValue] = useState("Initial value");
 
-  const onChange = (value: string) => {
+  const onChange = useCallback((value: string) => {
     setValue(value);
-  };
+  }, []);
 
   return <SimpleMdeReact value={value} onChange={onChange} />;
 };
@@ -112,9 +112,9 @@ Slightly more on that here: [#164](https://github.com/RIP21/react-simplemde-edit
 export const UsingOptions = () => {
   const [value, setValue] = useState("Initial");
 
-  const onChange = (value: string) => {
+  const onChange = useCallback((value: string) => {
     setValue(value);
-  };
+  }, []);
 
   const autofocusNoSpellcheckerOptions = useMemo(() => {
     return {
@@ -202,9 +202,9 @@ import type { SimpleMdeToCodemirrorEvents } from "react-simplemde-editor";
 export const CustomEventListeners = () => {
   const [value, setValue] = useState("Initial value");
 
-  const onChange = (value: string) => {
+  const onChange = useCallback((value: string) => {
     setValue(value);
-  };
+  }, []);
 
   // Make sure to always `useMemo` all the `options` and `events` props to ensure best performance!
   const events = useMemo(() => {
