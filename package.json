@@ -1,5 +1,5 @@
 {
-  "name": "react-simplemde-editor",
+  "name": "@squadcasthub/react-simplemde-editor",
   "homepage": "https://react-simplemde-edtior.netlify.app/",
   "repository": "https://github.com/RIP21/react-simplemde-editor",
   "version": "5.0.2",
@@ -24,7 +24,7 @@
     "@types/marked": "^2.0.2"
   },
   "peerDependencies": {
-    "easymde": ">= 2.0.0 < 3.0.0",
+    "@squadcasthub/easymde": "2.15.0",
     "react": ">=16.8.2",
     "react-dom": ">=16.8.2"
   },
@@ -40,7 +40,7 @@
     "@types/node": "^12.20.11",
     "@types/react": "^17.0.4",
     "@types/react-dom": "^17.0.3",
-    "easymde": "^2.0.0",
+    "@squadcasthub/easymde": "2.15.0",
     "prettier": "^2.2.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
