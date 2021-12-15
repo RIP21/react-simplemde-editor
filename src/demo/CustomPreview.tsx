@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import SimpleMDE from "easymde";
+import SimpleMDE from "@squadcasthub/easymde";
 import SimpleMdeReact from "../SimpleMdeReact";
 
 export const CustomPreview = () => {

@@ -1,6 +1,6 @@
 import SimpleMdeReact, { SimpleMdeToCodemirrorEvents } from "../SimpleMdeReact";
 import { useMemo, useState } from "react";
-import SimpleMDE from "easymde";
+import SimpleMDE from "@squadcasthub/easymde";
 
 let counter = 1;
 export const State = (props: any) => {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import SimpleMDE from "easymde";
+import SimpleMDE from "@squadcasthub/easymde";
 import SimpleMdeReact from "../SimpleMdeReact";
 import type { Editor, Position } from "codemirror";
 

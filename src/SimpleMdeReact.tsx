@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import SimpleMDE, { Options } from "easymde";
+import SimpleMDE, { Options } from "@squadcasthub/easymde";
 
 import type {
   Doc,
@@ -177,7 +177,6 @@ const useHandleEditorInstanceLifecycle = ({
     }
     return () => {
       editor?.toTextArea()
-      // @ts-expect-error
       editor?.cleanup()
     }
   }, [textRef, currentValueRef, id, imageUploadCallback, options]);

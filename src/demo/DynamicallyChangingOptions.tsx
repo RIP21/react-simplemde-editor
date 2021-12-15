@@ -1,6 +1,6 @@
 import SimpleMdeReact from "../SimpleMdeReact";
 import { useState } from "react";
-import { Options } from "easymde";
+import { Options } from "@squadcasthub/easymde";
 
 export const DynamicallyChangingOptions = () => {
   const [value, setValue] = useState(`Blur away to see initial event behavior`);
