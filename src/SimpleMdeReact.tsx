@@ -8,14 +8,9 @@ import React, {
 import SimpleMDE, { Options } from "easymde";
 
 import type {
-  Doc,
   Editor,
-  EditorChange,
-  EditorChangeCancellable,
-  EditorChangeLinkedList,
-  EditorSelectionChange,
+  EditorEventMap,
   KeyMap,
-  LineHandle,
   Position,
 } from "codemirror";
 
@@ -67,46 +62,7 @@ export type IndexEventsSignature = {
 export interface SimpleMdeToCodemirrorEvents
   extends CopyEvents,
     GlobalEvents,
-    IndexEventsSignature {
-  change?: (instance: Editor, changeObj: EditorChangeLinkedList) => void;
-  changes?: (instance: Editor, changes: EditorChangeLinkedList[]) => void;
-  beforeChange?: (instance: Editor, changeObj: EditorChangeCancellable) => void;
-  cursorActivity?: (instance: Editor) => void;
-  keyHandled?: (instance: Editor, name: string, event: KeyboardEvent) => void;
-  inputRead?: (instance: Editor, changeObj: EditorChange) => void;
-  electricInput?: (instance: Editor, line: number) => void;
-  beforeSelectionChange?: (
-    instance: Editor,
-    obj: EditorSelectionChange
-  ) => void;
-  viewportChange?: (instance: Editor, from: number, to: number) => void;
-  swapDoc?: (instance: Editor, oldDoc: Doc) => void;
-  gutterClick?: (
-    instance: Editor,
-    line: number,
-    gutter: string,
-    clickEvent: MouseEvent
-  ) => void;
-  gutterContextMenu?: (
-    instance: Editor,
-    line: number,
-    gutter: string,
-    contextMenu: MouseEvent
-  ) => void;
-  focus?: (instance: Editor, event: FocusEvent) => void;
-  blur?: (instance: Editor, event: FocusEvent) => void;
-  scroll?: (instance: Editor) => void;
-  refresh?: (instance: Editor) => void;
-  optionChange?: (instance: Editor, option: string) => void;
-  scrollCursorIntoView?: (instance: Editor, event: Event) => void;
-  update?: (instance: Editor) => void;
-  renderLine?: (
-    instance: Editor,
-    line: LineHandle,
-    element: HTMLElement
-  ) => void;
-  overwriteToggle?: (instance: Editor, overwrite: boolean) => void;
-}
+    IndexEventsSignature, Partial<EditorEventMap> {}
 
 export type GetMdeInstance = (instance: SimpleMDE) => void;
 export type GetCodemirrorInstance = (instance: Editor) => void;
@@ -305,18 +261,18 @@ export const SimpleMdeReact = React.forwardRef<
     isNotFirstEffectRun &&
       prevEvents.current &&
       Object.entries(prevEvents.current).forEach(([event, handler]) => {
-        handler && codemirror?.off(event, handler);
+        handler && codemirror?.off(event as keyof EditorEventMap, handler);
       });
 
     events &&
       Object.entries(events).forEach(([event, handler]) => {
-        handler && codemirror?.on(event, handler);
+        handler && codemirror?.on(event as keyof EditorEventMap, handler);
       });
     prevEvents.current = events;
     return () => {
       events &&
         Object.entries(events).forEach(([event, handler]) => {
-          handler && codemirror?.off(event, handler);
+          handler && codemirror?.off(event as keyof EditorEventMap, handler);
         });
     };
   }, [codemirror, events]);
