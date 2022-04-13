@@ -191,10 +191,10 @@ export const SimpleMdeReact = React.forwardRef<
     nonEventChangeRef.current = true;
   }, [editor, value]);
 
-  const onCodemirrorChangeHandler = useCallback(() => {
+  const onCodemirrorChangeHandler = useCallback((_, changeObject) => {
     if (editor?.value() !== currentValueRef.current) {
       nonEventChangeRef.current = false;
-      onChange?.(editor?.value() ?? "");
+      onChange?.(editor?.value() ?? "", changeObject);
     }
   }, [editor, onChange]);
 
