@@ -8,6 +8,7 @@ import { CustomEventsAndCursorPosition } from "./CustomEventsAndCursorPosition";
 import { GetInstance } from "./GetInstance";
 import { DynamicallyChangingEvents } from "./DynamicallyChangingEvents";
 import { DynamicallyChangingOptions } from "./DynamicallyChangingOptions";
+import { ExampleWithPlaceholder } from "./ExampleWithPlaceholder";
 
 const Demo = () => {
   return (
@@ -36,6 +37,7 @@ const Demo = () => {
       <GetInstance />
       <DynamicallyChangingEvents />
       <DynamicallyChangingOptions />
+      <ExampleWithPlaceholder/>
     </div>
   );
 };
