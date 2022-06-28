@@ -7,12 +7,7 @@ import React, {
 } from "react";
 import SimpleMDE, { Options } from "easymde";
 
-import type {
-  Editor,
-  EditorEventMap,
-  KeyMap,
-  Position,
-} from "codemirror";
+import type { Editor, EditorEventMap, KeyMap, Position } from "codemirror";
 
 let _id = 0;
 
@@ -62,7 +57,8 @@ export type IndexEventsSignature = {
 export interface SimpleMdeToCodemirrorEvents
   extends CopyEvents,
     GlobalEvents,
-    IndexEventsSignature, Partial<EditorEventMap> {}
+    IndexEventsSignature,
+    Partial<EditorEventMap> {}
 
 export type GetMdeInstance = (instance: SimpleMDE) => void;
 export type GetCodemirrorInstance = (instance: Editor) => void;
@@ -115,27 +111,27 @@ const useHandleEditorInstanceLifecycle = ({
   editorRef.current = editor;
 
   useEffect(() => {
-    let editor: SimpleMDE
+    let editor: SimpleMDE;
     if (textRef) {
       const initialOptions = {
         element: textRef,
         initialValue: currentValueRef.current,
-      }
+      };
       const imageUploadFunction = options?.imageUploadFunction
         ? imageUploadCallback
-        : undefined
+        : undefined;
       editor = new SimpleMDE(
         Object.assign({}, initialOptions, options, {
           imageUploadFunction,
         })
-      )
-      setEditor(editor)
+      );
+      setEditor(editor);
     }
     return () => {
-      editor?.toTextArea()
+      editor?.toTextArea();
       // @ts-expect-error
-      editor?.cleanup()
-    }
+      editor?.cleanup();
+    };
   }, [textRef, currentValueRef, id, imageUploadCallback, options]);
 
   const codemirror = useMemo(() => {
@@ -159,8 +155,10 @@ export const SimpleMdeReact = React.forwardRef<
     getCodemirrorInstance,
     onChange,
     id: anId,
+    placeholder,
     ...rest
   } = props;
+
 
   const id = useMemo(() => anId ?? generateId(), [anId]);
 
@@ -174,7 +172,7 @@ export const SimpleMdeReact = React.forwardRef<
   const currentValueRef = useRef(value);
   currentValueRef.current = value;
 
-  const [textRef, setTextRef] = useState<HTMLTextAreaElement | null>(null)
+  const [textRef, setTextRef] = useState<HTMLTextAreaElement | null>(null);
   const { editor, codemirror } = useHandleEditorInstanceLifecycle({
     options,
     id,
@@ -191,12 +189,15 @@ export const SimpleMdeReact = React.forwardRef<
     nonEventChangeRef.current = true;
   }, [editor, value]);
 
-  const onCodemirrorChangeHandler = useCallback((_, changeObject) => {
-    if (editor?.value() !== currentValueRef.current) {
-      nonEventChangeRef.current = false;
-      onChange?.(editor?.value() ?? "", changeObject);
-    }
-  }, [editor, onChange]);
+  const onCodemirrorChangeHandler = useCallback(
+    (_, changeObject) => {
+      if (editor?.value() !== currentValueRef.current) {
+        nonEventChangeRef.current = false;
+        onChange?.(editor?.value() ?? "", changeObject);
+      }
+    },
+    [editor, onChange]
+  );
 
   useEffect(() => {
     // For some reason it doesn't work out of the box, this makes sure it's working correctly
@@ -234,9 +235,10 @@ export const SimpleMdeReact = React.forwardRef<
   }, [codemirror, extraKeys]);
 
   useEffect(() => {
-    const toolbarNode = elementWrapperRef.current?.getElementsByClassName(
-      "editor-toolbarNode"
-    )[0];
+    const toolbarNode =
+      elementWrapperRef.current?.getElementsByClassName(
+        "editor-toolbarNode"
+      )[0];
     const handler = () => codemirror && onCodemirrorChangeHandler();
     toolbarNode?.addEventListener("click", handler);
 
@@ -290,7 +292,12 @@ export const SimpleMdeReact = React.forwardRef<
         elementWrapperRef.current = aRef;
       }}
     >
-      <textarea id={id} ref={setTextRef} style={{ display: "none" }} />
+      <textarea
+        id={id}
+        ref={setTextRef}
+        style={{ display: "none" }}
+        placeholder={placeholder}
+      />
     </div>
   );
 });
