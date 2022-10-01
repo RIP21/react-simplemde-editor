@@ -226,7 +226,7 @@ export const SimpleMdeReact = React.forwardRef<
     if (extraKeys && codemirror) {
       codemirror.setOption(
         "extraKeys",
-        Object.assign({}, extraKeys, codemirror.getOption("extraKeys"))
+        Object.assign({}, codemirror.getOption("extraKeys"), extraKeys)
       );
     }
   }, [codemirror, extraKeys]);
