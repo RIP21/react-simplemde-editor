@@ -16,8 +16,7 @@
   "module": "dist/SimpleMdeReact.mjs",
   "typings": "dist/SimpleMdeReact.d.ts",
   "files": [
-    "lib",
-    "typings",
+    "dist",
     "src"
   ],
   "scripts": {
