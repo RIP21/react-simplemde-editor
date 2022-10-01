@@ -344,17 +344,22 @@ describe("Renders", () => {
 ### Props
 
 ```tsx
-export interface SimpleMdeReactProps
+export interface SimpleMDEReactProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
   id?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value: string, changeObject?: EditorChange) => void;
   value?: string;
   extraKeys?: KeyMap;
   options?: SimpleMDE.Options;
   events?: SimpleMdeToCodemirrorEvents;
-  getMdeInstance?: (instance: SimpleMDE) => void;
-  getCodemirrorInstance?: (codemirror: Editor) => void;
-  getLineAndCursor?: (position: Position) => void;
+  getMdeInstance?: GetMdeInstance;
+  getCodemirrorInstance?: GetCodemirrorInstance;
+  getLineAndCursor?: GetLineAndCursor;
+  placeholder?: string;
+  textareaProps?: Omit<
+    React.HTMLAttributes<HTMLTextAreaElement>,
+    "id" | "style" | "placeholder"
+  >;
 }
 ```
 

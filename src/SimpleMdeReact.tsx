@@ -76,6 +76,11 @@ export interface SimpleMDEReactProps
   getMdeInstance?: GetMdeInstance;
   getCodemirrorInstance?: GetCodemirrorInstance;
   getLineAndCursor?: GetLineAndCursor;
+  placeholder?: string;
+  textareaProps?: Omit<
+    React.HTMLAttributes<HTMLTextAreaElement>,
+    "id" | "style" | "placeholder"
+  >;
 }
 
 const useHandleEditorInstanceLifecycle = ({
@@ -155,6 +160,8 @@ export const SimpleMdeReact = React.forwardRef<
     getCodemirrorInstance,
     onChange,
     id: anId,
+    placeholder,
+    textareaProps,
     ...rest
   } = props;
 
@@ -291,7 +298,13 @@ export const SimpleMdeReact = React.forwardRef<
         elementWrapperRef.current = aRef;
       }}
     >
-      <textarea id={id} ref={setTextRef} style={{ display: "none" }} />
+      <textarea
+        {...textareaProps}
+        id={id}
+        placeholder={placeholder}
+        ref={setTextRef}
+        style={{ display: "none" }}
+      />
     </div>
   );
 });
