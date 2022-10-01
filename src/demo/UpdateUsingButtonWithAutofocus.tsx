@@ -1,12 +1,13 @@
 import SimpleMdeReact, { SimpleMdeToCodemirrorEvents } from "../SimpleMdeReact";
 import { useMemo, useState } from "react";
 import SimpleMDE from "easymde";
+import React from "react";
 
 let counter = 1;
 export const State = (props: any) => {
   return (
     <div style={{ margin: "8px" }}>
-      <code>{JSON.stringify(props, null, 2)}</code>
+      <code data-testid="state">{JSON.stringify(props, null, 2)}</code>
     </div>
   );
 };
@@ -36,7 +37,7 @@ export const UpdateUsingButtonWithAutofocus = () => {
   }, []);
 
   return (
-    <div>
+    <div data-testid="autofocus-no-spellchecker">
       <h4>Autofocus spellchecker disabled, button updated, controlled</h4>
       <button
         style={{ display: "inline-block", margin: "10px 0" }}
@@ -47,6 +48,7 @@ export const UpdateUsingButtonWithAutofocus = () => {
       <State value={value} />
       <h4>Update by button</h4>
       <SimpleMdeReact
+        data-testid="autofocus-no-spellchecker-editor"
         options={autofocusNoSpellcheckerOptions}
         value={value}
         onChange={onChange}

@@ -1,7 +1,12 @@
-import {act, render, screen} from "@testing-library/react";
-import { useState } from "react";
-import { SimpleMdeReact } from "SimpleMdeReact";
+/**
+ * @vitest-environment jsdom
+ */
+
+import { act, render, screen } from "@testing-library/react";
+import React, { useState } from "react";
+import { SimpleMdeReact } from "./SimpleMdeReact";
 import userEvent from "@testing-library/user-event";
+import { expect, describe, it } from "vitest"
 
 // @ts-ignore
 Document.prototype.createRange = function () {
@@ -32,7 +37,7 @@ describe("Renders", () => {
       render(<Editor />);
     });
     const editor = await screen.findByRole("textbox");
-    userEvent.type(editor, "hello")
-    expect(screen.getByText('hello')).toBeDefined()
+    await userEvent.type(editor, "hello");
+    expect(screen.getByText("hello")).toBeDefined();
   });
 });

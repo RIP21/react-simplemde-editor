@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import SimpleMDE from "easymde";
 import SimpleMdeReact from "../SimpleMdeReact";
 import type { Editor, Position } from "codemirror";
+import React from "react";
 
 export const GetInstance = () => {
   // simple mde

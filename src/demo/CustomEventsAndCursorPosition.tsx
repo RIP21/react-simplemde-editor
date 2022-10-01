@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import SimpleMdeReact, { SimpleMdeToCodemirrorEvents } from "../SimpleMdeReact";
 import { State } from "./UpdateUsingButtonWithAutofocus";
+import React from "react";
 
 export const CustomEventsAndCursorPosition = () => {
   const [cursorInfo, setCursorInfo] = useState<any>({});

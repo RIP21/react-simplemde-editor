@@ -301,7 +301,7 @@ Here is how you do it. It requires mock of certain browser pieces to work, but t
 ```tsx
 import { act, render, screen } from "@testing-library/react";
 import { useState } from "react";
-import { SimpleMdeReact } from "SimpleMdeReact";
+import { SimpleMdeReact } from "react-simplemde-editor";
 import userEvent from "@testing-library/user-event";
 
 // @ts-ignore

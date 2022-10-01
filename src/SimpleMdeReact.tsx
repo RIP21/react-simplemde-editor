@@ -7,12 +7,8 @@ import React, {
 } from "react";
 import SimpleMDE, { Options } from "easymde";
 
-import type {
-  Editor,
-  EditorEventMap,
-  KeyMap,
-  Position,
-} from "codemirror";
+import type { Editor, EditorEventMap, KeyMap, Position } from "codemirror";
+import { EditorChange } from "codemirror";
 
 let _id = 0;
 
@@ -62,7 +58,8 @@ export type IndexEventsSignature = {
 export interface SimpleMdeToCodemirrorEvents
   extends CopyEvents,
     GlobalEvents,
-    IndexEventsSignature, Partial<EditorEventMap> {}
+    IndexEventsSignature,
+    Partial<EditorEventMap> {}
 
 export type GetMdeInstance = (instance: SimpleMDE) => void;
 export type GetCodemirrorInstance = (instance: Editor) => void;
@@ -71,7 +68,7 @@ export type GetLineAndCursor = (instance: Position) => void;
 export interface SimpleMDEReactProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
   id?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value: string, changeObject?: EditorChange) => void;
   value?: string;
   extraKeys?: KeyMap;
   options?: SimpleMDE.Options;
@@ -115,27 +112,26 @@ const useHandleEditorInstanceLifecycle = ({
   editorRef.current = editor;
 
   useEffect(() => {
-    let editor: SimpleMDE
+    let editor: SimpleMDE;
     if (textRef) {
       const initialOptions = {
         element: textRef,
         initialValue: currentValueRef.current,
-      }
+      };
       const imageUploadFunction = options?.imageUploadFunction
         ? imageUploadCallback
-        : undefined
+        : undefined;
       editor = new SimpleMDE(
         Object.assign({}, initialOptions, options, {
           imageUploadFunction,
         })
-      )
-      setEditor(editor)
+      );
+      setEditor(editor);
     }
     return () => {
-      editor?.toTextArea()
-      // @ts-expect-error
-      editor?.cleanup()
-    }
+      editor?.toTextArea();
+      editor?.cleanup();
+    };
   }, [textRef, currentValueRef, id, imageUploadCallback, options]);
 
   const codemirror = useMemo(() => {
@@ -174,7 +170,7 @@ export const SimpleMdeReact = React.forwardRef<
   const currentValueRef = useRef(value);
   currentValueRef.current = value;
 
-  const [textRef, setTextRef] = useState<HTMLTextAreaElement | null>(null)
+  const [textRef, setTextRef] = useState<HTMLTextAreaElement | null>(null);
   const { editor, codemirror } = useHandleEditorInstanceLifecycle({
     options,
     id,
@@ -189,14 +185,16 @@ export const SimpleMdeReact = React.forwardRef<
       editor?.value(value ?? "");
     }
     nonEventChangeRef.current = true;
-  }, [editor, value]);
-
-  const onCodemirrorChangeHandler = useCallback((_, changeObject) => {
-    if (editor?.value() !== currentValueRef.current) {
-      nonEventChangeRef.current = false;
-      onChange?.(editor?.value() ?? "", changeObject);
-    }
-  }, [editor, onChange]);
+  }, [editor, value]); //  _: Editor | Event <===== is to please TS :)
+  const onCodemirrorChangeHandler = useCallback(
+    (_: Editor | Event, changeObject?: EditorChange) => {
+      if (editor?.value() !== currentValueRef.current) {
+        nonEventChangeRef.current = false;
+        onChange?.(editor?.value() ?? "", changeObject);
+      }
+    },
+    [editor, onChange]
+  );
 
   useEffect(() => {
     // For some reason it doesn't work out of the box, this makes sure it's working correctly
@@ -234,15 +232,18 @@ export const SimpleMdeReact = React.forwardRef<
   }, [codemirror, extraKeys]);
 
   useEffect(() => {
-    const toolbarNode = elementWrapperRef.current?.getElementsByClassName(
-      "editor-toolbarNode"
-    )[0];
-    const handler = () => codemirror && onCodemirrorChangeHandler();
-    toolbarNode?.addEventListener("click", handler);
-
-    return () => {
-      toolbarNode?.removeEventListener("click", handler);
-    };
+    const toolbarNode =
+      elementWrapperRef.current?.getElementsByClassName(
+        "editor-toolbarNode"
+      )[0];
+    const handler = codemirror && onCodemirrorChangeHandler;
+    if (handler) {
+      toolbarNode?.addEventListener("click", handler);
+      return () => {
+        toolbarNode?.removeEventListener("click", handler);
+      };
+    }
+    return () => {};
   }, [codemirror, onCodemirrorChangeHandler]);
 
   useEffect(() => {

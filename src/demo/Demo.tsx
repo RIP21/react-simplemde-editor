@@ -8,6 +8,7 @@ import { CustomEventsAndCursorPosition } from "./CustomEventsAndCursorPosition";
 import { GetInstance } from "./GetInstance";
 import { DynamicallyChangingEvents } from "./DynamicallyChangingEvents";
 import { DynamicallyChangingOptions } from "./DynamicallyChangingOptions";
+import React from "react";
 
 const Demo = () => {
   return (

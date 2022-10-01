@@ -12,15 +12,26 @@
     }
   ],
   "license": "MIT",
-  "main": "lib/index.js",
-  "typings": "typings/SimpleMdeReact.d.ts",
+  "main": "dist/SimpleMdeReact.js",
+  "module": "dist/SimpleMdeReact.mjs",
+  "typings": "dist/SimpleMdeReact.d.ts",
   "files": [
     "lib",
     "typings",
     "src"
   ],
+  "scripts": {
+    "build:lib": "tsup ./src/SimpleMdeReact.tsx",
+    "prepare": "pnpm build:lib",
+    "demo": "vite",
+    "build:demo": "vite build",
+    "test": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:debug": "playwright test --debug",
+    "tsc": "tsc"
+  },
   "dependencies": {
-    "@types/codemirror": "^5.60.5"
+    "@types/codemirror": "~5.60.5"
   },
   "peerDependencies": {
     "easymde": ">= 2.0.0 < 3.0.0",
@@ -28,59 +39,24 @@
     "react-dom": ">=16.8.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.13.16",
-    "@babel/preset-typescript": "^7.13.0",
-    "@babel/runtime": "^7.14.0",
-    "@testing-library/jest-dom": "^5.12.0",
-    "@testing-library/react": "^11.2.6",
-    "@testing-library/user-event": "^13.1.8",
-    "@types/codemirror": "^5.60.5",
-    "@types/jest": "^26.0.23",
-    "@types/node": "^12.20.11",
-    "@types/react": "^17.0.4",
-    "@types/react-dom": "^17.0.3",
-    "easymde": "^2.0.0",
-    "prettier": "^2.2.1",
+    "@playwright-testing-library/test": "~4.5.0",
+    "@playwright/test": "~1.26.1",
+    "@testing-library/react": "~12.1.5",
+    "@testing-library/user-event": "~14.4.3",
+    "@types/codemirror": "~5.60.5",
+    "@types/node": "~16.11.62",
+    "@types/react": "~17.0.50",
+    "@types/react-dom": "~17.0.11",
+    "easymde": "~2.18.0",
+    "happy-dom": "~6.0.4",
+    "jsdom": "~20.0.0",
+    "prettier": "~2.7.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-scripts": "^4.0.3",
-    "typescript": "^4.2.4"
-  },
-  "scripts": {
-    "prebuild:lib": "tsc -p tsconfig.lib.json",
-    "build:lib": "NODE_ENV=production babel src/SimpleMdeReact.tsx --out-file lib/index.js  --source-maps --extensions \".js\",\".jsx\",\".ts\",\".tsx\"",
-    "prepare": "yarn build:lib",
-    "demo": "react-scripts start",
-    "build:demo": "react-scripts build",
-    "test": "react-scripts test"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
-  },
-  "babel": {
-    "presets": [
-      [
-        "babel-preset-react-app",
-        {
-          "useESModules": false,
-          "absoluteRuntime": false,
-          "typescript": true
-        }
-      ]
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "tsup": "~6.2.3",
+    "typescript": "~4.8.4",
+    "vite": "~3.1.4",
+    "vitest": "0.23.4",
+    "vitest-dom": "~0.0.4"
   }
 }

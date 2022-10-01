@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import SimpleMDEReact from "../SimpleMdeReact";
+import React from "react";
 
 export const Autosaving = () => {
   const delay = 1000;

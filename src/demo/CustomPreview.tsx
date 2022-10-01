@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import SimpleMDE from "easymde";
 import SimpleMdeReact from "../SimpleMdeReact";
+import React from "react";
 
 export const CustomPreview = () => {
   const customRendererOptions = useMemo(() => {

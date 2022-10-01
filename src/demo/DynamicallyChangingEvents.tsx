@@ -1,5 +1,7 @@
 import SimpleMdeReact, { SimpleMdeToCodemirrorEvents } from "../SimpleMdeReact";
 import { useState } from "react";
+import React from "react";
+import {State} from "./UpdateUsingButtonWithAutofocus";
 
 export const DynamicallyChangingEvents = () => {
   const [value, setValue] = useState(`Blur away to see initial event behavior`);
@@ -30,6 +32,7 @@ export const DynamicallyChangingEvents = () => {
       >
         Change event to a random one!
       </button>
+      <State value={value} />
       <SimpleMdeReact events={events} onChange={setValue} value={value} />
     </div>
   );

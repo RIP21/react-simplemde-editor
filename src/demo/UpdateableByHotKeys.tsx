@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { KeyMap } from "codemirror";
 import { State } from "./UpdateUsingButtonWithAutofocus";
 import SimpleMdeReact from "../SimpleMdeReact";
+import React from "react";
 
 export const UpdateableByHotKeys = () => {
   const extraKeys = useMemo<KeyMap>(() => {
