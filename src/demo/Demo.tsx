@@ -34,6 +34,7 @@ const Demo = () => {
       <CustomPreview />
       <CustomEventsAndCursorPosition />
       <Autosaving />
+      <AutosavingWithCb />
       <GetInstance />
       <DynamicallyChangingEvents />
       <DynamicallyChangingOptions />
