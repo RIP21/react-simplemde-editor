@@ -81,6 +81,8 @@ export interface SimpleMDEReactProps
     React.HTMLAttributes<HTMLTextAreaElement>,
     "id" | "style" | "placeholder"
   >;
+  autoSaveCb?: (text: string) => void;
+  autoSaveTimer?: number;
 }
 
 const useHandleEditorInstanceLifecycle = ({
@@ -162,6 +164,8 @@ export const SimpleMdeReact = React.forwardRef<
     id: anId,
     placeholder,
     textareaProps,
+    autoSaveCb,
+    autoSaveTimer = 1000,
     ...rest
   } = props;
 
@@ -169,6 +173,7 @@ export const SimpleMdeReact = React.forwardRef<
 
   const elementWrapperRef = useRef<HTMLDivElement | null>(null);
   const nonEventChangeRef = useRef<boolean>(true);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
   // This is to not pass value as a dependency e.g. to keep event handlers referentially
   // stable and do not `off` and `on` on each value change
@@ -193,15 +198,29 @@ export const SimpleMdeReact = React.forwardRef<
     }
     nonEventChangeRef.current = true;
   }, [editor, value]); //  _: Editor | Event <===== is to please TS :)
+
   const onCodemirrorChangeHandler = useCallback(
     (_: Editor | Event, changeObject?: EditorChange) => {
       if (editor?.value() !== currentValueRef.current) {
         nonEventChangeRef.current = false;
         onChange?.(editor?.value() ?? "", changeObject);
+
+        if (autoSaveCb != null) {
+          if (timerRef.current) clearTimeout(timerRef.current);
+          timerRef.current = setTimeout(() => {
+            autoSaveCb(editor?.value() ?? "");
+          }, autoSaveTimer);
+        }
       }
     },
-    [editor, onChange]
+    [editor, onChange, autoSaveCb, autoSaveTimer]
   );
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    }
+  }, [])
 
   useEffect(() => {
     // For some reason it doesn't work out of the box, this makes sure it's working correctly
