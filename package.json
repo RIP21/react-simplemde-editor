@@ -54,7 +54,7 @@
     "react-dom": "18.2.0",
     "tsup": "~6.2.3",
     "typescript": "~4.8.4",
-    "vite": "~3.1.4",
+    "vite": "~3.2.7",
     "vitest": "0.23.4",
     "vitest-dom": "~0.0.4"
   }
